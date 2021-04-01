@@ -1,0 +1,17 @@
+{
+  "name": "DDNetServiceBot-Mind",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/MindXL/DDNetServiceBot-Mind.git",
+  "author": "MindXL <1634300602@qq.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "koishi": "^3.6.0",
+    "typescript": "^4.2.3"
+  },
+  "dependencies": {
+    "koishi-adapter-onebot": "^3.0.4",
+    "koishi-plugin-common": "^4.2.0",
+    "koishi-plugin-mysql": "^3.3.0"
+  }
+}
