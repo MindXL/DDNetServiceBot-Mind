@@ -69,12 +69,12 @@ module.exports.apply = function (_ctx) {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        if (!(options === null || options === void 0 ? void 0 : options.timeout)) return [3 /*break*/, 2];
-                        return [4 /*yield*/, koishi_1.sleep(options.timeout * koishi_1.Time.second)];
+                        if (!(options === null || options === void 0 ? void 0 : options.timeout)) return [3, 2];
+                        return [4, koishi_1.sleep(options.timeout * koishi_1.Time.second)];
                     case 1:
                         _b.sent();
                         _b.label = 2;
-                    case 2: return [2 /*return*/, message];
+                    case 2: return [2, message];
                 }
             });
         });
@@ -87,10 +87,10 @@ module.exports.apply = function (_ctx) {
         return __awaiter(void 0, void 0, void 0, function () {
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, (session === null || session === void 0 ? void 0 : session.bot.broadcast([config_1.default.testGroup], content))];
+                    case 0: return [4, (session === null || session === void 0 ? void 0 : session.bot.broadcast([config_1.default.testGroup], content))];
                     case 1:
                         _b.sent();
-                        return [2 /*return*/, '广播结束'];
+                        return [2, '广播结束'];
                 }
             });
         });
@@ -107,7 +107,7 @@ function getOnePoints(name, n) {
         var _this = this;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, new Promise(function (resolve, reject) {
+                case 0: return [4, new Promise(function (resolve, reject) {
                         axios_1.default
                             .get("https://ddnet.tw/players/" + encodeURI(name) + "/")
                             .then(function (value) {
@@ -129,14 +129,10 @@ function getOnePoints(name, n) {
                                 switch (_b.label) {
                                     case 0:
                                         _a = resolve;
-                                        return [4 /*yield*/, new Promise(function (resolve, reject) {
+                                        return [4, new Promise(function (resolve, reject) {
                                                 axios_1.default
                                                     .get("https://ddnet.tw/players/?query=" + encodeURI(name))
                                                     .then(function (value) {
-                                                    // 为空列表或模糊搜索到了其他名下数据
-                                                    // typeof value.data !== 'undefined'
-                                                    //     ? resolve(`${name}\n\n该用户不存在`)
-                                                    //     : reject();
                                                     if (typeof value.data !== 'undefined') {
                                                         resolve(name + "\n\n\u8BE5\u7528\u6237\u4E0D\u5B58\u5728");
                                                     }
@@ -150,12 +146,12 @@ function getOnePoints(name, n) {
                                             })];
                                     case 1:
                                         _a.apply(void 0, [_b.sent()]);
-                                        return [2 /*return*/];
+                                        return [2];
                                 }
                             });
                         }); });
                     })];
-                case 1: return [2 /*return*/, _a.sent()];
+                case 1: return [2, _a.sent()];
             }
         });
     });

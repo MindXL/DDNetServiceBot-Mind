@@ -1,5 +1,5 @@
 import { App } from 'koishi';
-import 'koishi-adapter-onebot';
+import 'koishi-adapter-onebot'
 
 import Config from './config';
 

@@ -6,7 +6,3 @@ var Config = {
     testGroup: '834904988',
 };
 exports.default = Config;
-// declare module Config  {
-//     export const mainQQ: '1634300602'
-//     export const testGroup: '834904988'
-// }

@@ -45,27 +45,22 @@ var config_1 = __importDefault(require("./config"));
 module.exports.name = 'MessageHandler';
 module.exports.apply = function (_ctx) {
     var ctx = _ctx;
-    // 回应"hh"消息
     ctx.middleware(function (session, next) {
         if (session.content === 'hh') {
             session.send('surprise');
         }
         return next();
     });
-    // 回应@消息
     ctx.middleware(function (session, next) {
-        // 仅当接收到的消息包含了对机器人的称呼时才继续处理（比如消息以 @机器人 开头）
         if (session.content === 'segment') {
             return session.send('是你在叫我吗？');
         }
         else {
-            // 如果去掉这一行，那么不满足上述条件的消息就不会进入下一个中间件了
             return next();
         }
     });
-    // // 同一消息连续发送3次则复读一次
-    var times = 0; // 复读次数
-    var message = 'm'; // 当前消息
+    var times = 0;
+    var message = 'm';
     ctx.middleware(function (session, next) {
         if (session.content === message) {
             times += 1;
@@ -77,10 +72,9 @@ module.exports.apply = function (_ctx) {
             message = session.content;
             return next();
         }
-    }, true /* true 表示这是前置中间件 */);
+    }, true);
     ctx.middleware(function (session, next) {
         if (session.content === 'hlep') {
-            // 如果该 session 没有被截获，则这里的回调函数将会被执行
             return next(function () { return session.send('你想说的是 help 吗？'); });
         }
         else {
@@ -92,28 +86,24 @@ module.exports.apply = function (_ctx) {
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    if (!((_a = session.parsed) === null || _a === void 0 ? void 0 : _a.appel)) return [3 /*break*/, 6];
-                    // @某某用户 我在叫你哟！
-                    return [4 /*yield*/, session.sendQueued(koishi_1.segment('at', { id: config_1.default.mainQQ }) + '我在叫你哟！')];
+                    if (!((_a = session.parsed) === null || _a === void 0 ? void 0 : _a.appel)) return [3, 6];
+                    return [4, session.sendQueued(koishi_1.segment('at', { id: config_1.default.mainQQ }) + '我在叫你哟！')];
                 case 1:
-                    // @某某用户 我在叫你哟！
                     _b.sent();
-                    // 你发送了一张 Koishi 图标
-                    return [4 /*yield*/, session.sendQueued(koishi_1.segment('image', { url: 'https://koishi.js.org/koishi.png' }))];
+                    return [4, session.sendQueued(koishi_1.segment('image', { url: 'https://koishi.js.org/koishi.png' }))];
                 case 2:
-                    // 你发送了一张 Koishi 图标
                     _b.sent();
-                    return [4 /*yield*/, session.sendQueued(koishi_1.segment('anonymous') + '这是一条匿名消息。')];
+                    return [4, session.sendQueued(koishi_1.segment('anonymous') + '这是一条匿名消息。')];
                 case 3:
                     _b.sent();
-                    return [4 /*yield*/, session.sendQueued(koishi_1.segment('quote', { id: config_1.default.mainQQ }) + '这是一条回复消息。')];
+                    return [4, session.sendQueued(koishi_1.segment('quote', { id: config_1.default.mainQQ }) + '这是一条回复消息。')];
                 case 4:
                     _b.sent();
-                    return [4 /*yield*/, session.cancelQueued()];
+                    return [4, session.cancelQueued()];
                 case 5:
                     _b.sent();
                     _b.label = 6;
-                case 6: return [2 /*return*/, next()];
+                case 6: return [2, next()];
             }
         });
     }); });
@@ -122,18 +112,17 @@ module.exports.apply = function (_ctx) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (!(session.content === 'login')) return [3 /*break*/, 3];
-                    return [4 /*yield*/, session.send('请输入用户名：')];
+                    if (!(session.content === 'login')) return [3, 3];
+                    return [4, session.send('请输入用户名：')];
                 case 1:
                     _a.sent();
-                    return [4 /*yield*/, session.prompt()];
+                    return [4, session.prompt()];
                 case 2:
                     name_1 = _a.sent();
                     if (!name_1)
-                        return [2 /*return*/, session.send('输入超时。')];
-                    // 执行后续操作
-                    return [2 /*return*/, session.send(name_1 + "\uFF0C\u8BF7\u591A\u6307\u6559\uFF01")];
-                case 3: return [2 /*return*/, next()];
+                        return [2, session.send('输入超时。')];
+                    return [2, session.send(name_1 + "\uFF0C\u8BF7\u591A\u6307\u6559\uFF01")];
+                case 3: return [2, next()];
             }
         });
     }); });
