@@ -40,6 +40,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var koishi_1 = require("koishi");
+require("koishi-adapter-onebot");
 var config_1 = __importDefault(require("./config"));
 module.exports.name = 'MessageHandler';
 module.exports.apply = function (_ctx) {

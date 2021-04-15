@@ -1,4 +1,5 @@
 import { Context, segment } from 'koishi';
+import 'koishi-adapter-onebot';
 
 import Config from './config';
 

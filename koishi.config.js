@@ -1,4 +1,4 @@
-const Config = require('./config').default;
+const Config = require('./src/config').default;
 
 // 配置项文档：https://koishi.js.org/api/app.html
 module.exports = {
@@ -40,19 +40,19 @@ module.exports = {
       database: '_koishi',
     },
     common: {},
-    './AppManage': {},
-    './Command': {},
-    './UserManage': {},
-    './EventEmitter': {},
-    './MessageHandler': {},
+    './src/AppManage': {},
+    './src/Command': {},
+    './src/UserManage': {},
+    './src/EventEmitter': {},
+    './src/MessageHandler': {},
   },
 
   // logTime: true,
 
   watch: {
     // 要监听的根目录，相对于工作路径
-    root: './*.js',
+    root: './src/*.js',
     // 要忽略的文件列表，支持 glob patterns
-    ignore: ['node_modules', 'src'],
+    ignore: ['node_modules', 'src/ts'],
   },
 }
