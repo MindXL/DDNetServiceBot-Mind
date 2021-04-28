@@ -40,39 +40,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var koishi_1 = require("koishi");
-require("koishi-adapter-onebot");
-var config_1 = __importDefault(require("./config"));
+var config_1 = __importDefault(require("../utils/config"));
+var CustomFunc_1 = require("../utils/CustomFunc");
+require("../utils/MysqlExtends/Moderator");
 module.exports.name = 'MessageHandler';
-module.exports.apply = function (_ctx) {
-    var ctx = _ctx;
-    ctx.middleware(function (session, next) {
+module.exports.apply = function (ctx) {
+    var testCtx = config_1.default.getTestCtx(ctx);
+    var motCtx = config_1.default.getMotCtx(ctx);
+    testCtx.middleware(function (session, next) {
         if (session.content === 'hh') {
             session.send('surprise');
         }
         return next();
     });
-    ctx.middleware(function (session, next) {
-        if (session.content === 'segment') {
+    testCtx.middleware(function (session, next) {
+        if (session.content === 's') {
             return session.send('是你在叫我吗？');
         }
         else {
             return next();
         }
     });
-    var times = 0;
-    var message = 'm';
-    ctx.middleware(function (session, next) {
-        if (session.content === message) {
-            times += 1;
-            if (times === 3)
-                return session.send(message);
-        }
-        else {
-            times = 0;
-            message = session.content;
-            return next();
-        }
-    }, true);
     ctx.middleware(function (session, next) {
         if (session.content === 'hlep') {
             return next(function () { return session.send('你想说的是 help 吗？'); });
@@ -81,49 +69,66 @@ module.exports.apply = function (_ctx) {
             return next();
         }
     });
-    ctx.middleware(function (session, next) { return __awaiter(void 0, void 0, void 0, function () {
+    motCtx.middleware(function (session, next) { return __awaiter(void 0, void 0, void 0, function () {
+        var quote, replyMessageId, gmr, regExp, modReply, reason, botReply;
         var _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    if (!((_a = session.parsed) === null || _a === void 0 ? void 0 : _a.appel)) return [3, 6];
-                    return [4, session.sendQueued(koishi_1.segment('at', { id: config_1.default.mainQQ }) + '我在叫你哟！')];
+                    quote = session.quote;
+                    if (!quote)
+                        return [2, next()];
+                    replyMessageId = quote.messageId;
+                    return [4, ctx.database.getGMR('replyMessageId', replyMessageId)];
                 case 1:
-                    _b.sent();
-                    return [4, session.sendQueued(koishi_1.segment('image', { url: 'https://koishi.js.org/koishi.png' }))];
+                    gmr = _b.sent();
+                    if (!gmr)
+                        return [2, next()];
+                    regExp = /] (y|(?:n|n (?<reason>.*))|i)$/g.exec(session.content);
+                    modReply = regExp === null || regExp === void 0 ? void 0 : regExp[1];
+                    reason = (_a = regExp === null || regExp === void 0 ? void 0 : regExp.groups) === null || _a === void 0 ? void 0 : _a.reason;
+                    if (!modReply) return [3, 3];
+                    if (modReply === 'y') {
+                        botReply = '同意了该用户的入群申请';
+                        session.bot.handleGroupMemberRequest(gmr.messageId, true);
+                    }
+                    else if (modReply === 'i') {
+                        botReply = '忽略了该用户的入群申请';
+                    }
+                    else {
+                        botReply =
+                            '拒绝了该用户的入群申请\n拒绝理由：\n' + (reason !== null && reason !== void 0 ? reason : '无');
+                        session.bot.handleGroupMemberRequest(gmr.messageId, false, reason !== null && reason !== void 0 ? reason : '');
+                    }
+                    return [4, ctx.database.removeGMR('replyMessageId', replyMessageId)];
                 case 2:
                     _b.sent();
-                    return [4, session.sendQueued(koishi_1.segment('anonymous') + '这是一条匿名消息。')];
+                    return [3, 4];
                 case 3:
-                    _b.sent();
-                    return [4, session.sendQueued(koishi_1.segment('quote', { id: config_1.default.mainQQ }) + '这是一条回复消息。')];
-                case 4:
-                    _b.sent();
-                    return [4, session.cancelQueued()];
+                    botReply = '回复的消息格式似乎不正确，请重新回复';
+                    _b.label = 4;
+                case 4: return [4, session.send(koishi_1.s.join([
+                        CustomFunc_1.sf('quote', { id: replyMessageId }),
+                        CustomFunc_1.sf('at', { id: session.userId }),
+                        CustomFunc_1.sf('at', { id: session.userId }),
+                    ]) + ("\n" + botReply))];
                 case 5:
                     _b.sent();
-                    _b.label = 6;
-                case 6: return [2, next()];
+                    return [4, session.bot.deleteMessage(session.groupId, replyMessageId)];
+                case 6:
+                    _b.sent();
+                    return [4, session.bot.deleteMessage(session.groupId, session.messageId)];
+                case 7:
+                    _b.sent();
+                    return [2, next()];
             }
         });
     }); });
-    ctx.middleware(function (session, next) { return __awaiter(void 0, void 0, void 0, function () {
-        var name_1;
+    testCtx.middleware(function (session, next) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    if (!(session.content === 'login')) return [3, 3];
-                    return [4, session.send('请输入用户名：')];
-                case 1:
-                    _a.sent();
-                    return [4, session.prompt()];
-                case 2:
-                    name_1 = _a.sent();
-                    if (!name_1)
-                        return [2, session.send('输入超时。')];
-                    return [2, session.send(name_1 + "\uFF0C\u8BF7\u591A\u6307\u6559\uFF01")];
-                case 3: return [2, next()];
+            if (session.content === 'mt') {
             }
+            return [2, next()];
         });
     }); });
 };

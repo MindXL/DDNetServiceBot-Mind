@@ -40,12 +40,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var koishi_1 = require("koishi");
-var axios_1 = __importDefault(require("axios"));
-var config_1 = __importDefault(require("./config"));
+var config_1 = __importDefault(require("../utils/config"));
+var DDNetOrientedFunc_1 = require("../utils/DDNetOrientedFunc");
 module.exports.name = 'Command';
-module.exports.apply = function (_ctx) {
-    var ctx = _ctx;
-    ctx.command('eco <message:text>', '输出收到的信息', { authority: 1 })
+module.exports.apply = function (ctx) {
+    var testCtx = config_1.default.getTestCtx(ctx);
+    var motCtx = config_1.default.getMotCtx(ctx);
+    testCtx
+        .command('eco <message:text>', '输出收到的信息', { authority: 1 })
         .option('encode', '-e 输出编码（encode）后的信息')
         .option('decode', '-d 输出解码（decode）后的信息')
         .option('timeout', '-t [seconds:number] 设定延迟发送的时间')
@@ -79,7 +81,8 @@ module.exports.apply = function (_ctx) {
             });
         });
     });
-    ctx.command('b <content:_text>', '广播', { authority: 4 })
+    testCtx
+        .command('b <content:_text>', '广播', { authority: 4 })
         .alias('broadcast^')
         .shortcut('广播', { fuzzy: true })
         .action(function (_a, content) {
@@ -95,64 +98,82 @@ module.exports.apply = function (_ctx) {
             });
         });
     });
-    ctx.command('points [name:text]', '查询ddr分数', {
-        authority: 1,
-    }).action(function (_a, name) {
+    motCtx
+        .command('points [name:text]', '查询ddr分数')
+        .action(function (_a, name) {
         var session = _a.session;
-        return getOnePoints(name !== null && name !== void 0 ? name : session === null || session === void 0 ? void 0 : session.username, 0);
-    });
-};
-function getOnePoints(name, n) {
-    return __awaiter(this, void 0, void 0, function () {
-        var _this = this;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4, new Promise(function (resolve, reject) {
-                        axios_1.default
-                            .get("https://ddnet.tw/players/" + encodeURI(name) + "/")
-                            .then(function (value) {
-                            var _a;
-                            var data = value.data;
-                            var results = new RegExp("<div class=\"block2 ladder\"><h3>(?<title>.*?)<[/]h3>\\n<p class=\"pers-result\">(?<points>((\\d+). with (\\d+) points)|(Unranked))<[/]p><[/]div>", 'g');
-                            while (n > 0) {
-                                results.exec(data);
-                                n -= 1;
-                            }
-                            var result = (_a = results.exec(data)) === null || _a === void 0 ? void 0 : _a.groups;
-                            result
-                                ? resolve(name + "\n\n" + (result === null || result === void 0 ? void 0 : result.title) + "\n" + (result === null || result === void 0 ? void 0 : result.points))
-                                : reject();
-                        })
-                            .catch(function (reason) { return __awaiter(_this, void 0, void 0, function () {
-                            var _a;
-                            return __generator(this, function (_b) {
-                                switch (_b.label) {
-                                    case 0:
-                                        _a = resolve;
-                                        return [4, new Promise(function (resolve, reject) {
-                                                axios_1.default
-                                                    .get("https://ddnet.tw/players/?query=" + encodeURI(name))
-                                                    .then(function (value) {
-                                                    if (typeof value.data !== 'undefined') {
-                                                        resolve(name + "\n\n\u8BE5\u7528\u6237\u4E0D\u5B58\u5728");
-                                                    }
-                                                    else {
-                                                        throw new Error();
-                                                    }
-                                                })
-                                                    .catch(function (reason) {
-                                                    resolve('$ 出现错误\n$ Error');
-                                                });
-                                            })];
-                                    case 1:
-                                        _a.apply(void 0, [_b.sent()]);
-                                        return [2];
-                                }
-                            });
-                        }); });
-                    })];
-                case 1: return [2, _a.sent()];
-            }
+        return __awaiter(void 0, void 0, void 0, function () {
+            var _b, _c;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0: return [4, DDNetOrientedFunc_1.getPoints(name !== null && name !== void 0 ? name : (((_b = session === null || session === void 0 ? void 0 : session.author) === null || _b === void 0 ? void 0 : _b.nickname) !== ''
+                            ? (_c = session === null || session === void 0 ? void 0 : session.author) === null || _c === void 0 ? void 0 : _c.nickname
+                            : session === null || session === void 0 ? void 0 : session.username))];
+                    case 1: return [2, _d.sent()];
+                }
+            });
         });
     });
-}
+    motCtx
+        .command('gmr', '(Group Member Request)\n获取5条未处理的入群申请')
+        .action(function (_a) {
+        var session = _a.session;
+        return __awaiter(void 0, void 0, void 0, function () {
+            var gmrs, _i, gmrs_1, gmr, newReplyMessageId;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4, motCtx.database.getGMRs_N(5)];
+                    case 1:
+                        gmrs = _b.sent();
+                        if (Array.isArray(gmrs) && gmrs.length === 0)
+                            return [2, '$所有入群申请已被处理$'];
+                        _i = 0, gmrs_1 = gmrs;
+                        _b.label = 2;
+                    case 2:
+                        if (!(_i < gmrs_1.length)) return [3, 6];
+                        gmr = gmrs_1[_i];
+                        return [4, DDNetOrientedFunc_1.sendGMRReminder(session.bot, gmr.userId, gmr.groupId, gmr.content)];
+                    case 3:
+                        newReplyMessageId = _b.sent();
+                        return [4, ctx.database.updateGMR('messageId', gmr.messageId, newReplyMessageId)];
+                    case 4:
+                        _b.sent();
+                        _b.label = 5;
+                    case 5:
+                        _i++;
+                        return [3, 2];
+                    case 6: return [2];
+                }
+            });
+        });
+    });
+    testCtx.command('cdelete').action(function (_a) {
+        var session = _a.session;
+        return __awaiter(void 0, void 0, void 0, function () {
+            var channelId, mId;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        channelId = session === null || session === void 0 ? void 0 : session.channelId;
+                        return [4, (session === null || session === void 0 ? void 0 : session.bot.sendMessage(channelId, 'pre'))];
+                    case 1:
+                        mId = (_b.sent());
+                        return [4, koishi_1.sleep(4 * koishi_1.Time.minute)];
+                    case 2:
+                        _b.sent();
+                        session === null || session === void 0 ? void 0 : session.bot.deleteMessage(channelId, mId);
+                        return [2];
+                }
+            });
+        });
+    });
+    testCtx.command('ct').action(function (_a) {
+        var session = _a.session;
+        return __awaiter(void 0, void 0, void 0, function () {
+            return __generator(this, function (_b) {
+                session === null || session === void 0 ? void 0 : session.send('CommandTest');
+                return [2];
+            });
+        });
+    });
+};

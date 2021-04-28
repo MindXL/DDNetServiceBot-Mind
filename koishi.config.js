@@ -1,58 +1,58 @@
-const Config = require('./config').default;
-
-// 配置项文档：https://koishi.js.org/api/app.html
+"use strict";
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var config_1 = __importDefault(require("./utils/config"));
+var CustomFunc_1 = require("./utils/CustomFunc");
 module.exports = {
-  // Koishi 服务器监听的端口
-  port: 8080,
-
-  onebot: {
-    secret: '',
-  },
-
-  bots: [{
-    type: 'onebot:ws',
-    // 对应 cqhttp 配置项 ws_config.port
-    server: 'ws://localhost:6700',
-    selfId: 1066974992,
-    token: '',
-  }],
-
-  prefix: ['%', '&', '*', ''],
-
-  autoAssign: session => session.channelId === Config.testGroup,
-  autoAuthorize: session => session.userId === Config.mainQQ ? 4 : (session.groupId === Config.testGroup ? 1 : 0),
-
-  plugins: {
-    // mysql: {
-    //   host: '127.0.0.1',
-    //   // Koishi 服务器监听的端口
-    //   port: 3306,
-    //   user: 'root',
-    //   password: '1634300602Wx',
-    //   database: 'koishi',
-    // },
-    mysql: {
-      host: '127.0.0.1',
-      // Koishi 服务器监听的端口
-      port: 3306,
-      user: 'root',
-      password: '1634300602Wx',
-      database: '_koishi',
+    port: 8080,
+    onebot: {
+        secret: '',
     },
-    common: {},
-    './AppManage': {},
-    './Command': {},
-    './UserManage': {},
-    './EventEmitter': {},
-    './MessageHandler': {},
-  },
-
-  // logTime: true,
-
-  watch: {
-    // 要监听的根目录，相对于工作路径
-    root: './*.js',
-    // 要忽略的文件列表，支持 glob patterns
-    ignore: ['node_modules', 'src'],
-  },
-}
+    bots: [
+        {
+            type: 'onebot:ws',
+            server: 'ws://localhost:6700',
+            selfId: new Number(config_1.default.selfId),
+            token: 'MindBot',
+        },
+    ],
+    prefix: ['%', '&', '*'],
+    autoAssign: function (session) {
+        return CustomFunc_1.ifInGroups(session.groupId, __spreadArray([
+            config_1.default.testGroup
+        ], config_1.default.watchGroups));
+    },
+    autoAuthorize: function (session) {
+        return CustomFunc_1.ifInGroups(session.groupId, __spreadArray([
+            config_1.default.testGroup
+        ], config_1.default.watchGroups))
+            ? 1
+            : 0;
+    },
+    plugins: {
+        mysql: {
+            host: '127.0.0.1',
+            port: 3306,
+            user: 'root',
+            password: '1634300602Wx-',
+            database: '_koishi',
+        },
+        common: {},
+        './modules/AppManage': {},
+        './modules/Command': {},
+        './modules/UserManage': {},
+        './modules/EventHandler': {},
+        './modules/MessageHandler': {},
+    },
+    watch: {
+        root: './*/*.js',
+        ignore: ['node_modules'],
+    },
+};
