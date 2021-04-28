@@ -23,7 +23,9 @@ var Config = {
     ],
     watchGroups: ['1044036098'],
     getTestCtx: function (ctx) {
-        return ctx.group(Config.testGroup).union(ctx.user(Config.mainQQ));
+        return ctx
+            .group(Config.testGroup)
+            .union(ctx.unselect('groupId').user(Config.mainQQ));
     },
     getModCtx: function (ctx) {
         return ctx.group(Config.modGroup).union(Config.getTestCtx(ctx));
