@@ -38,10 +38,11 @@ const Config = {
     getMotCtx: (ctx: Context) =>
         ctx.group(Config.motGroup).union(Config.getTestCtx(ctx)),
     getWatchCtx: (ctx: Context) => {
+        let _ctx = ctx.unselect('groupId')
         for (const groupId of Config.watchGroups) {
-            ctx = ctx.group(groupId);
+            _ctx = _ctx.group(groupId);
         }
-        return ctx.union(Config.getTestCtx(ctx));
+        return _ctx.union(Config.getTestCtx(_ctx));
     },
 };
 export default Config;

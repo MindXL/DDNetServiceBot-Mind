@@ -34,11 +34,12 @@ var Config = {
         return ctx.group(Config.motGroup).union(Config.getTestCtx(ctx));
     },
     getWatchCtx: function (ctx) {
+        var _ctx = ctx.unselect('groupId');
         for (var _i = 0, _a = Config.watchGroups; _i < _a.length; _i++) {
             var groupId = _a[_i];
-            ctx = ctx.group(groupId);
+            _ctx = _ctx.group(groupId);
         }
-        return ctx.union(Config.getTestCtx(ctx));
+        return _ctx.union(Config.getTestCtx(_ctx));
     },
 };
 exports.default = Config;
