@@ -33,15 +33,15 @@ app.plugin(require('koishi-plugin-mysql'), {
     host: '127.0.0.1',
     port: 3306,
     user: 'root',
-    password: '1634300602Wx',
+    password: '1634300602Wx-',
     database: '_koishi',
 });
 app.plugin(require('koishi-plugin-common'));
 
-app.plugin(require('./AppManage'));
-app.plugin(require('./Command'));
-app.plugin(require('./UserManage'));
-app.plugin(require('./EventHandler'));
-app.plugin(require('./MessageHandler'));
+app.plugin(require('./modules/AppManage'));
+app.plugin(require('./modules/Command'));
+app.plugin(require('./modules/UserManage'));
+app.plugin(require('./modules/EventHandler'));
+app.plugin(require('./modules/MessageHandler'));
 
 app.start();
