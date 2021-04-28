@@ -4,7 +4,10 @@ export function ifInGroups(groupId: string, groupIds: string[]): boolean {
     if (!groupIds.length) return false;
     let flag = false;
     for (const check of groupIds) {
-        if (groupId === check) flag = true;
+        if (groupId === check) {
+            flag = true;
+            break;
+        }
     }
     return flag;
 }

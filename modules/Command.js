@@ -115,7 +115,8 @@ module.exports.apply = function (ctx) {
         });
     });
     motCtx
-        .command('gmr', '(Group Member Request)\n获取5条未处理的入群申请')
+        .command('gmr', '获取5条未处理的入群申请')
+        .usage('(Group Member Request)\n')
         .action(function (_a) {
         var session = _a.session;
         return __awaiter(void 0, void 0, void 0, function () {

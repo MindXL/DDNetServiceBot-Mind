@@ -5,7 +5,7 @@ import Config from './utils/config';
 import { ifInGroups } from './utils/CustomFunc';
 
 const app = new App({
-    port: 8080,
+    port: 8081,
     bots: [
         {
             type: 'onebot:ws',
@@ -18,11 +18,13 @@ const app = new App({
     autoAssign: (session: Session) =>
         ifInGroups(session.groupId as string, [
             Config.testGroup,
+            Config.motGroup,
             ...Config.watchGroups,
         ]),
     autoAuthorize: (session: Session) =>
         ifInGroups(session.groupId as string, [
             Config.testGroup,
+            Config.motGroup,
             ...Config.watchGroups,
         ])
             ? 1

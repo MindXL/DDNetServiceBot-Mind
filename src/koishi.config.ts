@@ -5,7 +5,7 @@ import { ifInGroups } from './utils/CustomFunc';
 
 // 配置项文档：https://koishi.js.org/api/app.html
 module.exports = {
-    port: 8080,
+    port: 8081,
 
     onebot: {
         secret: '',
@@ -26,11 +26,13 @@ module.exports = {
     autoAssign: (session: Session) =>
         ifInGroups(session.groupId as string, [
             Config.testGroup,
+            Config.motGroup,
             ...Config.watchGroups,
         ]),
     autoAuthorize: (session: Session) =>
         ifInGroups(session.groupId as string, [
             Config.testGroup,
+            Config.motGroup,
             ...Config.watchGroups,
         ])
             ? 1

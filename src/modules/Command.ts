@@ -8,7 +8,7 @@ module.exports.name = 'Command';
 module.exports.apply = (ctx: Context) => {
     const testCtx = Config.getTestCtx(ctx);
     const motCtx = Config.getMotCtx(ctx);
-
+    
     testCtx
         .command('eco <message:text>', '输出收到的信息', { authority: 1 })
         .option('encode', '-e 输出编码（encode）后的信息')
@@ -63,8 +63,9 @@ module.exports.apply = (ctx: Context) => {
     // });
 
     motCtx
-        .command('gmr', '(Group Member Request)\n获取5条未处理的入群申请')
+        .command('gmr', '获取5条未处理的入群申请')
         // .option('number', '-n [n:posint] 获取n条入群申请', { fallback: 5 })
+        .usage('(Group Member Request)\n')
         .action(async ({ session }) => {
             const gmrs = await motCtx.database.getGMRs_N(5);
             if (Array.isArray(gmrs) && gmrs.length === 0)

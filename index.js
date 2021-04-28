@@ -13,7 +13,7 @@ require("koishi-adapter-onebot");
 var config_1 = __importDefault(require("./utils/config"));
 var CustomFunc_1 = require("./utils/CustomFunc");
 var app = new koishi_1.App({
-    port: 8080,
+    port: 8081,
     bots: [
         {
             type: 'onebot:ws',
@@ -25,12 +25,14 @@ var app = new koishi_1.App({
     prefix: ['%', '$', ''],
     autoAssign: function (session) {
         return CustomFunc_1.ifInGroups(session.groupId, __spreadArray([
-            config_1.default.testGroup
+            config_1.default.testGroup,
+            config_1.default.motGroup
         ], config_1.default.watchGroups));
     },
     autoAuthorize: function (session) {
         return CustomFunc_1.ifInGroups(session.groupId, __spreadArray([
-            config_1.default.testGroup
+            config_1.default.testGroup,
+            config_1.default.motGroup
         ], config_1.default.watchGroups))
             ? 1
             : 0;
