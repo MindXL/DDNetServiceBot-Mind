@@ -30,7 +30,9 @@ const Config = {
     watchGroups: ['1044036098'],
 
     getTestCtx: (ctx: Context) =>
-        ctx.group(Config.testGroup).union(ctx.user(Config.mainQQ)),
+        ctx
+            .group(Config.testGroup)
+            .union(ctx.unselect('groupId').user(Config.mainQQ)),
     getModCtx: (ctx: Context) =>
         ctx.group(Config.modGroup).union(Config.getTestCtx(ctx)),
     getMotCtx: (ctx: Context) =>
