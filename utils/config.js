@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Config = {
     mainQQ: '1634300602',
-    selfId: '1066974992',
+    selfId: '1718209151',
     bot2Id: '1718209151',
     testGroup: '834904988',
     modGroup: '1135333664',
@@ -20,7 +20,7 @@ var Config = {
         { onebot: '994539654', name: 'KuNao' },
         { onebot: '1535650454', name: 'wuu' },
     ],
-    watchGroups: ['1044036098', '834904988'],
+    watchGroups: ['1044036098'],
     getTestCtx: function (ctx) {
         return ctx.group(Config.testGroup).union(ctx.user(Config.mainQQ));
     },
