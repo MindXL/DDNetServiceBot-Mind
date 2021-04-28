@@ -34,7 +34,7 @@ app.plugin(require('koishi-plugin-mysql'), {
     port: 3306,
     user: 'root',
     password: '1634300602Wx-',
-    database: '_koishi',
+    database: Config.mysqlDB,
 });
 app.plugin(require('koishi-plugin-common'));
 

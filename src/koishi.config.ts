@@ -5,7 +5,6 @@ import { ifInGroups } from './utils/CustomFunc';
 
 // 配置项文档：https://koishi.js.org/api/app.html
 module.exports = {
-    // Koishi 服务器监听的端口
     port: 8080,
 
     onebot: {
@@ -43,14 +42,14 @@ module.exports = {
         //   port: 3306,
         //   user: 'root',
         //   password: '1634300602Wx-',
-        //   database: 'koishi',
+        //   database: Config.mysqlDB,
         // },
         mysql: {
             host: '127.0.0.1',
             port: 3306,
             user: 'root',
             password: '1634300602Wx-',
-            database: '_koishi',
+            database: Config.mysqlDB,
         },
         common: {},
         './modules/AppManage': {},
