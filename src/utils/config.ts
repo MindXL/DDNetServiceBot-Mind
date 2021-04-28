@@ -1,12 +1,12 @@
 import { Context } from 'koishi-core';
 
 const Config = {
-    // mysqlDB: '_koishi',
-    mysqlDB: 'koishi',
+    // mysqlDB: 'koishi',
+    mysqlDB: '_koishi',
+    // selfId: '1718209151',
+    selfId: '1066974992',
 
     mainQQ: '1634300602',
-    selfId: '1718209151',
-    // selfId: '1066974992',
     bot2Id: '1718209151',
     testGroup: '834904988',
     modGroup: '1135333664',
@@ -37,8 +37,12 @@ const Config = {
         ctx.group(Config.modGroup).union(Config.getTestCtx(ctx)),
     getMotCtx: (ctx: Context) =>
         ctx.group(Config.motGroup).union(Config.getTestCtx(ctx)),
-    getWatchCtx: (ctx: Context) =>
-        ctx.group(...Config.watchGroups).union(Config.getTestCtx(ctx)),
+    getWatchCtx: (ctx: Context) => {
+        for (const groupId of Config.watchGroups) {
+            ctx = ctx.group(groupId);
+        }
+        return ctx.union(Config.getTestCtx(ctx));
+    },
 };
 export default Config;
 
