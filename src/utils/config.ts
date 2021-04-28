@@ -1,10 +1,10 @@
 import { Context } from 'koishi-core';
 
 const Config = {
-    // mysqlDB: 'koishi',
-    mysqlDB: '_koishi',
-    // selfId: '1718209151',
-    selfId: '1066974992',
+    mysqlDB: 'koishi',
+    // mysqlDB: '_koishi',
+    selfId: '1718209151',
+    // selfId: '1066974992',
 
     mainQQ: '1634300602',
     bot2Id: '1718209151',
