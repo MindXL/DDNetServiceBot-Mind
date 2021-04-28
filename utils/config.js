@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Config = {
     mysqlDB: 'koishi',
-    mainQQ: '1634300602',
     selfId: '1718209151',
+    mainQQ: '1634300602',
     bot2Id: '1718209151',
     testGroup: '834904988',
     modGroup: '1135333664',
@@ -34,7 +34,11 @@ var Config = {
         return ctx.group(Config.motGroup).union(Config.getTestCtx(ctx));
     },
     getWatchCtx: function (ctx) {
-        return ctx.group.apply(ctx, Config.watchGroups).union(Config.getTestCtx(ctx));
+        for (var _i = 0, _a = Config.watchGroups; _i < _a.length; _i++) {
+            var groupId = _a[_i];
+            ctx = ctx.group(groupId);
+        }
+        return ctx.union(Config.getTestCtx(ctx));
     },
 };
 exports.default = Config;
