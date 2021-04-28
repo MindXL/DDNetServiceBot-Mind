@@ -5,13 +5,19 @@
   "repository": "https://github.com/MindXL/DDNetServiceBot-Mind.git",
   "author": "MindXL <1634300602@qq.com>",
   "license": "MIT",
+  "scripts": {
+    "dump": "mysqldump -uroot -p -B koishi > /home/centos/Projects/Koishi/DDNetServiceBot-Mind/src/sql/koishi.sql",
+    "^mysql_dbcreate": "source /home/centos/Projects/Koishi/DDNetServiceBot-Mind/src/_koishi.sql;",
+    "^mysql_tables": "source /home/centos/Projects/Koishi/DDNetServiceBot-Mind/src/sql/koishiTables.sql;"
+  },
   "devDependencies": {
-    "koishi": "^3.6.0",
-    "typescript": "^4.2.3"
+    "koishi": "^3.10.0",
+    "typescript": "^4.2.4"
   },
   "dependencies": {
-    "koishi-adapter-onebot": "^3.0.4",
-    "koishi-plugin-common": "^4.2.0",
-    "koishi-plugin-mysql": "^3.3.0"
+    "axios": "^0.21.1",
+    "koishi-adapter-onebot": "^3.0.8",
+    "koishi-plugin-common": "^4.2.4",
+    "koishi-plugin-mysql": "^3.3.2"
   }
 }
