@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var config_1 = __importDefault(require("./utils/config"));
 var CustomFunc_1 = require("./utils/CustomFunc");
 module.exports = {
-    port: 8080,
+    port: 8081,
     onebot: {
         secret: '',
     },
@@ -26,12 +26,14 @@ module.exports = {
     prefix: ['%', '&', '*'],
     autoAssign: function (session) {
         return CustomFunc_1.ifInGroups(session.groupId, __spreadArray([
-            config_1.default.testGroup
+            config_1.default.testGroup,
+            config_1.default.motGroup
         ], config_1.default.watchGroups));
     },
     autoAuthorize: function (session) {
         return CustomFunc_1.ifInGroups(session.groupId, __spreadArray([
-            config_1.default.testGroup
+            config_1.default.testGroup,
+            config_1.default.motGroup
         ], config_1.default.watchGroups))
             ? 1
             : 0;

@@ -8,8 +8,10 @@ function ifInGroups(groupId, groupIds) {
     var flag = false;
     for (var _i = 0, groupIds_1 = groupIds; _i < groupIds_1.length; _i++) {
         var check = groupIds_1[_i];
-        if (groupId === check)
+        if (groupId === check) {
             flag = true;
+            break;
+        }
     }
     return flag;
 }
