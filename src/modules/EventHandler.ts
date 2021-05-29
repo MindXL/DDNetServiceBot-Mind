@@ -1,4 +1,4 @@
-import { Context } from 'koishi';
+import { Context, Time, sleep } from 'koishi';
 
 import Config from '../utils/config';
 import { sendGMRReminder } from '../utils/DDNetOrientedFunc';
@@ -11,13 +11,26 @@ module.exports.apply = (ctx: Context) => {
     const watchCtx = Config.getWatchCtx(ctx);
 
     ctx.once('before-connect', async () => {
-        await ctx.database.createUser(
-            'onebot',
-            Config.developer.onebot,
-            Config.developer
-        );
+        if (
+            (await ctx.database.getModerator(
+                'onebot',
+                Config.developer.onebot
+            )) === undefined
+        ) {
+            await ctx.database.createUser(
+                'onebot',
+                Config.developer.onebot,
+                Config.developer
+            );
+        }
+
         for (const data of Config.moderators) {
-            await ctx.database.createModerator(data);
+            if (
+                (await ctx.database.getModerator('onebot', data.onebot)) ===
+                undefined
+            ) {
+                await ctx.database.createModerator(data);
+            }
         }
     });
 
@@ -44,8 +57,8 @@ module.exports.apply = (ctx: Context) => {
         }
     });
 
-    // ctx.on('message', async (session) => {
-    //     const groupId = session.groupId as string;
+    // testCtx.on('message', async (session) => {
+    //     const groupId = session.groupId!;
 
     //     if (session.content === 'edelete') {
     //         let mId = await session.bot.sendMessage(groupId, 'pre');
@@ -54,7 +67,7 @@ module.exports.apply = (ctx: Context) => {
     //     }
     // });
 
-    // ctx.on('message-deleted', (session) => {
+    // testCtx.on('message-deleted', (session) => {
     //     session.operatorId === session.selfId
     //         ? session.send('bot deleted a message\n\nsended by EventHandler')
     //         : session.send(
@@ -63,10 +76,10 @@ module.exports.apply = (ctx: Context) => {
     // });
 
     watchCtx.on('group-member-request', async (session) => {
-        const answer = /答案：(.*?)$/.exec(session.content as string)![1];
+        const answer = /答案：(.*?)$/.exec(session.content!)![1];
 
-        const groupId = session.groupId as string;
-        const userId = session.userId as string;
+        const groupId = session.groupId!;
+        const userId = session.userId!;
 
         const replyMessageId = await sendGMRReminder(
             session.bot,
@@ -78,9 +91,9 @@ module.exports.apply = (ctx: Context) => {
     });
 
     watchCtx.on('group-member-deleted', async (session) => {
-        const userId = session.userId as string;
-        const groupId = session.groupId as string;
-        const operatorId = session.operatorId as string;
+        const userId = session.userId!;
+        const groupId = session.groupId!;
+        const operatorId = session.operatorId!;
 
         await ctx.database.remove('user', { onebot: [userId] });
         let message: string = `$退群通知$\n\n用户${userId}\n\n`;
@@ -103,11 +116,9 @@ module.exports.apply = (ctx: Context) => {
         await session.bot.sendGroupMessage(Config.motGroup, message);
     });
 
+    // 可通过koishi-plugin-common插件实现，详见koishi.config.ts
     ctx.on('friend-request', async (session) => {
-        await session.bot.handleFriendRequest(
-            session.messageId as string,
-            false
-        );
+        await session.bot.handleFriendRequest(session.messageId!, false);
     });
 
     testCtx.on('message', async (session) => {

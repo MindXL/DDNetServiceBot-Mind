@@ -19,20 +19,20 @@ module.exports.apply = (ctx: Context) => {
     });
 
     // 回应@消息
-    testCtx.middleware((session, next) => {
-        // 仅当接收到的消息包含了对机器人的称呼时才继续处理（比如消息以 @机器人 开头）
-        if (session.content === 's') {
-            return session.send('是你在叫我吗？');
-        } else {
-            // 如果去掉这一行，那么不满足上述条件的消息就不会进入下一个中间件了
-            return next();
-        }
-    });
+    // testCtx.middleware((session, next) => {
+    //     // 仅当接收到的消息包含了对机器人的称呼时才继续处理（比如消息以 @机器人 开头）
+    //     if (session.content === 's') {
+    //         return session.send('是你在叫我吗？');
+    //     } else {
+    //         // 如果去掉这一行，那么不满足上述条件的消息就不会进入下一个中间件了
+    //         return next();
+    //     }
+    // });
 
-    // // 同一消息连续发送3次则复读一次
+    // 同一消息连续发送3次则复读一次
     // let times = 0; // 复读次数
-    // let message = 'm'; // 当前消息
-    // ctx.middleware((session, next) => {
+    // let message = ''; // 当前消息
+    // testCtx.middleware((session, next) => {
     //     if (session.content === message) {
     //         times += 1;
     //         if (times === 3) return session.send(message);
@@ -56,7 +56,7 @@ module.exports.apply = (ctx: Context) => {
     //     if (session.parsed?.appel) {
     //         // // @某某用户 我在叫你哟！
     //         // await session.sendQueued(
-    //         //     s('at', { id: session.userId as string }) + '我在叫你哟！'
+    //         //     s('at', { id: session.userId! }) + '我在叫你哟！'
     //         // );
 
     //         // // 你发送了一张 Koishi 图标
@@ -69,13 +69,13 @@ module.exports.apply = (ctx: Context) => {
     //         // );
 
     //         // await session.sendQueued(
-    //         //     s('quote', { id: session.messageId as string }) +
+    //         //     s('quote', { id: session.messageId! }) +
     //         //         '这是一条回复消息。'
     //         // );
 
     //         // await session.sendQueued(
     //         //     s.join([
-    //         //         sf('at', { id: session.userId as string }),
+    //         //         sf('at', { id: session.userId! }),
     //         //         sf('image', { url: 'https://koishi.js.org/koishi.png' }),
     //         //     ]) + '这是一条组合消息的join实现'
     //         // );
@@ -83,7 +83,7 @@ module.exports.apply = (ctx: Context) => {
     //         // await session.sendQueued(
     //         //     s.join(
     //         //         s.parse(
-    //         //             s('at', { id: session.userId as string }) +
+    //         //             s('at', { id: session.userId! }) +
     //         //                 s('image', {
     //         //                     url: 'https://koishi.js.org/koishi.png',
     //         //                 }) +
@@ -116,15 +116,13 @@ module.exports.apply = (ctx: Context) => {
         // 非回复消息
         if (!quote) return next();
 
-        const replyMessageId = quote.messageId as string;
+        const replyMessageId = quote.messageId!;
 
         const gmr = await ctx.database.getGMR('replyMessageId', replyMessageId);
         // 被回复的消息非提示入群申请的消息
         if (!gmr) return next();
 
-        const regExp = /] (y|(?:n|n (?<reason>.*))|i)$/g.exec(
-            session.content as string
-        );
+        const regExp = /] (y|(?:n|n (?<reason>.*))|i)$/g.exec(session.content!);
         const modReply = regExp?.[1];
         const reason = regExp?.groups?.reason;
 
@@ -152,19 +150,20 @@ module.exports.apply = (ctx: Context) => {
         await session.send(
             s.join([
                 sf('quote', { id: replyMessageId }),
-                sf('at', { id: session.userId as string }),
-                sf('at', { id: session.userId as string }),
+                sf('at', { id: session.userId! }),
+                sf('at', { id: session.userId! }),
             ]) + `\n${botReply}`
         );
 
-        await session.bot.deleteMessage(
-            session.groupId as string,
-            replyMessageId
-        );
-        await session.bot.deleteMessage(
-            session.groupId as string,
-            session.messageId as string
-        );
+        await session.bot.deleteMessage(session.groupId!, replyMessageId);
+
+        // 管理员不可撤回群主的消息
+        try {
+            await session.bot.deleteMessage(
+                session.groupId!,
+                session.messageId!
+            );
+        } catch (error) {}
 
         return next();
     });

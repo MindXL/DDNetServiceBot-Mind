@@ -8,7 +8,7 @@ module.exports.name = 'Command';
 module.exports.apply = (ctx: Context) => {
     const testCtx = Config.getTestCtx(ctx);
     const motCtx = Config.getMotCtx(ctx);
-    
+
     testCtx
         .command('eco <message:text>', '输出收到的信息', { authority: 1 })
         .option('encode', '-e 输出编码（encode）后的信息')
@@ -31,15 +31,6 @@ module.exports.apply = (ctx: Context) => {
             return message;
         });
 
-    testCtx
-        .command('b <content:_text>', '广播', { authority: 4 })
-        .alias('broadcast^')
-        .shortcut('广播', { fuzzy: true })
-        .action(async ({ session }, content) => {
-            await session?.bot.broadcast([Config.testGroup], content);
-            return '广播结束';
-        });
-
     motCtx
         .command('points [name:text]', '查询ddr分数')
         .action(async ({ session }, name) => {
@@ -50,17 +41,6 @@ module.exports.apply = (ctx: Context) => {
                         : session?.username)
             );
         });
-
-    // ctx.command('lottery', '随机获取ddr分数').action(async ({ session }) => {
-    //     await session?.sendQueued(
-    //         s('at', { id: session.userId as string }) +
-    //             `\n恭喜 ${
-    //                 session.author?.nickname ?? session.author?.username
-    //             } 获得：\n+${Random.int(500)}points`
-    //     );
-    //     await sleep(4 * Time.second);
-    //     await session?.sendQueued('但是不给（');
-    // });
 
     motCtx
         .command('gmr', '获取5条未处理的入群申请')
@@ -80,14 +60,14 @@ module.exports.apply = (ctx: Context) => {
                 await ctx.database.updateGMR(
                     'messageId',
                     gmr.messageId,
-                    newReplyMessageId as string
+                    newReplyMessageId!
                 );
             }
         });
 
     testCtx.command('cdelete').action(async ({ session }) => {
-        const channelId = session?.channelId as string;
-        let mId = (await session?.bot.sendMessage(channelId, 'pre')) as string;
+        const channelId = session?.channelId!;
+        let mId = (await session?.bot.sendMessage(channelId, 'pre'))!;
 
         await sleep(4 * Time.minute);
         session?.bot.deleteMessage(channelId, mId);

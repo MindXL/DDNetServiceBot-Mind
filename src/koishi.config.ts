@@ -21,31 +21,12 @@ module.exports = {
         },
     ],
 
-    prefix: ['%', '&', '*'],
+    prefix: ['', '%', '&', '*'],
 
-    autoAssign: (session: Session) =>
-        ifInGroups(session.groupId as string, [
-            Config.testGroup,
-            Config.motGroup,
-            ...Config.watchGroups,
-        ]),
-    autoAuthorize: (session: Session) =>
-        ifInGroups(session.groupId as string, [
-            Config.testGroup,
-            Config.motGroup,
-            ...Config.watchGroups,
-        ])
-            ? 1
-            : 0,
+    autoAssign: (session: Session) => Config.autoAssign(session),
+    autoAuthorize: (session: Session) => Config.autoAuthorize(session),
 
     plugins: {
-        // mysql: {
-        //   host: '127.0.0.1',
-        //   port: 3306,
-        //   user: 'root',
-        //   password: '1634300602Wx-',
-        //   database: Config.mysqlDB,
-        // },
         mysql: {
             host: '127.0.0.1',
             port: 3306,
@@ -53,12 +34,31 @@ module.exports = {
             password: '1634300602Wx-',
             database: Config.mysqlDB,
         },
-        common: {},
+        // common: {
+        //     // 基础指令
+        //     broadcast: false,
+        //     contextify: false,
+        //     recall: false,
+
+        //     feedback: false,
+        //     // operator: 'onebot:1634300602',
+
+        //     // 处理好友申请
+        //     onFriendRequest: false,
+
+        //     // 数据管理
+        //     callme: false,
+        //     bind: false,
+        //     authorize: false,
+        //     assign: false,
+        //     user: false,
+        //     channel: false,
+        // },
         './modules/AppManage': {},
         './modules/Command': {},
-        './modules/UserManage': {},
         './modules/EventHandler': {},
         './modules/MessageHandler': {},
+        './modules/UserManage': {},
     },
 
     // logTime: true,

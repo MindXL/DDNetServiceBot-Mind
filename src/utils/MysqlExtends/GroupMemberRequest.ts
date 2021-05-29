@@ -129,7 +129,7 @@ Database.extend('koishi-plugin-mysql', {
     },
 
     async createGMR(session, replyMessageId) {
-        session.content = /答案：(.*?)$/.exec(session.content as string)![1];
+        session.content = /答案：(.*?)$/.exec(session.content!)![1];
 
         const gmr = Object.assign(GroupMemberRequest.create(), session, {
             replyMessageId: replyMessageId,

@@ -81,23 +81,6 @@ module.exports.apply = function (ctx) {
             });
         });
     });
-    testCtx
-        .command('b <content:_text>', '广播', { authority: 4 })
-        .alias('broadcast^')
-        .shortcut('广播', { fuzzy: true })
-        .action(function (_a, content) {
-        var session = _a.session;
-        return __awaiter(void 0, void 0, void 0, function () {
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0: return [4, (session === null || session === void 0 ? void 0 : session.bot.broadcast([config_1.default.testGroup], content))];
-                    case 1:
-                        _b.sent();
-                        return [2, '广播结束'];
-                }
-            });
-        });
-    });
     motCtx
         .command('points [name:text]', '查询ddr分数')
         .action(function (_a, name) {
