@@ -7,7 +7,7 @@ const Config = {
     mysqlDB: 'koishi',
     selfId: '1718209151',
     modGroup: '1135333664',
-    motGroup: '812953918',
+    motGroup: '1135333664',
 
     // only for develop
     // mysqlDB: '_koishi',
