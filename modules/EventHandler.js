@@ -50,22 +50,31 @@ module.exports.apply = function (ctx) {
         var _i, _a, data;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4, ctx.database.createUser('onebot', config_1.default.developer.onebot, config_1.default.developer)];
+                case 0: return [4, ctx.database.getModerator('onebot', config_1.default.developer.onebot)];
                 case 1:
-                    _b.sent();
-                    _i = 0, _a = config_1.default.moderators;
-                    _b.label = 2;
+                    if (!((_b.sent()) === undefined)) return [3, 3];
+                    return [4, ctx.database.createUser('onebot', config_1.default.developer.onebot, config_1.default.developer)];
                 case 2:
-                    if (!(_i < _a.length)) return [3, 5];
-                    data = _a[_i];
-                    return [4, ctx.database.createModerator(data)];
-                case 3:
                     _b.sent();
+                    _b.label = 3;
+                case 3:
+                    _i = 0, _a = config_1.default.moderators;
                     _b.label = 4;
                 case 4:
+                    if (!(_i < _a.length)) return [3, 8];
+                    data = _a[_i];
+                    return [4, ctx.database.getModerator('onebot', data.onebot)];
+                case 5:
+                    if (!((_b.sent()) ===
+                        undefined)) return [3, 7];
+                    return [4, ctx.database.createModerator(data)];
+                case 6:
+                    _b.sent();
+                    _b.label = 7;
+                case 7:
                     _i++;
-                    return [3, 2];
-                case 5: return [2];
+                    return [3, 4];
+                case 8: return [2];
             }
         });
     }); });

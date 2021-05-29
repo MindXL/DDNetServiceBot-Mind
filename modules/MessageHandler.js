@@ -53,14 +53,6 @@ module.exports.apply = function (ctx) {
         }
         return next();
     });
-    testCtx.middleware(function (session, next) {
-        if (session.content === 's') {
-            return session.send('是你在叫我吗？');
-        }
-        else {
-            return next();
-        }
-    });
     ctx.middleware(function (session, next) {
         if (session.content === 'hlep') {
             return next(function () { return session.send('你想说的是 help 吗？'); });
@@ -70,7 +62,7 @@ module.exports.apply = function (ctx) {
         }
     });
     motCtx.middleware(function (session, next) { return __awaiter(void 0, void 0, void 0, function () {
-        var quote, replyMessageId, gmr, regExp, modReply, reason, botReply;
+        var quote, replyMessageId, gmr, regExp, modReply, reason, botReply, error_1;
         var _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
@@ -117,10 +109,17 @@ module.exports.apply = function (ctx) {
                     return [4, session.bot.deleteMessage(session.groupId, replyMessageId)];
                 case 6:
                     _b.sent();
-                    return [4, session.bot.deleteMessage(session.groupId, session.messageId)];
+                    _b.label = 7;
                 case 7:
+                    _b.trys.push([7, 9, , 10]);
+                    return [4, session.bot.deleteMessage(session.groupId, session.messageId)];
+                case 8:
                     _b.sent();
-                    return [2, next()];
+                    return [3, 10];
+                case 9:
+                    error_1 = _b.sent();
+                    return [3, 10];
+                case 10: return [2, next()];
             }
         });
     }); });

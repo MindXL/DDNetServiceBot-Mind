@@ -1,13 +1,19 @@
 "use strict";
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+var CustomFunc_1 = require("./CustomFunc");
 var Config = {
-    mysqlDB: 'koishi',
-    selfId: '1718209151',
+    mysqlDB: '_koishi',
+    selfId: '1066974992',
+    modGroup: '834904988',
+    motGroup: '834904988',
     mainQQ: '1634300602',
     bot2Id: '1718209151',
     testGroup: '834904988',
-    modGroup: '1135333664',
-    motGroup: '812953918',
     developer: { onebot: '1634300602', name: 'Mind', authority: 4 },
     moderators: [
         { onebot: '616041132', name: 'Texas.C' },
@@ -21,25 +27,30 @@ var Config = {
         { onebot: '994539654', name: 'KuNao' },
         { onebot: '1535650454', name: 'wuu' },
     ],
-    watchGroups: ['1044036098'],
+    watchGroups: ['1044036098', '869655189'],
+    autoAssign: function (session) {
+        return CustomFunc_1.ifInGroups(session.groupId, __spreadArray([
+            Config.testGroup,
+            Config.motGroup
+        ], Config.watchGroups));
+    },
+    autoAuthorize: function (session) {
+        return CustomFunc_1.ifInGroups(session.groupId, __spreadArray([
+            Config.testGroup,
+            Config.motGroup
+        ], Config.watchGroups))
+            ? 1
+            : 0;
+    },
     getTestCtx: function (ctx) {
         return ctx
             .group(Config.testGroup)
             .union(ctx.unselect('groupId').user(Config.mainQQ));
     },
-    getModCtx: function (ctx) {
-        return ctx.group(Config.modGroup).union(Config.getTestCtx(ctx));
-    },
-    getMotCtx: function (ctx) {
-        return ctx.group(Config.motGroup).union(Config.getTestCtx(ctx));
-    },
+    getModCtx: function (ctx) { return ctx.group(Config.modGroup); },
+    getMotCtx: function (ctx) { return ctx.group(Config.motGroup); },
     getWatchCtx: function (ctx) {
-        var _ctx = ctx.unselect('groupId');
-        for (var _i = 0, _a = Config.watchGroups; _i < _a.length; _i++) {
-            var groupId = _a[_i];
-            _ctx = _ctx.group(groupId);
-        }
-        return _ctx.union(Config.getTestCtx(_ctx));
+        return ctx.group.apply(ctx, __spreadArray([Config.testGroup], Config.watchGroups));
     },
 };
 exports.default = Config;

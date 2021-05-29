@@ -1,15 +1,9 @@
 "use strict";
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var config_1 = __importDefault(require("./utils/config"));
-var CustomFunc_1 = require("./utils/CustomFunc");
 module.exports = {
     port: 8081,
     onebot: {
@@ -23,21 +17,9 @@ module.exports = {
             token: 'MindBot',
         },
     ],
-    prefix: ['%', '&', '*'],
-    autoAssign: function (session) {
-        return CustomFunc_1.ifInGroups(session.groupId, __spreadArray([
-            config_1.default.testGroup,
-            config_1.default.motGroup
-        ], config_1.default.watchGroups));
-    },
-    autoAuthorize: function (session) {
-        return CustomFunc_1.ifInGroups(session.groupId, __spreadArray([
-            config_1.default.testGroup,
-            config_1.default.motGroup
-        ], config_1.default.watchGroups))
-            ? 1
-            : 0;
-    },
+    prefix: ['', '%', '&', '*'],
+    autoAssign: function (session) { return config_1.default.autoAssign(session); },
+    autoAuthorize: function (session) { return config_1.default.autoAuthorize(session); },
     plugins: {
         mysql: {
             host: '127.0.0.1',
@@ -46,12 +28,11 @@ module.exports = {
             password: '1634300602Wx-',
             database: config_1.default.mysqlDB,
         },
-        common: {},
         './modules/AppManage': {},
         './modules/Command': {},
-        './modules/UserManage': {},
         './modules/EventHandler': {},
         './modules/MessageHandler': {},
+        './modules/UserManage': {},
     },
     watch: {
         root: './*/*.js',

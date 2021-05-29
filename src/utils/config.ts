@@ -1,18 +1,24 @@
-import { Context } from 'koishi-core';
+import { Context, Session } from 'koishi-core';
+
+import { ifInGroups } from './CustomFunc';
 
 const Config = {
-    mysqlDB: 'koishi',
-    // mysqlDB: '_koishi',
-    selfId: '1718209151',
-    // selfId: '1066974992',
+    // official
+    // mysqlDB: 'koishi',
+    // selfId: '1718209151',
+    // modGroup: '1135333664',
+    // motGroup: '812953918',
+
+    // only for develop
+    mysqlDB: '_koishi',
+    selfId: '1066974992',
+    modGroup: '834904988',
+    motGroup: '834904988',
 
     mainQQ: '1634300602',
     bot2Id: '1718209151',
     testGroup: '834904988',
-    modGroup: '1135333664',
-    // modGroup: '834904988',
-    motGroup: '812953918',
-    // motGroup: '834904988',
+
     developer: { onebot: '1634300602', name: 'Mind', authority: 4 },
     moderators: [
         { onebot: '616041132', name: 'Texas.C' },
@@ -27,23 +33,32 @@ const Config = {
         { onebot: '994539654', name: 'KuNao' },
         { onebot: '1535650454', name: 'wuu' },
     ],
-    watchGroups: ['1044036098'],
+    watchGroups: ['1044036098', '869655189'],
+
+    autoAssign: (session: Session) =>
+        ifInGroups(session.groupId!, [
+            Config.testGroup,
+            Config.motGroup,
+            ...Config.watchGroups,
+        ]),
+    autoAuthorize: (session: Session) =>
+        ifInGroups(session.groupId!, [
+            Config.testGroup,
+            Config.motGroup,
+            ...Config.watchGroups,
+        ])
+            ? 1
+            : 0,
 
     getTestCtx: (ctx: Context) =>
         ctx
             .group(Config.testGroup)
             .union(ctx.unselect('groupId').user(Config.mainQQ)),
-    getModCtx: (ctx: Context) =>
-        ctx.group(Config.modGroup).union(Config.getTestCtx(ctx)),
-    getMotCtx: (ctx: Context) =>
-        ctx.group(Config.motGroup).union(Config.getTestCtx(ctx)),
-    getWatchCtx: (ctx: Context) => {
-        let _ctx = ctx.unselect('groupId')
-        for (const groupId of Config.watchGroups) {
-            _ctx = _ctx.group(groupId);
-        }
-        return _ctx.union(Config.getTestCtx(_ctx));
-    },
+
+    getModCtx: (ctx: Context) => ctx.group(Config.modGroup),
+    getMotCtx: (ctx: Context) => ctx.group(Config.motGroup),
+    getWatchCtx: (ctx: Context) =>
+        ctx.group(...[Config.testGroup, ...Config.watchGroups]),
 };
 export default Config;
 
