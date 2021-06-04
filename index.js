@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var koishi_1 = require("koishi");
 require("koishi-adapter-onebot");
 var config_1 = __importDefault(require("./utils/config"));
+var CustomFunc_1 = require("./utils/CustomFunc");
 var app = new koishi_1.App({
     port: 8081,
     bots: [
@@ -17,8 +18,8 @@ var app = new koishi_1.App({
         },
     ],
     prefix: ['', '%', '$', '*'],
-    autoAssign: function (session) { return config_1.default.autoAssign(session); },
-    autoAuthorize: function (session) { return config_1.default.autoAuthorize(session); },
+    autoAssign: function (session) { return CustomFunc_1.autoAssign(session); },
+    autoAuthorize: function (session) { return CustomFunc_1.autoAuthorize(session); },
 });
 app.plugin(require('koishi-plugin-mysql'), {
     host: '127.0.0.1',

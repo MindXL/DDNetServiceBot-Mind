@@ -1,7 +1,7 @@
 import { Session } from 'koishi';
 
 import Config from './utils/config';
-import { ifInGroups } from './utils/CustomFunc';
+import { autoAssign, autoAuthorize } from './utils/CustomFunc';
 
 // 配置项文档：https://koishi.js.org/api/app.html
 module.exports = {
@@ -23,8 +23,8 @@ module.exports = {
 
     prefix: ['', '%', '&', '*'],
 
-    autoAssign: (session: Session) => Config.autoAssign(session),
-    autoAuthorize: (session: Session) => Config.autoAuthorize(session),
+    autoAssign: (session: Session) => autoAssign(session),
+    autoAuthorize: (session: Session) => autoAuthorize(session),
 
     plugins: {
         mysql: {

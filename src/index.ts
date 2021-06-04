@@ -2,7 +2,7 @@ import { App, Session } from 'koishi';
 import 'koishi-adapter-onebot';
 
 import Config from './utils/config';
-import { ifInGroups } from './utils/CustomFunc';
+import { autoAssign, autoAuthorize } from './utils/CustomFunc';
 
 const app = new App({
     port: 8081,
@@ -15,8 +15,8 @@ const app = new App({
         },
     ],
     prefix: ['', '%', '$', '*'],
-    autoAssign: (session: Session) => Config.autoAssign(session),
-    autoAuthorize: (session: Session) => Config.autoAuthorize(session),
+    autoAssign: (session: Session) => autoAssign(session),
+    autoAuthorize: (session: Session) => autoAuthorize(session),
 });
 
 app.plugin(require('koishi-plugin-mysql'), {

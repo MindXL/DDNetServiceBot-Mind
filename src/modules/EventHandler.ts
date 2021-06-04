@@ -1,14 +1,15 @@
 import { Context, Time, sleep } from 'koishi';
 
 import Config from '../utils/config';
+import { getDevCtx, getWatchCtx } from '../utils/CustomFunc';
 import { sendGMRReminder } from '../utils/DDNetOrientedFunc';
 import '../utils/MysqlExtends/GroupMemberRequest';
 
 module.exports.name = 'EventHandler';
 
 module.exports.apply = (ctx: Context) => {
-    const testCtx = Config.getTestCtx(ctx);
-    const watchCtx = Config.getWatchCtx(ctx);
+    const devCtx = getDevCtx(ctx);
+    const watchCtx = getWatchCtx(ctx);
 
     ctx.once('before-connect', async () => {
         if (
@@ -57,7 +58,7 @@ module.exports.apply = (ctx: Context) => {
         }
     });
 
-    // testCtx.on('message', async (session) => {
+    // devCtx.on('message', async (session) => {
     //     const groupId = session.groupId!;
 
     //     if (session.content === 'edelete') {
@@ -67,7 +68,7 @@ module.exports.apply = (ctx: Context) => {
     //     }
     // });
 
-    // testCtx.on('message-deleted', (session) => {
+    // devCtx.on('message-deleted', (session) => {
     //     session.operatorId === session.selfId
     //         ? session.send('bot deleted a message\n\nsended by EventHandler')
     //         : session.send(
@@ -92,28 +93,28 @@ module.exports.apply = (ctx: Context) => {
 
     watchCtx.on('group-member-deleted', async (session) => {
         const userId = session.userId!;
-        const groupId = session.groupId!;
-        const operatorId = session.operatorId!;
+        // const groupId = session.groupId!;
+        // const operatorId = session.operatorId!;
 
         await ctx.database.remove('user', { onebot: [userId] });
-        let message: string = `$退群通知$\n\n用户${userId}\n\n`;
-        if (session.subtype === 'active') {
-            message += '退出';
-        } else if (session.subtype === 'passive') {
-            // const operator = await session.bot.getGroupMember(groupId,operatorId)
-            message += `被${
-                (
-                    await ctx.database.getModerator('onebot', operatorId, [
-                        'name',
-                    ])
-                ).name ?? operatorId
-            }\n\n移出`;
-        }
-        message += `了群${groupId}\n${
-            (await session.bot.getGroup(groupId)).groupName
-        }`;
+        // let message: string = `$退群通知$\n\n用户${userId}\n\n`;
+        // if (session.subtype === 'active') {
+        //     message += '退出';
+        // } else if (session.subtype === 'passive') {
+        //     // const operator = await session.bot.getGroupMember(groupId,operatorId)
+        //     message += `被${
+        //         (
+        //             await ctx.database.getModerator('onebot', operatorId, [
+        //                 'name',
+        //             ])
+        //         ).name ?? operatorId
+        //     }\n\n移出`;
+        // }
+        // message += `了群${groupId}\n${
+        //     (await session.bot.getGroup(groupId)).groupName
+        // }`;
 
-        await session.bot.sendGroupMessage(Config.motGroup, message);
+        // await session.bot.sendGroupMessage(Config.motGroup, message);
     });
 
     // 可通过koishi-plugin-common插件实现，详见koishi.config.ts
@@ -121,7 +122,7 @@ module.exports.apply = (ctx: Context) => {
         await session.bot.handleFriendRequest(session.messageId!, false);
     });
 
-    testCtx.on('message', async (session) => {
+    devCtx.on('message', async (session) => {
         if (session.content === 'et') {
             // session.send('EventTest');
         }
