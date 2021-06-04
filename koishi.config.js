@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var config_1 = __importDefault(require("./utils/config"));
+var CustomFunc_1 = require("./utils/CustomFunc");
 module.exports = {
     port: 8081,
     onebot: {
@@ -18,8 +19,8 @@ module.exports = {
         },
     ],
     prefix: ['', '%', '&', '*'],
-    autoAssign: function (session) { return config_1.default.autoAssign(session); },
-    autoAuthorize: function (session) { return config_1.default.autoAuthorize(session); },
+    autoAssign: function (session) { return CustomFunc_1.autoAssign(session); },
+    autoAuthorize: function (session) { return CustomFunc_1.autoAuthorize(session); },
     plugins: {
         mysql: {
             host: '127.0.0.1',

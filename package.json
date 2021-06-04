@@ -2,6 +2,7 @@
   "name": "DDNetServiceBot-Mind",
   "version": "1.0.0",
   "main": "index.js",
+  "private": true,
   "repository": "https://github.com/MindXL/DDNetServiceBot-Mind.git",
   "author": "MindXL <1634300602@qq.com>",
   "license": "MIT",

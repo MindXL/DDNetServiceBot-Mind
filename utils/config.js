@@ -1,11 +1,5 @@
 "use strict";
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var CustomFunc_1 = require("./CustomFunc");
 var Config = {
     mysqlDB: 'koishi',
     selfId: '1718209151',
@@ -23,34 +17,11 @@ var Config = {
         { onebot: '745116989', name: 'Rice' },
         { onebot: '2754231645', name: 'xiaocan' },
         { onebot: '1242305018', name: 'ArchLinux' },
-        { onebot: '2169140389', name: 'Dust dall' },
+        { onebot: '2169140389', name: 'Dust fall' },
         { onebot: '994539654', name: 'KuNao' },
         { onebot: '1535650454', name: 'wuu' },
+        { onebot: '1010089230', name: 'Sol' },
     ],
     watchGroups: ['1044036098', '869655189'],
-    autoAssign: function (session) {
-        return CustomFunc_1.ifInGroups(session.groupId, __spreadArray([
-            Config.testGroup,
-            Config.motGroup
-        ], Config.watchGroups));
-    },
-    autoAuthorize: function (session) {
-        return CustomFunc_1.ifInGroups(session.groupId, __spreadArray([
-            Config.testGroup,
-            Config.motGroup
-        ], Config.watchGroups))
-            ? 1
-            : 0;
-    },
-    getTestCtx: function (ctx) {
-        return ctx
-            .group(Config.testGroup)
-            .union(ctx.unselect('groupId').user(Config.mainQQ));
-    },
-    getModCtx: function (ctx) { return ctx.group(Config.modGroup); },
-    getMotCtx: function (ctx) { return ctx.group(Config.motGroup); },
-    getWatchCtx: function (ctx) {
-        return ctx.group.apply(ctx, __spreadArray([Config.testGroup], Config.watchGroups));
-    },
 };
 exports.default = Config;

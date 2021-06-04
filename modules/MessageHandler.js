@@ -45,14 +45,6 @@ var CustomFunc_1 = require("../utils/CustomFunc");
 require("../utils/MysqlExtends/Moderator");
 module.exports.name = 'MessageHandler';
 module.exports.apply = function (ctx) {
-    var testCtx = config_1.default.getTestCtx(ctx);
-    var motCtx = config_1.default.getMotCtx(ctx);
-    testCtx.middleware(function (session, next) {
-        if (session.content === 'hh') {
-            session.send('surprise');
-        }
-        return next();
-    });
     ctx.middleware(function (session, next) {
         if (session.content === 'hlep') {
             return next(function () { return session.send('你想说的是 help 吗？'); });
@@ -61,8 +53,28 @@ module.exports.apply = function (ctx) {
             return next();
         }
     });
-    motCtx.middleware(function (session, next) { return __awaiter(void 0, void 0, void 0, function () {
-        var quote, replyMessageId, gmr, regExp, modReply, reason, botReply, error_1;
+    var devCtx = CustomFunc_1.getDevCtx(ctx);
+    var motCtx = CustomFunc_1.getMotCtx(ctx);
+    motCtx.plugin(handleGMR);
+    devCtx.middleware(function (session, next) {
+        if (session.content === 'hh') {
+            session.send('surprise');
+        }
+        return next();
+    });
+    devCtx.middleware(function (session, next) { return __awaiter(void 0, void 0, void 0, function () {
+        var regExp;
+        return __generator(this, function (_a) {
+            regExp = /] ([yY]|(?:[nN]|[nN] (?<reason>.*))|[iI])$/g.exec(session.content);
+            session.send(regExp === null || regExp === void 0 ? void 0 : regExp[1]);
+            return [2, next()];
+        });
+    }); });
+};
+function handleGMR(ctx) {
+    var _this = this;
+    ctx.middleware(function (session, next) { return __awaiter(_this, void 0, void 0, function () {
+        var quote, replyMessageId, gmr, modAuthority, regExp, modReply, reason, botReply, error_1;
         var _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
@@ -76,15 +88,27 @@ module.exports.apply = function (ctx) {
                     gmr = _b.sent();
                     if (!gmr)
                         return [2, next()];
-                    regExp = /] (y|(?:n|n (?<reason>.*))|i)$/g.exec(session.content);
+                    return [4, ctx.database.getModerator('onebot', session.userId, [
+                            'authority',
+                        ])];
+                case 2:
+                    modAuthority = (_b.sent()).authority;
+                    if (modAuthority < 3) {
+                        session.send(koishi_1.s('at', { id: session.userId }) +
+                            '是新管理员吗？\n是的话请联系' +
+                            koishi_1.s('at', { id: config_1.default.developer.onebot }) +
+                            '进行注册哦！');
+                        return [2, next()];
+                    }
+                    regExp = /] ([yY]|(?:[nN]|[nN] (?<reason>.*))|[iI])$/g.exec(session.content);
                     modReply = regExp === null || regExp === void 0 ? void 0 : regExp[1];
                     reason = (_a = regExp === null || regExp === void 0 ? void 0 : regExp.groups) === null || _a === void 0 ? void 0 : _a.reason;
-                    if (!modReply) return [3, 3];
-                    if (modReply === 'y') {
+                    if (!modReply) return [3, 4];
+                    if (modReply === 'y' || modReply === 'Y') {
                         botReply = '同意了该用户的入群申请';
                         session.bot.handleGroupMemberRequest(gmr.messageId, true);
                     }
-                    else if (modReply === 'i') {
+                    else if (modReply === 'i' || modReply === 'I') {
                         botReply = '忽略了该用户的入群申请';
                     }
                     else {
@@ -93,41 +117,34 @@ module.exports.apply = function (ctx) {
                         session.bot.handleGroupMemberRequest(gmr.messageId, false, reason !== null && reason !== void 0 ? reason : '');
                     }
                     return [4, ctx.database.removeGMR('replyMessageId', replyMessageId)];
-                case 2:
-                    _b.sent();
-                    return [3, 4];
                 case 3:
+                    _b.sent();
+                    return [3, 5];
+                case 4:
                     botReply = '回复的消息格式似乎不正确，请重新回复';
-                    _b.label = 4;
-                case 4: return [4, session.send(koishi_1.s.join([
+                    _b.label = 5;
+                case 5: return [4, session.send(koishi_1.s.join([
                         CustomFunc_1.sf('quote', { id: replyMessageId }),
                         CustomFunc_1.sf('at', { id: session.userId }),
                         CustomFunc_1.sf('at', { id: session.userId }),
                     ]) + ("\n" + botReply))];
-                case 5:
-                    _b.sent();
-                    return [4, session.bot.deleteMessage(session.groupId, replyMessageId)];
                 case 6:
                     _b.sent();
-                    _b.label = 7;
+                    return [4, session.bot.deleteMessage(session.groupId, replyMessageId)];
                 case 7:
-                    _b.trys.push([7, 9, , 10]);
-                    return [4, session.bot.deleteMessage(session.groupId, session.messageId)];
-                case 8:
                     _b.sent();
-                    return [3, 10];
+                    _b.label = 8;
+                case 8:
+                    _b.trys.push([8, 10, , 11]);
+                    return [4, session.bot.deleteMessage(session.groupId, session.messageId)];
                 case 9:
+                    _b.sent();
+                    return [3, 11];
+                case 10:
                     error_1 = _b.sent();
-                    return [3, 10];
-                case 10: return [2, next()];
+                    return [3, 11];
+                case 11: return [2, next()];
             }
         });
     }); });
-    testCtx.middleware(function (session, next) { return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            if (session.content === 'mt') {
-            }
-            return [2, next()];
-        });
-    }); });
-};
+}

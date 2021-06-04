@@ -40,12 +40,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var config_1 = __importDefault(require("../utils/config"));
+var CustomFunc_1 = require("../utils/CustomFunc");
 var DDNetOrientedFunc_1 = require("../utils/DDNetOrientedFunc");
 require("../utils/MysqlExtends/GroupMemberRequest");
 module.exports.name = 'EventHandler';
 module.exports.apply = function (ctx) {
-    var testCtx = config_1.default.getTestCtx(ctx);
-    var watchCtx = config_1.default.getWatchCtx(ctx);
+    var devCtx = CustomFunc_1.getDevCtx(ctx);
+    var watchCtx = CustomFunc_1.getWatchCtx(ctx);
     ctx.once('before-connect', function () { return __awaiter(void 0, void 0, void 0, function () {
         var _i, _a, data;
         return __generator(this, function (_b) {
@@ -107,40 +108,14 @@ module.exports.apply = function (ctx) {
         });
     }); });
     watchCtx.on('group-member-deleted', function (session) { return __awaiter(void 0, void 0, void 0, function () {
-        var userId, groupId, operatorId, message, _a, _b, _c, _d;
-        var _e;
-        return __generator(this, function (_f) {
-            switch (_f.label) {
+        var userId;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
                 case 0:
                     userId = session.userId;
-                    groupId = session.groupId;
-                    operatorId = session.operatorId;
                     return [4, ctx.database.remove('user', { onebot: [userId] })];
                 case 1:
-                    _f.sent();
-                    message = "$\u9000\u7FA4\u901A\u77E5$\n\n\u7528\u6237" + userId + "\n\n";
-                    if (!(session.subtype === 'active')) return [3, 2];
-                    message += '退出';
-                    return [3, 4];
-                case 2:
-                    if (!(session.subtype === 'passive')) return [3, 4];
-                    _a = message;
-                    _b = "\u88AB";
-                    return [4, ctx.database.getModerator('onebot', operatorId, [
-                            'name',
-                        ])];
-                case 3:
-                    message = _a + (_b + ((_e = (_f.sent()).name) !== null && _e !== void 0 ? _e : operatorId) + "\n\n\u79FB\u51FA");
-                    _f.label = 4;
-                case 4:
-                    _c = message;
-                    _d = "\u4E86\u7FA4" + groupId + "\n";
-                    return [4, session.bot.getGroup(groupId)];
-                case 5:
-                    message = _c + (_d + (_f.sent()).groupName);
-                    return [4, session.bot.sendGroupMessage(config_1.default.motGroup, message)];
-                case 6:
-                    _f.sent();
+                    _a.sent();
                     return [2];
             }
         });
@@ -155,7 +130,7 @@ module.exports.apply = function (ctx) {
             }
         });
     }); });
-    testCtx.on('message', function (session) { return __awaiter(void 0, void 0, void 0, function () {
+    devCtx.on('message', function (session) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
             if (session.content === 'et') {
             }
