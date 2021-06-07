@@ -63,10 +63,9 @@ module.exports.apply = function (ctx) {
         return next();
     });
     devCtx.middleware(function (session, next) { return __awaiter(void 0, void 0, void 0, function () {
-        var regExp;
         return __generator(this, function (_a) {
-            regExp = /] ([yY]|(?:[nN]|[nN] (?<reason>.*))|[iI])$/g.exec(session.content);
-            session.send(regExp === null || regExp === void 0 ? void 0 : regExp[1]);
+            if (session.content === 'mt') {
+            }
             return [2, next()];
         });
     }); });
@@ -75,25 +74,27 @@ function handleGMR(ctx) {
     var _this = this;
     ctx.middleware(function (session, next) { return __awaiter(_this, void 0, void 0, function () {
         var quote, replyMessageId, gmr, modAuthority, regExp, modReply, reason, botReply, error_1;
-        var _a;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
                     quote = session.quote;
                     if (!quote)
                         return [2, next()];
                     replyMessageId = quote.messageId;
-                    return [4, ctx.database.getGMR('replyMessageId', replyMessageId)];
+                    return [4, ctx.database.getGMR('replyMessageId', {
+                            replyMessageId: replyMessageId,
+                        })];
                 case 1:
-                    gmr = _b.sent();
-                    if (!gmr)
+                    gmr = _c.sent();
+                    if (gmr === undefined)
                         return [2, next()];
                     return [4, ctx.database.getModerator('onebot', session.userId, [
                             'authority',
                         ])];
                 case 2:
-                    modAuthority = (_b.sent()).authority;
-                    if (modAuthority < 3) {
+                    modAuthority = (_a = (_c.sent())) === null || _a === void 0 ? void 0 : _a.authority;
+                    if (modAuthority && modAuthority < 3) {
                         session.send(koishi_1.s('at', { id: session.userId }) +
                             '是新管理员吗？\n是的话请联系' +
                             koishi_1.s('at', { id: config_1.default.developer.onebot }) +
@@ -102,7 +103,7 @@ function handleGMR(ctx) {
                     }
                     regExp = /] ([yY]|(?:[nN]|[nN] (?<reason>.*))|[iI])$/g.exec(session.content);
                     modReply = regExp === null || regExp === void 0 ? void 0 : regExp[1];
-                    reason = (_a = regExp === null || regExp === void 0 ? void 0 : regExp.groups) === null || _a === void 0 ? void 0 : _a.reason;
+                    reason = (_b = regExp === null || regExp === void 0 ? void 0 : regExp.groups) === null || _b === void 0 ? void 0 : _b.reason;
                     if (!modReply) return [3, 4];
                     if (modReply === 'y' || modReply === 'Y') {
                         botReply = '同意了该用户的入群申请';
@@ -116,32 +117,34 @@ function handleGMR(ctx) {
                             '拒绝了该用户的入群申请\n拒绝理由：\n' + (reason !== null && reason !== void 0 ? reason : '无');
                         session.bot.handleGroupMemberRequest(gmr.messageId, false, reason !== null && reason !== void 0 ? reason : '');
                     }
-                    return [4, ctx.database.removeGMR('replyMessageId', replyMessageId)];
+                    return [4, ctx.database.removeGMR('replyMessageId', {
+                            replyMessageId: replyMessageId,
+                        })];
                 case 3:
-                    _b.sent();
+                    _c.sent();
                     return [3, 5];
                 case 4:
                     botReply = '回复的消息格式似乎不正确，请重新回复';
-                    _b.label = 5;
+                    _c.label = 5;
                 case 5: return [4, session.send(koishi_1.s.join([
                         CustomFunc_1.sf('quote', { id: replyMessageId }),
                         CustomFunc_1.sf('at', { id: session.userId }),
                         CustomFunc_1.sf('at', { id: session.userId }),
                     ]) + ("\n" + botReply))];
                 case 6:
-                    _b.sent();
-                    return [4, session.bot.deleteMessage(session.groupId, replyMessageId)];
+                    _c.sent();
+                    _c.label = 7;
                 case 7:
-                    _b.sent();
-                    _b.label = 8;
+                    _c.trys.push([7, 10, , 11]);
+                    return [4, session.bot.deleteMessage(session.groupId, replyMessageId)];
                 case 8:
-                    _b.trys.push([8, 10, , 11]);
+                    _c.sent();
                     return [4, session.bot.deleteMessage(session.groupId, session.messageId)];
                 case 9:
-                    _b.sent();
+                    _c.sent();
                     return [3, 11];
                 case 10:
-                    error_1 = _b.sent();
+                    error_1 = _c.sent();
                     return [3, 11];
                 case 11: return [2, next()];
             }

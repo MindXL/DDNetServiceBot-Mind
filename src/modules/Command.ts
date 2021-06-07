@@ -195,11 +195,7 @@ function gmr(ctx: Context) {
                     gmr.groupId,
                     gmr.content
                 );
-                await ctx.database.updateGMR(
-                    'messageId',
-                    gmr.messageId,
-                    newReplyMessageId!
-                );
+                await ctx.database.updateGMR(gmr.messageId, newReplyMessageId!);
             }
         });
 }

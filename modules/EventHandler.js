@@ -90,7 +90,7 @@ module.exports.apply = function (ctx) {
         }
     });
     watchCtx.on('group-member-request', function (session) { return __awaiter(void 0, void 0, void 0, function () {
-        var answer, groupId, userId, replyMessageId;
+        var answer, groupId, userId, replyMessageId, set;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -100,10 +100,23 @@ module.exports.apply = function (ctx) {
                     return [4, DDNetOrientedFunc_1.sendGMRReminder(session.bot, userId, groupId, answer)];
                 case 1:
                     replyMessageId = _a.sent();
-                    return [4, ctx.database.createGMR(session, replyMessageId)];
+                    set = {
+                        userId: session.userId,
+                        groupId: session.groupId,
+                        channelId: session.channelId,
+                    };
+                    return [4, ctx.database.getGMR('union', set)];
                 case 2:
+                    if (!((_a.sent()) === undefined)) return [3, 4];
+                    return [4, ctx.database.createGMR(session, replyMessageId)];
+                case 3:
                     _a.sent();
-                    return [2];
+                    return [3, 6];
+                case 4: return [4, ctx.database.setGMR('union', set, session, replyMessageId)];
+                case 5:
+                    _a.sent();
+                    _a.label = 6;
+                case 6: return [2];
             }
         });
     }); });
@@ -131,10 +144,20 @@ module.exports.apply = function (ctx) {
         });
     }); });
     devCtx.on('message', function (session) { return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            if (session.content === 'et') {
+        var _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    if (!(session.content === 'et')) return [3, 2];
+                    _b = (_a = console).log;
+                    return [4, ctx.database.getGMR('replyMessageId', {
+                            replyMessageId: '312',
+                        })];
+                case 1:
+                    _b.apply(_a, [_c.sent()]);
+                    _c.label = 2;
+                case 2: return [2];
             }
-            return [2];
         });
     }); });
 };

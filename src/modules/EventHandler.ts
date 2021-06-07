@@ -88,7 +88,15 @@ module.exports.apply = (ctx: Context) => {
             groupId,
             answer
         );
-        await ctx.database.createGMR(session, replyMessageId);
+
+        const set = {
+            userId: session.userId!,
+            groupId: session.groupId!,
+            channelId: session.channelId!,
+        };
+        if ((await ctx.database.getGMR('union', set)) === undefined)
+            await ctx.database.createGMR(session, replyMessageId);
+        else await ctx.database.setGMR('union', set, session, replyMessageId);
     });
 
     watchCtx.on('group-member-deleted', async (session) => {
@@ -125,6 +133,11 @@ module.exports.apply = (ctx: Context) => {
     devCtx.on('message', async (session) => {
         if (session.content === 'et') {
             // session.send('EventTest');
+            console.log(
+                await ctx.database.getGMR('replyMessageId', {
+                    replyMessageId: '312',
+                })
+            );
         }
     });
 };

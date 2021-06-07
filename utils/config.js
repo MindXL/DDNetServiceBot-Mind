@@ -5,6 +5,7 @@ var Config = {
     selfId: '1718209151',
     modGroup: '1135333664',
     motGroup: '1135333664',
+    watchGroups: ['1044036098'],
     mainQQ: '1634300602',
     bot2Id: '1718209151',
     testGroup: '834904988',
@@ -22,6 +23,5 @@ var Config = {
         { onebot: '1535650454', name: 'wuu' },
         { onebot: '1010089230', name: 'Sol' },
     ],
-    watchGroups: ['1044036098', '869655189'],
 };
 exports.default = Config;

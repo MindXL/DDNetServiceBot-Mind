@@ -308,7 +308,7 @@ function gmr(ctx) {
                         return [4, DDNetOrientedFunc_1.sendGMRReminder(session.bot, gmr_1.userId, gmr_1.groupId, gmr_1.content)];
                     case 3:
                         newReplyMessageId = _b.sent();
-                        return [4, ctx.database.updateGMR('messageId', gmr_1.messageId, newReplyMessageId)];
+                        return [4, ctx.database.updateGMR(gmr_1.messageId, newReplyMessageId)];
                     case 4:
                         _b.sent();
                         _b.label = 5;
