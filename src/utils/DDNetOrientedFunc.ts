@@ -10,7 +10,7 @@ export async function getPoints(name: string): Promise<string> {
         const { data } = await axios(
             `https://api.teeworlds.cn/ddnet/players/${encodeURIComponent(
                 name
-            )}`,
+            )}.json`,
             {
                 headers: {
                     'accept-encoding': 'gzip',
