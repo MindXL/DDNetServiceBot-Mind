@@ -56,6 +56,7 @@ function getPoints(name) {
                     return [4, axios_1.default("https://api.teeworlds.cn/ddnet/players/" + encodeURIComponent(name), {
                             headers: {
                                 'accept-encoding': 'gzip',
+                                decompress: true,
                             },
                         })];
                 case 2:
@@ -79,9 +80,10 @@ function ifExists(name) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
-                    return [4, axios_1.default("https://api.teeworlds.cn/ddnet/players/" + encodeURIComponent(name), {
+                    return [4, axios_1.default("https://api.teeworlds.cn/ddnet/players/" + encodeURIComponent(name) + ".json", {
                             headers: {
                                 'accept-encoding': 'gzip',
+                                decompress: true,
                             },
                         })];
                 case 1:

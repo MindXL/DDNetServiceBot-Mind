@@ -1,0 +1,80 @@
+{
+    "players": [
+        {
+            "name": "nameless tee",
+            "clan": "",
+            "score": 0,
+            "is_player": true,
+            "flag": -1,
+            "server": {
+                "ip": "37.59.55.192",
+                "port": 9407,
+                "protocols": [
+                    "tw-0.6+udp"
+                ],
+                "max_clients": 16,
+                "max_players": 16,
+                "passworded": false,
+                "game_type": "BW       V1.364 ",
+                "name": "Baam Server [0/64]",
+                "version": "0.6.4",
+                "map": "Starblock",
+                "locale": "FR",
+                "num_clients": 2,
+                "num_players": 2,
+                "num_spectators": 0
+            }
+        },
+        {
+            "name": "nameless tee",
+            "clan": "",
+            "score": -853,
+            "is_player": true,
+            "flag": -1,
+            "server": {
+                "ip": "37.230.210.231",
+                "port": 8322,
+                "protocols": [
+                    "tw-0.6+udp",
+                    "tw-0.7+udp"
+                ],
+                "max_clients": 63,
+                "max_players": 63,
+                "passworded": false,
+                "game_type": "DDraceNetwork",
+                "name": "DDNet RUS - DDmaX",
+                "version": "0.6.4, 15.4",
+                "map": "Desert Pain",
+                "locale": "RU",
+                "num_clients": 14,
+                "num_players": 14,
+                "num_spectators": 0
+            }
+        },
+        {
+            "name": "nameless tee",
+            "clan": "",
+            "score": 7,
+            "is_player": true,
+            "flag": -1,
+            "server": {
+                "ip": "51.255.129.48",
+                "port": 8404,
+                "protocols": [
+                    "tw-0.6+udp"
+                ],
+                "max_clients": 16,
+                "max_players": 16,
+                "passworded": false,
+                "game_type": "DM",
+                "name": "Vanilla Teeworlds Server - CTF",
+                "version": "0.6.5",
+                "map": "ctf4",
+                "locale": "FR",
+                "num_clients": 4,
+                "num_players": 4,
+                "num_spectators": 0
+            }
+        }
+    ]
+}

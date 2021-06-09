@@ -1,10 +1,12 @@
 import { Context, Time, sleep, s } from 'koishi-core';
 import { RecallConfig } from 'koishi-plugin-common';
 import { resolve } from 'path';
+import axios from 'axios';
 
 import Config from '../utils/config';
 import { getDevCtx, getMotCtx } from '../utils/CustomFunc';
 import { getPoints, sendGMRReminder } from '../utils/DDNetOrientedFunc';
+import {FindData} from '../utils/TsFreddieAPIInterface'
 
 module.exports.name = 'Command';
 
@@ -195,23 +197,142 @@ function gmr(ctx: Context) {
                     gmr.groupId,
                     gmr.content
                 );
-                await ctx.database.updateGMR(
-                    'messageId',
-                    gmr.messageId,
-                    newReplyMessageId!
-                );
+                await ctx.database.updateGMR(gmr.messageId, newReplyMessageId!);
             }
         });
 }
 
 function spot(ctx: Context) {
-    ctx.command('spot', 'Seek-Locate-Destroy（', { authority: 3 });
+    ctx.command('spot', '（Seek-Locate-Destroy）', { authority: 3 });
 
-    ctx.command('spot/client').action(async ({ session }) => {
+    ctx.command('spot/client', '查看client信息').action(async ({ session }) => {
         session?.send(
             s('image', {
                 file: 'file://' + resolve(__dirname, '../static/client.jpg'),
             })
         );
     });
+
+    return;
+
+    ctx.command('spot/find <name:text>', '查找在线状态')
+        .option('noDetail', '-nd')
+        .action(async ({ session, options }, name) => {
+            const atSender = s('at', { id: session?.userId! });
+            if (name === undefined) {
+                session?.sendQueued(atSender + 'find指令缺少参数name');
+                return;
+            }
+
+            const _result = `${name}\n\n`;
+            let result = _result;
+
+            try {
+                // 默认为true
+                const { data } = await axios(
+                    `https://api.teeworlds.cn/servers/players?name=${name}&detail=${
+                        options?.noDetail ?? false ? 'false' : 'true'
+                    }`,
+                    {
+                        headers: {
+                            'accept-encoding': 'gzip',
+                        },
+                    }
+                );
+                // const { players } = data as FindData;
+                const { players } = data
+
+                if (players.length === 0) {
+                    result += '该玩家目前不在线';
+                    session?.sendQueued(result);
+                } else if (players.length === 1) {
+                    const player = players[0];
+                    const { server } = player;
+
+                    result += `${
+                        player.clan === ''
+                            ? '(no clan)'
+                            : 'clan：' + player.clan
+                    }\n位于${server.locale}服务器：\n${server.name}\nmap：${
+                        server.map
+                    }`;
+
+                    session?.sendQueued(result);
+                } else {
+                    const lenth = players.length;
+                    const seperate = '-'.repeat(30);
+
+                    // let i = 0;
+                    // let j=0;
+
+                    // for(let i = 0,j=0;j<lenth;j++){
+                    //     while(players[i].)
+                    // }
+
+                    // for (i; i < lenth; i++) {
+                    //     let player = players[i];
+                    //     let { server } = player;
+
+                    //     if (player.server.locale === 'CN' && i === 0)
+                    //         result =
+                    //             atSender +
+                    //             `查找到${lenth}位玩家，首位如下：\n\n` +
+                    //             result;
+                    //     else if (player.server.locale !== 'CN' && i === 0) {
+                    //         session?.sendQueued(
+                    //             atSender +
+                    //                 '未查找到任何位于CN的玩家，是否显示其它在线重名玩家？（y/...）'
+                    //         );
+                    //         const reply = await session?.prompt()!;
+                    //         if (!reply) {
+                    //             session?.sendQueued(atSender + '输入超时。');
+                    //             return;
+                    //         }
+
+                    //         if (!/[yY]/.test(reply)) {
+                    //             session?.sendQueued('退出find');
+                    //             return;
+                    //         }
+                    //     }
+
+                    //     result += `${
+                    //         player.clan === ''
+                    //             ? '(no clan)'
+                    //             : 'clan：' + player.clan
+                    //     }\n位于${server.locale}服务器：\n${server.name}\nmap：${
+                    //         server.map
+                    //     }`;
+                    //     if (i < lenth - 1) {
+                    //         result += `\n${seperate}\n\n回复：\ny-继续查看\nip-获取服务器ip并结束对话\n（回复其它则结束对话）`;
+                    //         session?.sendQueued(result);
+                    //         const reply = await session?.prompt()!;
+
+                    //         if (!reply) {
+                    //             session?.sendQueued(atSender + '输入超时。');
+                    //             return;
+                    //         }
+
+                    //         if (/[yY]/.test(reply)) {
+                    //             result = _result;
+                    //             continue;
+                    //         } else if (/ip/.test(reply)) {
+                    //             session?.sendQueued(`${server.ip}:${server.port}`);
+                    //             return;
+                    //         } else {
+                    //             session?.sendQueued('退出find');
+                    //             return;
+                    //         }
+                    //     } else {
+                    //         result += `\n${seperate}\n\n查看完毕`;
+                    //         session?.sendQueued(result);
+                    //     }
+                    // }
+                }
+            } catch (e) {
+                console.log(e);
+                session?.sendQueued(
+                    `$${e?.response?.data?.error ?? '出现未知错误'}$`
+                );
+            }
+        });
 }

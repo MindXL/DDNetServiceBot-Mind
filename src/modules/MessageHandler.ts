@@ -114,13 +114,9 @@ module.exports.apply = (ctx: Context) => {
     // });
 
     devCtx.middleware(async (session, next) => {
-        // if (session.content === 'mt') {
-        //     // session.send('MessageTest');
-        // }
-        const regExp = /] ([yY]|(?:[nN]|[nN] (?<reason>.*))|[iI])$/g.exec(
-            session.content!
-        )!;
-        session.send(regExp?.[1]);
+        if (session.content === 'mt') {
+            // session.send('MessageTest');
+        }
         return next();
     });
 };
@@ -133,17 +129,19 @@ function handleGMR(ctx: Context) {
 
         const replyMessageId = quote.messageId!;
 
-        const gmr = await ctx.database.getGMR('replyMessageId', replyMessageId);
+        const gmr = await ctx.database.getGMR('replyMessageId', {
+            replyMessageId: replyMessageId,
+        });
         // 被回复的消息非提示入群申请的消息
-        if (!gmr) return next();
+        if (gmr === undefined) return next();
 
         // 若非在册的管理员
         const modAuthority = (
             await ctx.database.getModerator('onebot', session.userId!, [
                 'authority',
             ])
-        ).authority;
-        if (modAuthority < 3) {
+        )?.authority;
+        if (modAuthority && modAuthority < 3) {
             session.send(
                 s('at', { id: session.userId! }) +
                     '是新管理员吗？\n是的话请联系' +
@@ -177,7 +175,9 @@ function handleGMR(ctx: Context) {
                     reason ?? ''
                 );
             }
-            await ctx.database.removeGMR('replyMessageId', replyMessageId);
+            await ctx.database.removeGMR('replyMessageId', {
+                replyMessageId: replyMessageId,
+            });
         } else {
             botReply = '回复的消息格式似乎不正确，请重新回复';
         }
@@ -190,10 +190,10 @@ function handleGMR(ctx: Context) {
             ]) + `\n${botReply}`
         );
 
-        await session.bot.deleteMessage(session.groupId!, replyMessageId);
-
-        // 管理员不可撤回群主的消息
         try {
+            await session.bot.deleteMessage(session.groupId!, replyMessageId);
+
+            // 管理员不可撤回群主和管理员的消息
             await session.bot.deleteMessage(
                 session.groupId!,
                 session.messageId!

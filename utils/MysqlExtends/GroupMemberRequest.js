@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -58,12 +47,10 @@ var koishi_core_1 = require("koishi-core");
 var GroupMemberRequest;
 (function (GroupMemberRequest) {
     GroupMemberRequest.table = 'gmr';
-    GroupMemberRequest.fields = [];
     GroupMemberRequest.queryFields = [];
     var getters = [];
     function extend(getterDefault, getterQuery) {
         getters.push(getterDefault);
-        GroupMemberRequest.fields.push.apply(GroupMemberRequest.fields, Object.keys(getterDefault));
         GroupMemberRequest.queryFields.push.apply(GroupMemberRequest.queryFields, Object.keys(getterQuery));
     }
     GroupMemberRequest.extend = extend;
@@ -101,19 +88,46 @@ var GroupMemberRequest;
     GroupMemberRequest.create = create;
 })(GroupMemberRequest = exports.GroupMemberRequest || (exports.GroupMemberRequest = {}));
 koishi_core_1.Database.extend('koishi-plugin-mysql', {
-    getGMR: function (type, id) {
+    getConditions: function (type, set) {
+        var _this = this;
+        var empty = 'time = 0';
+        if (!set)
+            return empty;
+        var keys;
+        var pkeys = ['replyMessageId'];
+        var ukeys = ['messageId'];
+        var uukeys = ['groupId', 'userId', 'channelId'];
+        if (type === 'replyMessageId') {
+            keys = koishi_core_1.intersection(Object.keys(set), pkeys);
+            if (keys.length !== 1)
+                return empty;
+        }
+        else if (type === 'messageId') {
+            keys = koishi_core_1.intersection(Object.keys(set), ukeys);
+            if (keys.length !== 1)
+                return empty;
+        }
+        else {
+            keys = koishi_core_1.intersection(Object.keys(set), uukeys);
+            if (keys.length !== 3)
+                return empty;
+        }
+        var conditions = keys
+            .map(function (key) {
+            return _this.escapeId(key) + " = " + _this.escape(set[key], GroupMemberRequest.table, key);
+        })
+            .join(' AND ');
+        return conditions;
+    },
+    getGMR: function (type, set) {
         return __awaiter(this, void 0, void 0, function () {
             var data;
-            var _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        if (!id)
-                            return [2, undefined];
-                        return [4, this.select(GroupMemberRequest.table, GroupMemberRequest.queryFields, '?? = ?', [type, id])];
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, this.query("SELECT * FROM ?? WHERE " + this.getConditions(type, set), [GroupMemberRequest.table])];
                     case 1:
-                        data = (_b.sent())[0];
-                        return [2, data && __assign(__assign({}, data), (_a = {}, _a[type] = id, _a))];
+                        data = (_a.sent())[0];
+                        return [2, data];
                 }
             });
         });
@@ -128,6 +142,13 @@ koishi_core_1.Database.extend('koishi-plugin-mysql', {
             });
         });
     },
+    deconGMRSession: function (session, replyMessageId) {
+        var data = Object.assign(GroupMemberRequest.create(), session, {
+            replyMessageId: replyMessageId,
+            content: /答案：(.*?)$/.exec(session.content)[1],
+        });
+        return data;
+    },
     createGMR: function (session, replyMessageId) {
         return __awaiter(this, void 0, void 0, function () {
             var gmr, keys, assignments;
@@ -135,10 +156,7 @@ koishi_core_1.Database.extend('koishi-plugin-mysql', {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        session.content = /答案：(.*?)$/.exec(session.content)[1];
-                        gmr = Object.assign(GroupMemberRequest.create(), session, {
-                            replyMessageId: replyMessageId,
-                        });
+                        gmr = this.deconGMRSession(session, replyMessageId);
                         keys = koishi_core_1.difference(Object.keys(gmr), GroupMemberRequest.excludeKeys);
                         assignments = keys
                             .map(function (key) {
@@ -158,15 +176,11 @@ koishi_core_1.Database.extend('koishi-plugin-mysql', {
             });
         });
     },
-    removeGMR: function (type, id) {
+    removeGMR: function (type, set) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4, this.query('DELETE FROM ?? WHERE ?? = ?', [
-                            GroupMemberRequest.table,
-                            type,
-                            id,
-                        ])];
+                    case 0: return [4, this.query("DELETE FROM ?? WHERE " + this.getConditions(type, set), [GroupMemberRequest.table])];
                     case 1:
                         _a.sent();
                         return [2];
@@ -174,16 +188,33 @@ koishi_core_1.Database.extend('koishi-plugin-mysql', {
             });
         });
     },
-    updateGMR: function (type, id, newReplyMessageId) {
+    setGMR: function (type, set, session, replyMessageId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var gmr, keys, assignments;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        gmr = this.deconGMRSession(session, replyMessageId);
+                        keys = koishi_core_1.difference(Object.keys(gmr), GroupMemberRequest.excludeKeys);
+                        assignments = keys
+                            .map(function (key) {
+                            return _this.escapeId(key) + " = " + _this.escape(gmr[key], GroupMemberRequest.table, key);
+                        })
+                            .join(', ');
+                        return [4, this.query("UPDATE ?? SET " + assignments + " WHERE " + this.getConditions(type, set), [GroupMemberRequest.table])];
+                    case 1:
+                        _a.sent();
+                        return [2];
+                }
+            });
+        });
+    },
+    updateGMR: function (messageId, newReplyMessageId) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4, this.query('UPDATE ?? SET `replyMessageId` = ? WHERE ?? = ?', [
-                            GroupMemberRequest.table,
-                            newReplyMessageId,
-                            type,
-                            id,
-                        ])];
+                    case 0: return [4, this.query('UPDATE ?? SET `replyMessageId` = ? WHERE messageId = ?', [GroupMemberRequest.table, newReplyMessageId, messageId])];
                     case 1:
                         _a.sent();
                         return [2];
