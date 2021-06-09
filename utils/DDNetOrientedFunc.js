@@ -53,7 +53,7 @@ function getPoints(name) {
                     _d.label = 1;
                 case 1:
                     _d.trys.push([1, 3, , 4]);
-                    return [4, axios_1.default("https://api.teeworlds.cn/ddnet/players/" + encodeURIComponent(name), {
+                    return [4, axios_1.default("https://api.teeworlds.cn/ddnet/players/" + encodeURIComponent(name) + ".json", {
                             headers: {
                                 'accept-encoding': 'gzip',
                                 decompress: true,
