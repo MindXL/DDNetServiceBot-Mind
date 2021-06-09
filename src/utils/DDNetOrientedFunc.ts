@@ -13,7 +13,7 @@ export async function getPoints(name: string): Promise<string> {
             )}.json`,
             {
                 headers: {
-                    'accept-encoding': 'gzip',
+                    'accept-encoding': 'gzip, deflate',
                     decompress: true,
                 },
             }
@@ -34,7 +34,7 @@ export async function ifExists(name: string): Promise<boolean> {
             )}.json`,
             {
                 headers: {
-                    'accept-encoding': 'gzip',
+                    'accept-encoding': 'gzip, deflate',
                     decompress: true,
                 },
             }
