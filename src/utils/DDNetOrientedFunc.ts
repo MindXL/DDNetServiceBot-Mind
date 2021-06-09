@@ -14,6 +14,7 @@ export async function getPoints(name: string): Promise<string> {
             {
                 headers: {
                     'accept-encoding': 'gzip',
+                    decompress: true,
                 },
             }
         );
@@ -30,10 +31,11 @@ export async function ifExists(name: string): Promise<boolean> {
         await axios(
             `https://api.teeworlds.cn/ddnet/players/${encodeURIComponent(
                 name
-            )}`,
+            )}.json`,
             {
                 headers: {
                     'accept-encoding': 'gzip',
+                    decompress: true,
                 },
             }
         );

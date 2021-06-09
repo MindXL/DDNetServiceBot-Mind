@@ -41,6 +41,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var koishi_core_1 = require("koishi-core");
 var path_1 = require("path");
+var axios_1 = __importDefault(require("axios"));
 var config_1 = __importDefault(require("../utils/config"));
 var CustomFunc_1 = require("../utils/CustomFunc");
 var DDNetOrientedFunc_1 = require("../utils/DDNetOrientedFunc");
@@ -323,8 +324,8 @@ function gmr(ctx) {
 }
 function spot(ctx) {
     var _this = this;
-    ctx.command('spot', 'Seek-Locate-Destroy（', { authority: 3 });
-    ctx.command('spot/client').action(function (_a) {
+    ctx.command('spot', '（Seek-Locate-Destroy）', { authority: 3 });
+    ctx.command('spot/client', '查看client信息').action(function (_a) {
         var session = _a.session;
         return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_b) {
@@ -332,6 +333,62 @@ function spot(ctx) {
                     file: 'file://' + path_1.resolve(__dirname, '../static/client.jpg'),
                 }));
                 return [2];
+            });
+        });
+    });
+    return;
+    ctx.command('spot/find <name:text>', '查找在线状态')
+        .option('noDetail', '-nd')
+        .action(function (_a, name) {
+        var session = _a.session, options = _a.options;
+        return __awaiter(_this, void 0, void 0, function () {
+            var atSender, _result, result, data, players, player, server, lenth, seperate, e_1;
+            var _b, _c, _d, _e;
+            return __generator(this, function (_f) {
+                switch (_f.label) {
+                    case 0:
+                        atSender = koishi_core_1.s('at', { id: session === null || session === void 0 ? void 0 : session.userId });
+                        if (name === undefined) {
+                            session === null || session === void 0 ? void 0 : session.sendQueued(atSender + 'find指令缺少参数name');
+                            return [2];
+                        }
+                        _result = name + "\n\n";
+                        result = _result;
+                        _f.label = 1;
+                    case 1:
+                        _f.trys.push([1, 3, , 4]);
+                        return [4, axios_1.default("https://api.teeworlds.cn/servers/players?name=" + name + "&detail=" + (((_b = options === null || options === void 0 ? void 0 : options.noDetail) !== null && _b !== void 0 ? _b : false) ? 'false' : 'true'), {
+                                headers: {
+                                    'accept-encoding': 'gzip',
+                                },
+                            })];
+                    case 2:
+                        data = (_f.sent()).data;
+                        players = data.players;
+                        if (players.length === 0) {
+                            result += '该玩家目前不在线';
+                            session === null || session === void 0 ? void 0 : session.sendQueued(result);
+                        }
+                        else if (players.length === 1) {
+                            player = players[0];
+                            server = player.server;
+                            result += (player.clan === ''
+                                ? '(no clan)'
+                                : 'clan：' + player.clan) + "\n\u4F4D\u4E8E" + server.locale + "\u670D\u52A1\u5668\uFF1A\n" + server.name + "\nmap\uFF1A" + server.map;
+                            session === null || session === void 0 ? void 0 : session.sendQueued(result);
+                        }
+                        else {
+                            lenth = players.length;
+                            seperate = '-'.repeat(30);
+                        }
+                        return [3, 4];
+                    case 3:
+                        e_1 = _f.sent();
+                        console.log(e_1);
+                        session === null || session === void 0 ? void 0 : session.sendQueued("$" + ((_e = (_d = (_c = e_1 === null || e_1 === void 0 ? void 0 : e_1.response) === null || _c === void 0 ? void 0 : _c.data) === null || _d === void 0 ? void 0 : _d.error) !== null && _e !== void 0 ? _e : '出现未知错误') + "$");
+                        return [3, 4];
+                    case 4: return [2];
+                }
             });
         });
     });
