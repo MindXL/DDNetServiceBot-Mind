@@ -97,7 +97,7 @@ module.exports.apply = function (ctx) {
                     answer = /答案：(.*?)$/.exec(session.content)[1];
                     groupId = session.groupId;
                     userId = session.userId;
-                    return [4, DDNetOrientedFunc_1.sendGMRReminder(session.bot, userId, groupId, answer)];
+                    return [4, DDNetOrientedFunc_1.sendGMRReminder(session.bot, userId, groupId, answer, ctx.logger('points'))];
                 case 1:
                     replyMessageId = _a.sent();
                     set = {

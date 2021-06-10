@@ -6,7 +6,7 @@ import axios from 'axios';
 import Config from '../utils/config';
 import { getDevCtx, getMotCtx } from '../utils/CustomFunc';
 import { getPoints, sendGMRReminder } from '../utils/DDNetOrientedFunc';
-import {FindData} from '../utils/TsFreddieAPIInterface'
+import { FindData } from '../utils/TsFreddieAPIInterface';
 
 module.exports.name = 'Command';
 
@@ -176,7 +176,8 @@ function points(ctx: Context) {
                 name ??
                     (session?.author?.nickname !== ''
                         ? session?.author?.nickname
-                        : session?.username)
+                        : session?.username),
+                ctx.logger('points')
             );
         }
     );
@@ -195,7 +196,8 @@ function gmr(ctx: Context) {
                     session!.bot,
                     gmr.userId,
                     gmr.groupId,
-                    gmr.content
+                    gmr.content,
+                    ctx.logger('points')
                 );
                 await ctx.database.updateGMR(gmr.messageId, newReplyMessageId!);
             }
@@ -213,8 +215,6 @@ function spot(ctx: Context) {
         );
     });
 
-    return;
-
     ctx.command('spot/find <name:text>', '查找在线状态')
         .option('noDetail', '-nd')
         .action(async ({ session, options }, name) => {
@@ -229,7 +229,7 @@ function spot(ctx: Context) {
 
             try {
                 // 默认为true
-                const { data } = await axios(
+                const { data }: { data: FindData } = await axios(
                     `https://api.teeworlds.cn/servers/players?name=${name}&detail=${
                         options?.noDetail ?? false ? 'false' : 'true'
                     }`,
@@ -239,8 +239,7 @@ function spot(ctx: Context) {
                         },
                     }
                 );
-                // const { players } = data as FindData;
-                const { players } = data
+                const { players } = data;
 
                 if (players.length === 0) {
                     result += '该玩家目前不在线';

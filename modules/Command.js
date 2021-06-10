@@ -279,7 +279,7 @@ function points(ctx) {
                 switch (_d.label) {
                     case 0: return [4, DDNetOrientedFunc_1.getPoints(name !== null && name !== void 0 ? name : (((_b = session === null || session === void 0 ? void 0 : session.author) === null || _b === void 0 ? void 0 : _b.nickname) !== ''
                             ? (_c = session === null || session === void 0 ? void 0 : session.author) === null || _c === void 0 ? void 0 : _c.nickname
-                            : session === null || session === void 0 ? void 0 : session.username))];
+                            : session === null || session === void 0 ? void 0 : session.username), ctx.logger('points'))];
                     case 1: return [2, _d.sent()];
                 }
             });
@@ -306,7 +306,7 @@ function gmr(ctx) {
                     case 2:
                         if (!(_i < gmrs_1.length)) return [3, 6];
                         gmr_1 = gmrs_1[_i];
-                        return [4, DDNetOrientedFunc_1.sendGMRReminder(session.bot, gmr_1.userId, gmr_1.groupId, gmr_1.content)];
+                        return [4, DDNetOrientedFunc_1.sendGMRReminder(session.bot, gmr_1.userId, gmr_1.groupId, gmr_1.content, ctx.logger('points'))];
                     case 3:
                         newReplyMessageId = _b.sent();
                         return [4, ctx.database.updateGMR(gmr_1.messageId, newReplyMessageId)];
@@ -336,7 +336,6 @@ function spot(ctx) {
             });
         });
     });
-    return;
     ctx.command('spot/find <name:text>', '查找在线状态')
         .option('noDetail', '-nd')
         .action(function (_a, name) {

@@ -12,6 +12,7 @@
     "^mysql_tables": "source /home/centos/Projects/Koishi/DDNetServiceBot-Mind/src/sql/koishiTables.sql;"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.170",
     "koishi": "^3.10.0",
     "typescript": "^4.2.4"
   },
@@ -19,6 +20,7 @@
     "axios": "^0.21.1",
     "koishi-adapter-onebot": "^3.0.8",
     "koishi-plugin-common": "^4.2.4",
-    "koishi-plugin-mysql": "^3.3.2"
+    "koishi-plugin-mysql": "^3.3.2",
+    "lodash": "^4.17.21"
   }
 }

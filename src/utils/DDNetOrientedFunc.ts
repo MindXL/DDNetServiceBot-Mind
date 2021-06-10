@@ -1,13 +1,16 @@
+import { Logger } from 'koishi-utils';
 import { CQBot } from 'koishi-adapter-onebot';
 import axios from 'axios';
+import _ from 'lodash';
 
 import Config from './config';
+import { PointsData } from './TsFreddieAPIInterface';
 
-export async function getPoints(name: string): Promise<string> {
+export async function getPoints(name: string, logger: Logger): Promise<string> {
     let result = `${name}\n\n`;
 
     try {
-        const { data } = await axios(
+        const { data }: { data: PointsData } = await axios(
             `https://api.teeworlds.cn/ddnet/players/${encodeURIComponent(
                 name
             )}.json`,
@@ -18,32 +21,43 @@ export async function getPoints(name: string): Promise<string> {
                 },
             }
         );
+        if (data.player) {
+            const favServer = _.maxBy(
+                _.toPairs(_.groupBy(data.last_finishes, 'country')),
+                '1.length'
+            )?.[0];
 
-        result += `${data.points.rank}. with ${data.points.points} points`;
+            result += `${favServer}\n${data.points.rank}. with ${data.points.points} points`;
+        } else {
+            result += 'Player Not Found';
+        }
     } catch (e) {
-        result += e?.response?.data?.error ?? '$出现未知错误';
+        if (e.response.status === 404)
+            result += e?.response?.data?.error ?? '$出现未知错误';
+        else logger?.extend('getPoints').error(e);
     }
     return result;
 }
 
-export async function ifExists(name: string): Promise<boolean> {
-    try {
-        await axios(
-            `https://api.teeworlds.cn/ddnet/players/${encodeURIComponent(
-                name
-            )}.json`,
-            {
-                headers: {
-                    'accept-encoding': 'gzip, deflate',
-                    decompress: true,
-                },
-            }
-        );
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
+// export async function ifExists(name: string, logger: Logger): Promise<boolean> {
+//     try {
+//         await axios(
+//             `https://api.teeworlds.cn/ddnet/players/${encodeURIComponent(
+//                 name
+//             )}`,
+//             {
+//                 headers: {
+//                     'accept-encoding': 'gzip, deflate',
+//                     decompress: true,
+//                 },
+//             }
+//         );
+//         return true;
+//     } catch (e) {
+//         logger?.extend('ifExists').error(e);
+//         return false;
+//     }
+// }
 
 // export async function getOnePoints(name: string, n: number): Promise<string> {
 //     if (!(await ifExists(name))) return `${name}\n\n该玩家不存在`;
@@ -94,7 +108,8 @@ export async function sendGMRReminder(
     bot: CQBot,
     userId: string,
     groupId: string,
-    answer: string
+    answer: string,
+    logger: Logger
 ): Promise<string> {
     const targetGroup = await bot.getGroup(groupId);
     const seperate = '-'.repeat(30);
@@ -104,7 +119,7 @@ export async function sendGMRReminder(
         `$收到入群申请$\n\n申请人：${userId}\n\n目标群：${
             targetGroup.groupId
         }\n${targetGroup.groupName}\n\n${seperate}\n${
-            answer ? await getPoints(answer) : userId
+            answer ? await getPoints(answer, logger) : userId
         }\n${seperate}\n\n回复此消息以处理入群申请\n（y/n/n [reason...]/i=忽略）`
     );
     return newReplyMessageId;

@@ -86,7 +86,8 @@ module.exports.apply = (ctx: Context) => {
             session.bot,
             userId,
             groupId,
-            answer
+            answer,
+            ctx.logger('points')
         );
 
         const set = {
