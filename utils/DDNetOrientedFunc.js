@@ -73,7 +73,7 @@ function getPoints(name, logger) {
                 case 3:
                     e_1 = _e.sent();
                     if (e_1.response.status === 404)
-                        result += (_d = (_c = (_b = e_1 === null || e_1 === void 0 ? void 0 : e_1.response) === null || _b === void 0 ? void 0 : _b.data) === null || _c === void 0 ? void 0 : _c.error) !== null && _d !== void 0 ? _d : '$出现未知错误';
+                        result += (_d = (_c = (_b = e_1 === null || e_1 === void 0 ? void 0 : e_1.response) === null || _b === void 0 ? void 0 : _b.data) === null || _c === void 0 ? void 0 : _c.error) !== null && _d !== void 0 ? _d : '$出现未知错误$';
                     else
                         logger === null || logger === void 0 ? void 0 : logger.extend('getPoints').error(e_1);
                     return [3, 4];

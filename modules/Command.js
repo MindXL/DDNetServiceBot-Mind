@@ -324,6 +324,7 @@ function gmr(ctx) {
 }
 function spot(ctx) {
     var _this = this;
+    var logger = ctx.logger('Command').extend('spot');
     ctx.command('spot', '（Seek-Locate-Destroy）', { authority: 3 });
     ctx.command('spot/client', '查看client信息').action(function (_a) {
         var session = _a.session;
@@ -341,10 +342,10 @@ function spot(ctx) {
         .action(function (_a, name) {
         var session = _a.session, options = _a.options;
         return __awaiter(_this, void 0, void 0, function () {
-            var atSender, _result, result, data, players, player, server, lenth, seperate, e_1;
-            var _b, _c, _d, _e;
-            return __generator(this, function (_f) {
-                switch (_f.label) {
+            var atSender, _result, result, toFind, data, players, player, server, lenth, seperate, i, j, countCN, player, reply, server, reply, e_1;
+            var _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
                         atSender = koishi_core_1.s('at', { id: session === null || session === void 0 ? void 0 : session.userId });
                         if (name === undefined) {
@@ -353,40 +354,118 @@ function spot(ctx) {
                         }
                         _result = name + "\n\n";
                         result = _result;
-                        _f.label = 1;
+                        toFind = 'as:cn';
+                        _c.label = 1;
                     case 1:
-                        _f.trys.push([1, 3, , 4]);
+                        _c.trys.push([1, 13, , 14]);
                         return [4, axios_1.default("https://api.teeworlds.cn/servers/players?name=" + name + "&detail=" + (((_b = options === null || options === void 0 ? void 0 : options.noDetail) !== null && _b !== void 0 ? _b : false) ? 'false' : 'true'), {
                                 headers: {
                                     'accept-encoding': 'gzip',
                                 },
                             })];
                     case 2:
-                        data = (_f.sent()).data;
+                        data = (_c.sent()).data;
                         players = data.players;
-                        if (players.length === 0) {
-                            result += '该玩家目前不在线';
-                            session === null || session === void 0 ? void 0 : session.sendQueued(result);
-                        }
-                        else if (players.length === 1) {
-                            player = players[0];
-                            server = player.server;
-                            result += (player.clan === ''
-                                ? '(no clan)'
-                                : 'clan：' + player.clan) + "\n\u4F4D\u4E8E" + server.locale + "\u670D\u52A1\u5668\uFF1A\n" + server.name + "\nmap\uFF1A" + server.map;
-                            session === null || session === void 0 ? void 0 : session.sendQueued(result);
+                        if (!(players.length === 0)) return [3, 3];
+                        result += '该玩家目前不在线';
+                        session === null || session === void 0 ? void 0 : session.sendQueued(result);
+                        return [3, 12];
+                    case 3:
+                        if (!(players.length === 1)) return [3, 4];
+                        player = players[0];
+                        server = player.server;
+                        result += (player.clan === ''
+                            ? '(no clan)'
+                            : 'clan：' + player.clan) + "\n\u4F4D\u4E8E" + server.locale + "\u670D\u52A1\u5668\uFF1A\n" + server.name + "\nmap\uFF1A" + server.map;
+                        session === null || session === void 0 ? void 0 : session.sendQueued(result);
+                        return [3, 12];
+                    case 4:
+                        lenth = players.length;
+                        seperate = '-'.repeat(30);
+                        i = 0, j = 0, countCN = 0;
+                        _c.label = 5;
+                    case 5:
+                        if (!(i < lenth && j <= lenth)) return [3, 11];
+                        while (j < lenth && players[j].server.locale !== toFind)
+                            j++;
+                        player = undefined;
+                        if (!(i === 0)) return [3, 8];
+                        if (!(j < lenth)) return [3, 6];
+                        if (countCN === 0)
+                            session === null || session === void 0 ? void 0 : session.sendQueued(atSender +
+                                ("\u67E5\u627E\u5230" + lenth + "\u4F4D\u73A9\u5BB6\uFF0C\u9996\u4F4D\u5982\u4E0B\uFF1A"));
+                        countCN++;
+                        player = players[j];
+                        j++;
+                        i--;
+                        return [3, 8];
+                    case 6:
+                        if (countCN) {
+                            if (lenth - countCN > 0)
+                                session === null || session === void 0 ? void 0 : session.sendQueued(atSender +
+                                    '位于CN的玩家已显示完毕，是否显示其它在线重名玩家？（y/...）');
+                            else {
+                                return [3, 11];
+                            }
                         }
                         else {
-                            lenth = players.length;
-                            seperate = '-'.repeat(30);
+                            session === null || session === void 0 ? void 0 : session.sendQueued(atSender +
+                                '未查找到任何位于CN的玩家，是否显示其它在线重名玩家？（y/...）');
                         }
-                        return [3, 4];
-                    case 3:
-                        e_1 = _f.sent();
-                        console.log(e_1);
-                        session === null || session === void 0 ? void 0 : session.sendQueued("$" + ((_e = (_d = (_c = e_1 === null || e_1 === void 0 ? void 0 : e_1.response) === null || _c === void 0 ? void 0 : _c.data) === null || _d === void 0 ? void 0 : _d.error) !== null && _e !== void 0 ? _e : '出现未知错误') + "$");
-                        return [3, 4];
-                    case 4: return [2];
+                        return [4, (session === null || session === void 0 ? void 0 : session.prompt())];
+                    case 7:
+                        reply = _c.sent();
+                        if (!reply) {
+                            session === null || session === void 0 ? void 0 : session.sendQueued(atSender + '输入超时。');
+                            return [2];
+                        }
+                        if (!/[yY]/.test(reply))
+                            return [3, 11];
+                        _c.label = 8;
+                    case 8:
+                        player = player !== null && player !== void 0 ? player : players[i];
+                        if (i !== -1 &&
+                            j === lenth &&
+                            player.server.locale === toFind)
+                            return [3, 10];
+                        server = player.server;
+                        result += (player.clan === ''
+                            ? '(no clan)'
+                            : 'clan：' + player.clan) + "\n\u4F4D\u4E8E" + server.locale + "\u670D\u52A1\u5668\uFF1A\n\n" + server.name + "\nmap\uFF1A" + server.map;
+                        if (!(i < lenth)) return [3, 10];
+                        result += "\n" + seperate + "\n\n\u56DE\u590D\uFF1A\ny-\u7EE7\u7EED\u67E5\u770B\nip-\u83B7\u53D6\u670D\u52A1\u5668ip\u5E76\u7ED3\u675F\u5BF9\u8BDD\n\uFF08\u56DE\u590D\u5176\u5B83\u5219\u7ED3\u675F\u5BF9\u8BDD\uFF09";
+                        session === null || session === void 0 ? void 0 : session.sendQueued(result);
+                        return [4, (session === null || session === void 0 ? void 0 : session.prompt())];
+                    case 9:
+                        reply = _c.sent();
+                        if (!reply) {
+                            session === null || session === void 0 ? void 0 : session.sendQueued(atSender + '输入超时。');
+                            return [2];
+                        }
+                        if (/[yY]/.test(reply)) {
+                            result = _result;
+                            return [3, 10];
+                        }
+                        else if (/ip/.test(reply)) {
+                            session === null || session === void 0 ? void 0 : session.sendQueued(server.ip + ":" + server.port);
+                            return [3, 11];
+                        }
+                        else
+                            return [3, 11];
+                        _c.label = 10;
+                    case 10:
+                        i++;
+                        return [3, 5];
+                    case 11:
+                        session === null || session === void 0 ? void 0 : session.sendQueued('$find查看完毕$');
+                        _c.label = 12;
+                    case 12: return [3, 14];
+                    case 13:
+                        e_1 = _c.sent();
+                        logger.extend('find').error(e_1);
+                        session === null || session === void 0 ? void 0 : session.sendQueued('$出现未知错误$');
+                        return [3, 14];
+                    case 14: return [2];
                 }
             });
         });

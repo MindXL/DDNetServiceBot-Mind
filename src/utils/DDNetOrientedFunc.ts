@@ -33,7 +33,7 @@ export async function getPoints(name: string, logger: Logger): Promise<string> {
         }
     } catch (e) {
         if (e.response.status === 404)
-            result += e?.response?.data?.error ?? '$出现未知错误';
+            result += e?.response?.data?.error ?? '$出现未知错误$';
         else logger?.extend('getPoints').error(e);
     }
     return result;
