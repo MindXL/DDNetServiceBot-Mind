@@ -2,11 +2,12 @@ import { Context, Time, sleep, s } from 'koishi-core';
 import { RecallConfig } from 'koishi-plugin-common';
 import { resolve } from 'path';
 import axios from 'axios';
+import _ from 'lodash';
 
 import Config from '../utils/config';
 import { getDevCtx, getMotCtx } from '../utils/CustomFunc';
 import { getPoints, sendGMRReminder } from '../utils/DDNetOrientedFunc';
-import {FindData} from '../utils/TsFreddieAPIInterface'
+import { FindData } from '../utils/TsFreddieAPIInterface';
 
 module.exports.name = 'Command';
 
@@ -176,7 +177,8 @@ function points(ctx: Context) {
                 name ??
                     (session?.author?.nickname !== ''
                         ? session?.author?.nickname
-                        : session?.username)
+                        : session?.username),
+                ctx.logger('points')
             );
         }
     );
@@ -195,7 +197,8 @@ function gmr(ctx: Context) {
                     session!.bot,
                     gmr.userId,
                     gmr.groupId,
-                    gmr.content
+                    gmr.content,
+                    ctx.logger('points')
                 );
                 await ctx.database.updateGMR(gmr.messageId, newReplyMessageId!);
             }
@@ -203,7 +206,9 @@ function gmr(ctx: Context) {
 }
 
 function spot(ctx: Context) {
-    ctx.command('spot', '（Seek-Locate-Destroy）', { authority: 3 });
+    const logger = ctx.logger('Command').extend('spot');
+
+    ctx.command('spot', '（Seek-Locate-Destroy）');
 
     ctx.command('spot/client', '查看client信息').action(async ({ session }) => {
         session?.send(
@@ -212,8 +217,6 @@ function spot(ctx: Context) {
             })
         );
     });
-
-    return;
 
     ctx.command('spot/find <name:text>', '查找在线状态')
         .option('noDetail', '-nd')
@@ -226,10 +229,11 @@ function spot(ctx: Context) {
 
             const _result = `${name}\n\n`;
             let result = _result;
+            const toFind = 'as:cn';
 
             try {
                 // 默认为true
-                const { data } = await axios(
+                const { data }: { data: FindData } = await axios(
                     `https://api.teeworlds.cn/servers/players?name=${name}&detail=${
                         options?.noDetail ?? false ? 'false' : 'true'
                     }`,
@@ -239,8 +243,7 @@ function spot(ctx: Context) {
                         },
                     }
                 );
-                // const { players } = data as FindData;
-                const { players } = data
+                const { players } = data;
 
                 if (players.length === 0) {
                     result += '该玩家目前不在线';
@@ -262,77 +265,109 @@ function spot(ctx: Context) {
                     const lenth = players.length;
                     const seperate = '-'.repeat(30);
 
-                    // let i = 0;
-                    // let j=0;
+                    // i points to all; j only points to 'CN'
+                    for (
+                        let i = 0, j = 0, countCN = 0;
+                        i < lenth && j <= lenth;
+                        i++
+                    ) {
+                        while (j < lenth && players[j].server.locale !== toFind)
+                            j++;
 
-                    // for(let i = 0,j=0;j<lenth;j++){
-                    //     while(players[i].)
-                    // }
+                        let player = undefined;
+                        if (i === 0)
+                            if (j < lenth) {
+                                // 匹配到位于CN的玩家
+                                if (countCN === 0)
+                                    session?.sendQueued(
+                                        atSender +
+                                            `查找到${lenth}位玩家，首位如下：`
+                                    );
 
-                    // for (i; i < lenth; i++) {
-                    //     let player = players[i];
-                    //     let { server } = player;
+                                countCN++;
+                                player = players[j];
+                                j++;
+                                i--;
+                            } else {
+                                // 遍历CN完毕
 
-                    //     if (player.server.locale === 'CN' && i === 0)
-                    //         result =
-                    //             atSender +
-                    //             `查找到${lenth}位玩家，首位如下：\n\n` +
-                    //             result;
-                    //     else if (player.server.locale !== 'CN' && i === 0) {
-                    //         session?.sendQueued(
-                    //             atSender +
-                    //                 '未查找到任何位于CN的玩家，是否显示其它在线重名玩家？（y/...）'
-                    //         );
-                    //         const reply = await session?.prompt()!;
-                    //         if (!reply) {
-                    //             session?.sendQueued(atSender + '输入超时。');
-                    //             return;
-                    //         }
+                                if (countCN) {
+                                    // 曾遍历到CN玩家
+                                    if (lenth - countCN > 0)
+                                        // 仍有位于其他国家的玩家
+                                        session?.sendQueued(
+                                            atSender +
+                                                '位于CN的玩家已显示完毕，是否显示其它在线重名玩家？（y/...）'
+                                        );
+                                    else {
+                                        // 所有玩家均位于CN
+                                        break;
+                                    }
+                                } else {
+                                    // 未遍历到CN玩家
+                                    session?.sendQueued(
+                                        atSender +
+                                            '未查找到任何位于CN的玩家，是否显示其它在线重名玩家？（y/...）'
+                                    );
+                                }
 
-                    //         if (!/[yY]/.test(reply)) {
-                    //             session?.sendQueued('退出find');
-                    //             return;
-                    //         }
-                    //     }
+                                const reply = await session?.prompt()!;
+                                if (!reply) {
+                                    session?.sendQueued(
+                                        atSender + '输入超时。'
+                                    );
+                                    return;
+                                }
 
-                    //     result += `${
-                    //         player.clan === ''
-                    //             ? '(no clan)'
-                    //             : 'clan：' + player.clan
-                    //     }\n位于${server.locale}服务器：\n${server.name}\nmap：${
-                    //         server.map
-                    //     }`;
-                    //     if (i < lenth - 1) {
-                    //         result += `\n${seperate}\n\n回复：\ny-继续查看\nip-获取服务器ip并结束对话\n（回复其它则结束对话）`;
-                    //         session?.sendQueued(result);
-                    //         const reply = await session?.prompt()!;
+                                if (!/[yY]/.test(reply)) break;
+                            }
 
-                    //         if (!reply) {
-                    //             session?.sendQueued(atSender + '输入超时。');
-                    //             return;
-                    //         }
+                        // 只要之前未跳出就会执行下段
+                        // 若之前未找到CN玩家，则此处player===undifined
+                        player = player ?? players[i];
 
-                    //         if (/[yY]/.test(reply)) {
-                    //             result = _result;
-                    //             continue;
-                    //         } else if (/ip/.test(reply)) {
-                    //             session?.sendQueued(`${server.ip}:${server.port}`);
-                    //             return;
-                    //         } else {
-                    //             session?.sendQueued('退出find');
-                    //             return;
-                    //         }
-                    //     } else {
-                    //         result += `\n${seperate}\n\n查看完毕`;
-                    //         session?.sendQueued(result);
-                    //     }
-                    // }
+                        // 若此时player指向已遍历的CN玩家
+                        if (
+                            i !== -1 &&
+                            j === lenth &&
+                            player.server.locale === toFind
+                        )
+                            continue;
+                        let { server } = player;
+
+                        result += `${
+                            player.clan === ''
+                                ? '(no clan)'
+                                : 'clan：' + player.clan
+                        }\n位于${server.locale}服务器：\n\n${
+                            server.name
+                        }\nmap：${server.map}`;
+                        if (i < lenth) {
+                            result += `\n${seperate}\n\n回复：\ny-继续查看\nip-获取服务器ip并结束对话\n（回复其它则结束对话）`;
+                            session?.sendQueued(result);
+                            const reply = await session?.prompt()!;
+
+                            if (!reply) {
+                                session?.sendQueued(atSender + '输入超时。');
+                                return;
+                            }
+
+                            if (/[yY]/.test(reply)) {
+                                result = _result;
+                                continue;
+                            } else if (/ip/.test(reply)) {
+                                session?.sendQueued(
+                                    `${server.ip}:${server.port}`
+                                );
+                                break;
+                            } else break;
+                        }
+                    }
+                    session?.sendQueued('$find查看完毕$');
                 }
             } catch (e) {
-                console.log(e);
-                session?.sendQueued(
-                    `$${e?.response?.data?.error ?? '出现未知错误'}$`
-                );
+                logger.extend('find').error(e);
+                session?.sendQueued('$出现未知错误$');
             }
         });
 }

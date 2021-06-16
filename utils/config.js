@@ -22,6 +22,7 @@ var Config = {
         { onebot: '994539654', name: 'KuNao' },
         { onebot: '1535650454', name: 'wuu' },
         { onebot: '1010089230', name: 'Sol' },
+        { onebot: '577047398', name: '满月' },
     ],
 };
 exports.default = Config;

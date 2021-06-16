@@ -47,6 +47,7 @@ module.exports.name = 'EventHandler';
 module.exports.apply = function (ctx) {
     var devCtx = CustomFunc_1.getDevCtx(ctx);
     var watchCtx = CustomFunc_1.getWatchCtx(ctx);
+    var logger = ctx.logger('EventHandler');
     ctx.once('before-connect', function () { return __awaiter(void 0, void 0, void 0, function () {
         var _i, _a, data;
         return __generator(this, function (_b) {
@@ -81,12 +82,17 @@ module.exports.apply = function (ctx) {
     }); });
     ctx.before('command', function (_a) {
         var session = _a.session, command = _a.command;
-        var author = session === null || session === void 0 ? void 0 : session.author;
-        if ((session === null || session === void 0 ? void 0 : session.subtype) === 'group') {
-            console.log('{%s} [%s] `%s` %s calls command `%s`', session === null || session === void 0 ? void 0 : session.channelId, author === null || author === void 0 ? void 0 : author.userId, author === null || author === void 0 ? void 0 : author.username, (author === null || author === void 0 ? void 0 : author.nickname) ? '(`' + (author === null || author === void 0 ? void 0 : author.nickname) + '`) ' : '', command === null || command === void 0 ? void 0 : command.name);
+        try {
+            var author = session === null || session === void 0 ? void 0 : session.author;
+            if ((session === null || session === void 0 ? void 0 : session.subtype) === 'group') {
+                console.log('{%s} [%s] `%s` %s calls command `%s`', session === null || session === void 0 ? void 0 : session.channelId, author === null || author === void 0 ? void 0 : author.userId, author === null || author === void 0 ? void 0 : author.username, (author === null || author === void 0 ? void 0 : author.nickname) ? '(`' + (author === null || author === void 0 ? void 0 : author.nickname) + '`) ' : '', command === null || command === void 0 ? void 0 : command.name);
+            }
+            else if ((session === null || session === void 0 ? void 0 : session.subtype) === 'private') {
+                console.log('{private} [%s] `%s` %s calls command `%s`', author === null || author === void 0 ? void 0 : author.userId, author === null || author === void 0 ? void 0 : author.username, (author === null || author === void 0 ? void 0 : author.nickname) ? '(`' + (author === null || author === void 0 ? void 0 : author.nickname) + '`) ' : '', command === null || command === void 0 ? void 0 : command.name);
+            }
         }
-        else if ((session === null || session === void 0 ? void 0 : session.subtype) === 'private') {
-            console.log('{private} [%s] `%s` %s calls command `%s`', author === null || author === void 0 ? void 0 : author.userId, author === null || author === void 0 ? void 0 : author.username, (author === null || author === void 0 ? void 0 : author.nickname) ? '(`' + (author === null || author === void 0 ? void 0 : author.nickname) + '`) ' : '', command === null || command === void 0 ? void 0 : command.name);
+        catch (e) {
+            logger.extend('before-command').error(e);
         }
     });
     watchCtx.on('group-member-request', function (session) { return __awaiter(void 0, void 0, void 0, function () {
@@ -97,9 +103,10 @@ module.exports.apply = function (ctx) {
                     answer = /答案：(.*?)$/.exec(session.content)[1];
                     groupId = session.groupId;
                     userId = session.userId;
-                    return [4, DDNetOrientedFunc_1.sendGMRReminder(session.bot, userId, groupId, answer)];
+                    return [4, DDNetOrientedFunc_1.sendGMRReminder(session.bot, userId, groupId, answer, ctx.logger('points'))];
                 case 1:
                     replyMessageId = _a.sent();
+                    if (!replyMessageId) return [3, 7];
                     set = {
                         userId: session.userId,
                         groupId: session.groupId,
@@ -116,7 +123,11 @@ module.exports.apply = function (ctx) {
                 case 5:
                     _a.sent();
                     _a.label = 6;
-                case 6: return [2];
+                case 6: return [3, 8];
+                case 7:
+                    session.send('$Event On GMR出现未知错误，请联系Mind处理$\n错误标号：points/getPoints');
+                    _a.label = 8;
+                case 8: return [2];
             }
         });
     }); });
@@ -144,20 +155,10 @@ module.exports.apply = function (ctx) {
         });
     }); });
     devCtx.on('message', function (session) { return __awaiter(void 0, void 0, void 0, function () {
-        var _a, _b;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
-                case 0:
-                    if (!(session.content === 'et')) return [3, 2];
-                    _b = (_a = console).log;
-                    return [4, ctx.database.getGMR('replyMessageId', {
-                            replyMessageId: '312',
-                        })];
-                case 1:
-                    _b.apply(_a, [_c.sent()]);
-                    _c.label = 2;
-                case 2: return [2];
+        return __generator(this, function (_a) {
+            if (session.content === 'et') {
             }
+            return [2];
         });
     }); });
 };

@@ -35,6 +35,7 @@ module.exports = {
         './modules/MessageHandler': {},
         './modules/UserManage': {},
     },
+    logTime: true,
     watch: {
         root: './*/*.js',
         ignore: ['node_modules'],

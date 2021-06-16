@@ -39,20 +39,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendGMRReminder = exports.ifExists = exports.getPoints = void 0;
+exports.sendGMRReminder = exports.getPoints = void 0;
 var axios_1 = __importDefault(require("axios"));
+var lodash_1 = __importDefault(require("lodash"));
 var config_1 = __importDefault(require("./config"));
-function getPoints(name) {
-    var _a, _b, _c;
+function getPoints(name, logger) {
+    var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function () {
-        var result, data, e_1;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
+        var result, data, favServer, e_1;
+        return __generator(this, function (_e) {
+            switch (_e.label) {
                 case 0:
                     result = name + "\n\n";
-                    _d.label = 1;
+                    _e.label = 1;
                 case 1:
-                    _d.trys.push([1, 3, , 4]);
+                    _e.trys.push([1, 3, , 4]);
                     return [4, axios_1.default("https://api.teeworlds.cn/ddnet/players/" + encodeURIComponent(name) + ".json", {
                             headers: {
                                 'accept-encoding': 'gzip, deflate',
@@ -60,12 +61,26 @@ function getPoints(name) {
                             },
                         })];
                 case 2:
-                    data = (_d.sent()).data;
-                    result += data.points.rank + ". with " + data.points.points + " points";
+                    data = (_e.sent()).data;
+                    if (data.player) {
+                        favServer = (_a = lodash_1.default.maxBy(lodash_1.default.toPairs(lodash_1.default.groupBy(data.last_finishes, 'country')), '1.length')) === null || _a === void 0 ? void 0 : _a[0];
+                        result += favServer + "\n" + data.points.rank + ". with " + data.points.points + " points";
+                    }
+                    else {
+                        result += 'Player Not Found';
+                    }
+                    result += 'n';
                     return [3, 4];
                 case 3:
-                    e_1 = _d.sent();
-                    result += (_c = (_b = (_a = e_1 === null || e_1 === void 0 ? void 0 : e_1.response) === null || _a === void 0 ? void 0 : _a.data) === null || _b === void 0 ? void 0 : _b.error) !== null && _c !== void 0 ? _c : '$出现未知错误';
+                    e_1 = _e.sent();
+                    if (e_1.response.status === 404) {
+                        result += (_d = (_c = (_b = e_1 === null || e_1 === void 0 ? void 0 : e_1.response) === null || _b === void 0 ? void 0 : _b.data) === null || _c === void 0 ? void 0 : _c.error) !== null && _d !== void 0 ? _d : '$出现未知错误$';
+                        result += 'e';
+                    }
+                    else {
+                        logger === null || logger === void 0 ? void 0 : logger.extend('getPoints').error(e_1);
+                        result = '?';
+                    }
                     return [3, 4];
                 case 4: return [2, result];
             }
@@ -73,55 +88,36 @@ function getPoints(name) {
     });
 }
 exports.getPoints = getPoints;
-function ifExists(name) {
+function sendGMRReminder(bot, userId, groupId, _answer, logger) {
     return __awaiter(this, void 0, void 0, function () {
-        var e_2;
+        var targetGroup, seperate, answer, pointsMessage, flag, newReplyMessageId;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    _a.trys.push([0, 2, , 3]);
-                    return [4, axios_1.default("https://api.teeworlds.cn/ddnet/players/" + encodeURIComponent(name) + ".json", {
-                            headers: {
-                                'accept-encoding': 'gzip, deflate',
-                                decompress: true,
-                            },
-                        })];
-                case 1:
-                    _a.sent();
-                    return [2, true];
-                case 2:
-                    e_2 = _a.sent();
-                    return [2, false];
-                case 3: return [2];
-            }
-        });
-    });
-}
-exports.ifExists = ifExists;
-function sendGMRReminder(bot, userId, groupId, answer) {
-    return __awaiter(this, void 0, void 0, function () {
-        var targetGroup, seperate, newReplyMessageId, _a, _b, _c, _d, _e;
-        return __generator(this, function (_f) {
-            switch (_f.label) {
                 case 0: return [4, bot.getGroup(groupId)];
                 case 1:
-                    targetGroup = _f.sent();
+                    targetGroup = _a.sent();
                     seperate = '-'.repeat(30);
-                    _b = (_a = bot).sendGroupMessage;
-                    _c = [config_1.default.motGroup];
-                    _d = "$\u6536\u5230\u5165\u7FA4\u7533\u8BF7$\n\n\u7533\u8BF7\u4EBA\uFF1A" + userId + "\n\n\u76EE\u6807\u7FA4\uFF1A" + targetGroup.groupId + "\n" + targetGroup.groupName + "\n\n" + seperate + "\n";
-                    if (!answer) return [3, 3];
-                    return [4, getPoints(answer)];
+                    answer = _answer !== '' ? _answer : userId;
+                    return [4, getPoints(answer, logger)];
                 case 2:
-                    _e = _f.sent();
-                    return [3, 4];
+                    pointsMessage = _a.sent();
+                    flag = pointsMessage.slice(-1);
+                    if (!(flag !== '?')) return [3, 4];
+                    return [4, bot.sendGroupMessage(config_1.default.motGroup, "$\u6536\u5230\u5165\u7FA4\u7533\u8BF7$\n\n\u7533\u8BF7\u4EBA\uFF1A" + userId + "\n\n\u76EE\u6807\u7FA4\uFF1A" + targetGroup.groupId + "\n" + targetGroup.groupName + "\n\n" + seperate + "\n" + (_answer === '' ? '$用户未提供答案，使用QQ号查询分数$\n' : '') + pointsMessage.slice(0, -1) + "\n" + seperate + "\n\n\u56DE\u590D\u6B64\u6D88\u606F\u4EE5\u5904\u7406\u5165\u7FA4\u7533\u8BF7\n\uFF08y/n/n [reason...]/i=\u5FFD\u7565\uFF09")];
                 case 3:
-                    _e = userId;
-                    _f.label = 4;
-                case 4: return [4, _b.apply(_a, _c.concat([_d + (_e) + "\n" + seperate + "\n\n\u56DE\u590D\u6B64\u6D88\u606F\u4EE5\u5904\u7406\u5165\u7FA4\u7533\u8BF7\n\uFF08y/n/n [reason...]/i=\u5FFD\u7565\uFF09"]))];
-                case 5:
-                    newReplyMessageId = _f.sent();
+                    newReplyMessageId = _a.sent();
+                    if (flag === 'e') {
+                        bot.createSession({
+                            type: 'send',
+                            subtype: 'group',
+                            platform: 'onebot',
+                            selfId: config_1.default.developer.onebot,
+                            groupId: config_1.default.motGroup,
+                            channelId: config_1.default.motGroup,
+                        }).execute("find " + answer);
+                    }
                     return [2, newReplyMessageId];
+                case 4: return [2];
             }
         });
     });

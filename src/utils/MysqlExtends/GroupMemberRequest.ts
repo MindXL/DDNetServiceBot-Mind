@@ -8,7 +8,6 @@ import {
     TableType,
     difference,
     intersection,
-    contain,
 } from 'koishi-core';
 
 interface ReplyGroupMemberRequest {

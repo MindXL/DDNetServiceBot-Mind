@@ -7,11 +7,14 @@
   "author": "MindXL <1634300602@qq.com>",
   "license": "MIT",
   "scripts": {
-    "dump": "mysqldump -uroot -p -B koishi > /home/centos/Projects/Koishi/DDNetServiceBot-Mind/src/sql/koishi.sql",
-    "^mysql_dbcreate": "source /home/centos/Projects/Koishi/DDNetServiceBot-Mind/src/_koishi.sql;",
-    "^mysql_tables": "source /home/centos/Projects/Koishi/DDNetServiceBot-Mind/src/sql/koishiTables.sql;"
+    "dump": "mysqldump -uroot -p -B koishi > /home/centos/Projects/Koishi/DDNetServiceBot-Mind/static/sql/koishi.sql",
+    "^mysql_dbcreate": "source /home/centos/Projects/Koishi/DDNetServiceBot-Mind/static/_koishi.sql;",
+    "mysql_dbdumpupdate": "mysqldump -uroot -p -B -d _koishi > /home/centos/Projects/Koishi/DDNetServiceBot-Mind/static/sql/koishi_update.sql",
+    "^mysql_dbupdate": "source /home/centos/Projects/Koishi/DDNetServiceBot-Mind/static/sql/koishi.sql",
+    "^mysql_tables": "source /home/centos/Projects/Koishi/DDNetServiceBot-Mind/static/sql/koishiTables.sql;"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.170",
     "koishi": "^3.10.0",
     "typescript": "^4.2.4"
   },
@@ -19,6 +22,7 @@
     "axios": "^0.21.1",
     "koishi-adapter-onebot": "^3.0.8",
     "koishi-plugin-common": "^4.2.4",
-    "koishi-plugin-mysql": "^3.3.2"
+    "koishi-plugin-mysql": "^3.3.2",
+    "lodash": "^4.17.21"
   }
 }

@@ -11,6 +11,8 @@ module.exports.apply = (ctx: Context) => {
     const devCtx = getDevCtx(ctx);
     const watchCtx = getWatchCtx(ctx);
 
+    const logger = ctx.logger('EventHandler');
+
     ctx.once('before-connect', async () => {
         if (
             (await ctx.database.getModerator(
@@ -36,25 +38,29 @@ module.exports.apply = (ctx: Context) => {
     });
 
     ctx.before('command', ({ session, command }) => {
-        const author = session?.author;
+        try {
+            const author = session?.author;
 
-        if (session?.subtype === 'group') {
-            console.log(
-                '{%s} [%s] `%s` %s calls command `%s`',
-                session?.channelId,
-                author?.userId,
-                author?.username,
-                author?.nickname ? '(`' + author?.nickname + '`) ' : '',
-                command?.name
-            );
-        } else if (session?.subtype === 'private') {
-            console.log(
-                '{private} [%s] `%s` %s calls command `%s`',
-                author?.userId,
-                author?.username,
-                author?.nickname ? '(`' + author?.nickname + '`) ' : '',
-                command?.name
-            );
+            if (session?.subtype === 'group') {
+                console.log(
+                    '{%s} [%s] `%s` %s calls command `%s`',
+                    session?.channelId,
+                    author?.userId,
+                    author?.username,
+                    author?.nickname ? '(`' + author?.nickname + '`) ' : '',
+                    command?.name
+                );
+            } else if (session?.subtype === 'private') {
+                console.log(
+                    '{private} [%s] `%s` %s calls command `%s`',
+                    author?.userId,
+                    author?.username,
+                    author?.nickname ? '(`' + author?.nickname + '`) ' : '',
+                    command?.name
+                );
+            }
+        } catch (e) {
+            logger.extend('before-command').error(e);
         }
     });
 
@@ -86,17 +92,30 @@ module.exports.apply = (ctx: Context) => {
             session.bot,
             userId,
             groupId,
-            answer
+            answer,
+            ctx.logger('points')
         );
 
-        const set = {
-            userId: session.userId!,
-            groupId: session.groupId!,
-            channelId: session.channelId!,
-        };
-        if ((await ctx.database.getGMR('union', set)) === undefined)
-            await ctx.database.createGMR(session, replyMessageId);
-        else await ctx.database.setGMR('union', set, session, replyMessageId);
+        if (replyMessageId) {
+            const set = {
+                userId: session.userId!,
+                groupId: session.groupId!,
+                channelId: session.channelId!,
+            };
+            if ((await ctx.database.getGMR('union', set)) === undefined)
+                await ctx.database.createGMR(session, replyMessageId);
+            else
+                await ctx.database.setGMR(
+                    'union',
+                    set,
+                    session,
+                    replyMessageId
+                );
+        } else {
+            session.send(
+                '$Event On GMR出现未知错误，请联系Mind处理$\n错误标号：points/getPoints'
+            );
+        }
     });
 
     watchCtx.on('group-member-deleted', async (session) => {
@@ -132,12 +151,15 @@ module.exports.apply = (ctx: Context) => {
 
     devCtx.on('message', async (session) => {
         if (session.content === 'et') {
-            // session.send('EventTest');
-            console.log(
-                await ctx.database.getGMR('replyMessageId', {
-                    replyMessageId: '312',
-                })
-            );
+            // const _session = session.bot.createSession({
+            //     type: 'send',
+            //     subtype: 'group',
+            //     platform: 'onebot',
+            //     selfId: Config.developer.onebot,
+            //     groupId: Config.motGroup,
+            //     channelId: Config.motGroup,
+            // });
+            // _session.execute('find ${answer}');
         }
     });
 };
