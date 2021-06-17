@@ -1,6 +1,6 @@
 const Config = {
     // official
-    // mysqlDB: 'koishi',
+    mysqlDB: 'koishi',
     selfId: '1718209151',
     modGroup: '1135333664',
     motGroup: '1135333664',
@@ -31,6 +31,7 @@ const Config = {
         { onebot: '994539654', name: 'KuNao' },
         { onebot: '1535650454', name: 'wuu' },
         { onebot: '1010089230', name: 'Sol' },
+        { onebot: '577047398', name: '满月' },
     ],
 };
 export default Config;

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Config = {
+    mysqlDB: 'koishi',
     selfId: '1718209151',
     modGroup: '1135333664',
     motGroup: '1135333664',
@@ -21,6 +22,7 @@ var Config = {
         { onebot: '994539654', name: 'KuNao' },
         { onebot: '1535650454', name: 'wuu' },
         { onebot: '1010089230', name: 'Sol' },
+        { onebot: '577047398', name: '满月' },
     ],
 };
 exports.default = Config;
