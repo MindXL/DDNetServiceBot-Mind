@@ -144,20 +144,10 @@ module.exports.apply = function (ctx) {
         });
     }); });
     devCtx.on('message', function (session) { return __awaiter(void 0, void 0, void 0, function () {
-        var _a, _b;
-        return __generator(this, function (_c) {
-            switch (_c.label) {
-                case 0:
-                    if (!(session.content === 'et')) return [3, 2];
-                    _b = (_a = console).log;
-                    return [4, ctx.database.getGMR('replyMessageId', {
-                            replyMessageId: '312',
-                        })];
-                case 1:
-                    _b.apply(_a, [_c.sent()]);
-                    _c.label = 2;
-                case 2: return [2];
+        return __generator(this, function (_a) {
+            if (session.content === 'et') {
             }
+            return [2];
         });
     }); });
 };

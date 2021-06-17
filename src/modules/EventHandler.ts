@@ -133,12 +133,15 @@ module.exports.apply = (ctx: Context) => {
 
     devCtx.on('message', async (session) => {
         if (session.content === 'et') {
-            // session.send('EventTest');
-            console.log(
-                await ctx.database.getGMR('replyMessageId', {
-                    replyMessageId: '312',
-                })
-            );
+            // const _session = session.bot.createSession({
+            //     type: 'send',
+            //     subtype: 'group',
+            //     platform: 'onebot',
+            //     selfId: Config.developer.onebot,
+            //     groupId: Config.motGroup,
+            //     channelId: Config.motGroup,
+            // });
+            // _session.execute('find ${answer}');
         }
     });
 };

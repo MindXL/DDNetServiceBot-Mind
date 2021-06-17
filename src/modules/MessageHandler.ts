@@ -141,7 +141,7 @@ function handleGMR(ctx: Context) {
                 'authority',
             ])
         )?.authority;
-        if (modAuthority && modAuthority < 3) {
+        if (!modAuthority || modAuthority < 3) {
             session.send(
                 s('at', { id: session.userId! }) +
                     '是新管理员吗？\n是的话请联系' +

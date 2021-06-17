@@ -208,7 +208,7 @@ function gmr(ctx: Context) {
 function spot(ctx: Context) {
     const logger = ctx.logger('Command').extend('spot');
 
-    ctx.command('spot', '（Seek-Locate-Destroy）', { authority: 3 });
+    ctx.command('spot', '（Seek-Locate-Destroy）');
 
     ctx.command('spot/client', '查看client信息').action(async ({ session }) => {
         session?.send(

@@ -94,7 +94,7 @@ function handleGMR(ctx) {
                         ])];
                 case 2:
                     modAuthority = (_a = (_c.sent())) === null || _a === void 0 ? void 0 : _a.authority;
-                    if (modAuthority && modAuthority < 3) {
+                    if (!modAuthority || modAuthority < 3) {
                         session.send(koishi_1.s('at', { id: session.userId }) +
                             '是新管理员吗？\n是的话请联系' +
                             koishi_1.s('at', { id: config_1.default.developer.onebot }) +

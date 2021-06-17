@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendGMRReminder = exports.getPoints = void 0;
+exports.sendGMRReminder = exports.sendMotQueued = exports.getPoints = void 0;
 var axios_1 = __importDefault(require("axios"));
 var lodash_1 = __importDefault(require("lodash"));
 var config_1 = __importDefault(require("./config"));
@@ -69,13 +69,18 @@ function getPoints(name, logger) {
                     else {
                         result += 'Player Not Found';
                     }
+                    result += 'n';
                     return [3, 4];
                 case 3:
                     e_1 = _e.sent();
-                    if (e_1.response.status === 404)
+                    if (e_1.response.status === 404) {
                         result += (_d = (_c = (_b = e_1 === null || e_1 === void 0 ? void 0 : e_1.response) === null || _b === void 0 ? void 0 : _b.data) === null || _c === void 0 ? void 0 : _c.error) !== null && _d !== void 0 ? _d : '$出现未知错误$';
-                    else
+                        result += 'e';
+                    }
+                    else {
                         logger === null || logger === void 0 ? void 0 : logger.extend('getPoints').error(e_1);
+                        result = '?';
+                    }
                     return [3, 4];
                 case 4: return [2, result];
             }
@@ -83,29 +88,39 @@ function getPoints(name, logger) {
     });
 }
 exports.getPoints = getPoints;
-function sendGMRReminder(bot, userId, groupId, answer, logger) {
+function sendMotQueued(content) {
+    return __awaiter(this, void 0, void 0, function () { return __generator(this, function (_a) {
+        return [2];
+    }); });
+}
+exports.sendMotQueued = sendMotQueued;
+function sendGMRReminder(bot, userId, groupId, _answer, logger) {
     return __awaiter(this, void 0, void 0, function () {
-        var targetGroup, seperate, newReplyMessageId, _a, _b, _c, _d, _e;
-        return __generator(this, function (_f) {
-            switch (_f.label) {
+        var targetGroup, seperate, answer, pointsMessage, newReplyMessageId, flag;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
                 case 0: return [4, bot.getGroup(groupId)];
                 case 1:
-                    targetGroup = _f.sent();
+                    targetGroup = _a.sent();
                     seperate = '-'.repeat(30);
-                    _b = (_a = bot).sendGroupMessage;
-                    _c = [config_1.default.motGroup];
-                    _d = "$\u6536\u5230\u5165\u7FA4\u7533\u8BF7$\n\n\u7533\u8BF7\u4EBA\uFF1A" + userId + "\n\n\u76EE\u6807\u7FA4\uFF1A" + targetGroup.groupId + "\n" + targetGroup.groupName + "\n\n" + seperate + "\n";
-                    if (!answer) return [3, 3];
+                    answer = _answer !== '' ? _answer : userId;
                     return [4, getPoints(answer, logger)];
                 case 2:
-                    _e = _f.sent();
-                    return [3, 4];
+                    pointsMessage = _a.sent();
+                    return [4, bot.sendGroupMessage(config_1.default.motGroup, "$\u6536\u5230\u5165\u7FA4\u7533\u8BF7$\n\n\u7533\u8BF7\u4EBA\uFF1A" + userId + "\n\n\u76EE\u6807\u7FA4\uFF1A" + targetGroup.groupId + "\n" + targetGroup.groupName + "\n\n" + seperate + "\n" + (_answer === '' ? '$用户未提供答案，使用QQ号查询分数$\n' : '') + pointsMessage.slice(0, -1) + "\n" + seperate + "\n\n\u56DE\u590D\u6B64\u6D88\u606F\u4EE5\u5904\u7406\u5165\u7FA4\u7533\u8BF7\n\uFF08y/n/n [reason...]/i=\u5FFD\u7565\uFF09")];
                 case 3:
-                    _e = userId;
-                    _f.label = 4;
-                case 4: return [4, _b.apply(_a, _c.concat([_d + (_e) + "\n" + seperate + "\n\n\u56DE\u590D\u6B64\u6D88\u606F\u4EE5\u5904\u7406\u5165\u7FA4\u7533\u8BF7\n\uFF08y/n/n [reason...]/i=\u5FFD\u7565\uFF09"]))];
-                case 5:
-                    newReplyMessageId = _f.sent();
+                    newReplyMessageId = _a.sent();
+                    flag = pointsMessage.slice(-1);
+                    if (flag === 'e') {
+                        bot.createSession({
+                            type: 'send',
+                            subtype: 'group',
+                            platform: 'onebot',
+                            selfId: config_1.default.developer.onebot,
+                            groupId: config_1.default.motGroup,
+                            channelId: config_1.default.motGroup,
+                        }).execute("find " + answer);
+                    }
                     return [2, newReplyMessageId];
             }
         });

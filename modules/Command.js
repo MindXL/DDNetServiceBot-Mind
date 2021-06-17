@@ -325,7 +325,7 @@ function gmr(ctx) {
 function spot(ctx) {
     var _this = this;
     var logger = ctx.logger('Command').extend('spot');
-    ctx.command('spot', '（Seek-Locate-Destroy）', { authority: 3 });
+    ctx.command('spot', '（Seek-Locate-Destroy）');
     ctx.command('spot/client', '查看client信息').action(function (_a) {
         var session = _a.session;
         return __awaiter(_this, void 0, void 0, function () {
