@@ -1,6 +1,6 @@
 const Config = {
     // official
-    mysqlDB: 'koishi',
+    // mysqlDB: 'koishi',
     selfId: '1718209151',
     modGroup: '1135333664',
     motGroup: '1135333664',

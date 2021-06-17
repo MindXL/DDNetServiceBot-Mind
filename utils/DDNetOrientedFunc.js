@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendGMRReminder = exports.sendMotQueued = exports.getPoints = void 0;
+exports.sendGMRReminder = exports.getPoints = void 0;
 var axios_1 = __importDefault(require("axios"));
 var lodash_1 = __importDefault(require("lodash"));
 var config_1 = __importDefault(require("./config"));
@@ -88,15 +88,9 @@ function getPoints(name, logger) {
     });
 }
 exports.getPoints = getPoints;
-function sendMotQueued(content) {
-    return __awaiter(this, void 0, void 0, function () { return __generator(this, function (_a) {
-        return [2];
-    }); });
-}
-exports.sendMotQueued = sendMotQueued;
 function sendGMRReminder(bot, userId, groupId, _answer, logger) {
     return __awaiter(this, void 0, void 0, function () {
-        var targetGroup, seperate, answer, pointsMessage, newReplyMessageId, flag;
+        var targetGroup, seperate, answer, pointsMessage, flag, newReplyMessageId;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4, bot.getGroup(groupId)];
@@ -107,10 +101,11 @@ function sendGMRReminder(bot, userId, groupId, _answer, logger) {
                     return [4, getPoints(answer, logger)];
                 case 2:
                     pointsMessage = _a.sent();
+                    flag = pointsMessage.slice(-1);
+                    if (!(flag !== '?')) return [3, 4];
                     return [4, bot.sendGroupMessage(config_1.default.motGroup, "$\u6536\u5230\u5165\u7FA4\u7533\u8BF7$\n\n\u7533\u8BF7\u4EBA\uFF1A" + userId + "\n\n\u76EE\u6807\u7FA4\uFF1A" + targetGroup.groupId + "\n" + targetGroup.groupName + "\n\n" + seperate + "\n" + (_answer === '' ? '$用户未提供答案，使用QQ号查询分数$\n' : '') + pointsMessage.slice(0, -1) + "\n" + seperate + "\n\n\u56DE\u590D\u6B64\u6D88\u606F\u4EE5\u5904\u7406\u5165\u7FA4\u7533\u8BF7\n\uFF08y/n/n [reason...]/i=\u5FFD\u7565\uFF09")];
                 case 3:
                     newReplyMessageId = _a.sent();
-                    flag = pointsMessage.slice(-1);
                     if (flag === 'e') {
                         bot.createSession({
                             type: 'send',
@@ -122,6 +117,7 @@ function sendGMRReminder(bot, userId, groupId, _answer, logger) {
                         }).execute("find " + answer);
                     }
                     return [2, newReplyMessageId];
+                case 4: return [2];
             }
         });
     });

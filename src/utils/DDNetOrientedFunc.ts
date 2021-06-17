@@ -5,7 +5,6 @@ import _ from 'lodash';
 
 import Config from './config';
 import { PointsData } from './TsFreddieAPIInterface';
-import { Session } from 'koishi';
 
 export async function getPoints(name: string, logger: Logger): Promise<string> {
     let result = `${name}\n\n`;
@@ -113,46 +112,46 @@ export async function getPoints(name: string, logger: Logger): Promise<string> {
 //     }
 // }
 
-export async function sendMotQueued(content: string): Promise<void> {}
-
 export async function sendGMRReminder(
     bot: CQBot,
     userId: string,
     groupId: string,
     _answer: string,
     logger: Logger
-): Promise<string> {
+): Promise<string | undefined> {
     const targetGroup = await bot.getGroup(groupId);
     const seperate = '-'.repeat(30);
 
     const answer = _answer !== '' ? _answer : userId;
     const pointsMessage = await getPoints(answer, logger);
 
-    const newReplyMessageId = await bot.sendGroupMessage(
-        Config.motGroup,
-        `$收到入群申请$\n\n申请人：${userId}\n\n目标群：${
-            targetGroup.groupId
-        }\n${targetGroup.groupName}\n\n${seperate}\n${
-            _answer === '' ? '$用户未提供答案，使用QQ号查询分数$\n' : ''
-        }${pointsMessage.slice(
-            0,
-            -1
-        )}\n${seperate}\n\n回复此消息以处理入群申请\n（y/n/n [reason...]/i=忽略）`
-    );
-
     const flag = pointsMessage.slice(-1);
-    if (flag === 'e') {
-        bot.createSession({
-            type: 'send',
-            subtype: 'group',
-            platform: 'onebot',
-            selfId: Config.developer.onebot,
-            groupId: Config.motGroup,
-            channelId: Config.motGroup,
-        }).execute(`find ${answer}`);
-    }
-    // else if (flag === 'n') {}
-    // else if (flag === '?') {}
+    if (flag !== '?') {
+        const newReplyMessageId = await bot.sendGroupMessage(
+            Config.motGroup,
+            `$收到入群申请$\n\n申请人：${userId}\n\n目标群：${
+                targetGroup.groupId
+            }\n${targetGroup.groupName}\n\n${seperate}\n${
+                _answer === '' ? '$用户未提供答案，使用QQ号查询分数$\n' : ''
+            }${pointsMessage.slice(
+                0,
+                -1
+            )}\n${seperate}\n\n回复此消息以处理入群申请\n（y/n/n [reason...]/i=忽略）`
+        );
 
-    return newReplyMessageId;
+        if (flag === 'e') {
+            bot.createSession({
+                type: 'send',
+                subtype: 'group',
+                platform: 'onebot',
+                selfId: Config.developer.onebot,
+                groupId: Config.motGroup,
+                channelId: Config.motGroup,
+            }).execute(`find ${answer}`);
+        }
+
+        return newReplyMessageId;
+    } else {
+        return;
+    }
 }
