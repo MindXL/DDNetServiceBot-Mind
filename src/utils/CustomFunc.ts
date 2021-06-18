@@ -1,4 +1,4 @@
-import { s, Context, Session } from 'koishi-core';
+import { Context, Session } from 'koishi';
 
 import Config from './config';
 
@@ -12,10 +12,6 @@ export function ifInGroups(groupId: string, groupIds: string[]): boolean {
         }
     }
     return flag;
-}
-
-export function sf(type: string, data: s.Data): s.Parsed {
-    return s.from(s(type, data));
 }
 
 export function autoAssign(session: Session): boolean {
@@ -52,4 +48,12 @@ export function getMotCtx(ctx: Context): Context {
 
 export function getWatchCtx(ctx: Context): Context {
     return ctx.group(...Config.watchGroups).union(getDevCtx(ctx));
+}
+
+// export function sf(type: string, data: s.Data): s.Parsed {
+//     return s.from(s(type, data));
+// }
+
+export function byteLenth(str: string): number {
+    return Buffer.from(str, 'utf-8').length;
 }

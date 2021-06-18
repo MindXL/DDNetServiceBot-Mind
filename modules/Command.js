@@ -39,9 +39,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var koishi_core_1 = require("koishi-core");
+var koishi_1 = require("koishi");
 var path_1 = require("path");
-var axios_1 = __importDefault(require("axios"));
 var config_1 = __importDefault(require("../utils/config"));
 var CustomFunc_1 = require("../utils/CustomFunc");
 var DDNetOrientedFunc_1 = require("../utils/DDNetOrientedFunc");
@@ -56,38 +55,11 @@ module.exports.apply = function (ctx) {
     motCtx.plugin(points);
     motCtx.plugin(gmr);
     motCtx.plugin(spot);
-    devCtx.command('cdelete').action(function (_a) {
-        var session = _a.session;
-        return __awaiter(void 0, void 0, void 0, function () {
-            var channelId, mId;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        channelId = session === null || session === void 0 ? void 0 : session.channelId;
-                        return [4, (session === null || session === void 0 ? void 0 : session.bot.sendMessage(channelId, 'pre'))];
-                    case 1:
-                        mId = (_b.sent());
-                        return [4, koishi_core_1.sleep(4 * koishi_core_1.Time.minute)];
-                    case 2:
-                        _b.sent();
-                        session === null || session === void 0 ? void 0 : session.bot.deleteMessage(channelId, mId);
-                        return [2];
-                }
-            });
-        });
-    });
-    devCtx.command('ct').action(function (_a) {
-        var session = _a.session;
-        return __awaiter(void 0, void 0, void 0, function () {
-            return __generator(this, function (_b) {
-                return [2];
-            });
-        });
-    });
+    devCtx.plugin(cTest);
 };
 function eco(ctx) {
     var _this = this;
-    ctx.command('eco <message:text>', '输出收到的信息', { authority: 1 })
+    ctx.command('echo <message:text>', '输出收到的信息', { authority: 1 })
         .option('encode', '-e 输出编码（encode）后的信息')
         .option('decode', '-d 输出解码（decode）后的信息')
         .option('timeout', '-t [seconds:number] 设定延迟发送的时间')
@@ -112,7 +84,7 @@ function eco(ctx) {
                 switch (_b.label) {
                     case 0:
                         if (!(options === null || options === void 0 ? void 0 : options.timeout)) return [3, 2];
-                        return [4, koishi_core_1.sleep(options.timeout * koishi_core_1.Time.second)];
+                        return [4, koishi_1.sleep(options.timeout * koishi_1.Time.second)];
                     case 1:
                         _b.sent();
                         _b.label = 2;
@@ -146,11 +118,12 @@ function reg(ctx) {
 }
 function newmod(ctx) {
     var _this = this;
-    ctx.command('newmod <mod:user> <name:string>', '注册新管理员', {
+    ctx.command('newmod <mod:user> <name:text>', '注册新管理员', {
         authority: 4,
     })
         .usage('注意：昵称一定要使用单引号包裹！\n')
         .example("newmod @Mind 'Mind'\n此处的@Mind不是一串文本")
+        .check(function (_, name) { return DDNetOrientedFunc_1.commandCheckUserName(name); })
         .action(function (_a, mod, name) {
         var session = _a.session;
         return __awaiter(_this, void 0, void 0, function () {
@@ -159,7 +132,7 @@ function newmod(ctx) {
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
-                        atSender = koishi_core_1.s('at', { id: session === null || session === void 0 ? void 0 : session.userId });
+                        atSender = koishi_1.s('at', { id: session === null || session === void 0 ? void 0 : session.userId });
                         onebot = (_c = (_b = /onebot:(?<onebot>\d+)/.exec(mod)) === null || _b === void 0 ? void 0 : _b.groups) === null || _c === void 0 ? void 0 : _c.onebot;
                         if (onebot === undefined ||
                             onebot === (session === null || session === void 0 ? void 0 : session.selfId) ||
@@ -203,7 +176,7 @@ function newmod(ctx) {
                         ctx.database.createModerator({ onebot: onebot, name: name });
                         _d.label = 6;
                     case 6:
-                        session === null || session === void 0 ? void 0 : session.send("\u6CE8\u518C\u6210\u529F\uFF01\n\u6B22\u8FCE\u4F60\uFF0C" + koishi_core_1.s('at', { id: onebot }) + "\uFF01");
+                        session === null || session === void 0 ? void 0 : session.send("\u6CE8\u518C\u6210\u529F\uFF01\n\u6B22\u8FCE\u4F60\uFF0C" + koishi_1.s('at', { id: onebot }) + "\uFF01");
                         return [2];
                 }
             });
@@ -229,36 +202,37 @@ function recall(ctx, _a) {
         var session = _a.session;
         if (count === void 0) { count = 1; }
         return __awaiter(_this, void 0, void 0, function () {
-            var list, removal, delay, index, error_1;
+            var channelId, list, removal, delay, index, error_1;
             var _b, _c;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
-                        list = recent[session === null || session === void 0 ? void 0 : session.channelId];
+                        channelId = session === null || session === void 0 ? void 0 : session.channelId;
+                        list = recent[channelId];
                         if (!list)
                             return [2, '近期没有发送消息。'];
                         removal = list.splice(0, count);
                         delay = (_c = (_b = ctx.app) === null || _b === void 0 ? void 0 : _b.options.delay) === null || _c === void 0 ? void 0 : _c.broadcast;
                         if (!list.length)
-                            delete recent[session === null || session === void 0 ? void 0 : session.channelId];
+                            delete recent[channelId];
                         index = 0;
                         _d.label = 1;
                     case 1:
                         if (!(index < removal.length)) return [3, 7];
                         if (!(index && delay)) return [3, 3];
-                        return [4, koishi_core_1.sleep(delay)];
+                        return [4, koishi_1.sleep(delay)];
                     case 2:
                         _d.sent();
                         _d.label = 3;
                     case 3:
                         _d.trys.push([3, 5, , 6]);
-                        return [4, (session === null || session === void 0 ? void 0 : session.bot.deleteMessage(session === null || session === void 0 ? void 0 : session.channelId, removal[index]))];
+                        return [4, (session === null || session === void 0 ? void 0 : session.bot.deleteMessage(channelId, removal[index]))];
                     case 4:
                         _d.sent();
                         return [3, 6];
                     case 5:
                         error_1 = _d.sent();
-                        ctx.logger('bot').warn(error_1);
+                        ctx.logger('Command').extend('recall').warn(error_1);
                         return [3, 6];
                     case 6:
                         index++;
@@ -271,7 +245,9 @@ function recall(ctx, _a) {
 }
 function points(ctx) {
     var _this = this;
-    ctx.command('points [name:text]', '查询ddr分数', { authority: 3 }).action(function (_a, name) {
+    ctx.command('points [name:text]', '查询ddr分数', { authority: 3 })
+        .check(function (_, name) { return DDNetOrientedFunc_1.commandCheckUserName(name); })
+        .action(function (_a, name) {
         var session = _a.session;
         return __awaiter(_this, void 0, void 0, function () {
             var _b, _c;
@@ -279,7 +255,7 @@ function points(ctx) {
                 switch (_d.label) {
                     case 0: return [4, DDNetOrientedFunc_1.getPoints(name !== null && name !== void 0 ? name : (((_b = session === null || session === void 0 ? void 0 : session.author) === null || _b === void 0 ? void 0 : _b.nickname) !== ''
                             ? (_c = session === null || session === void 0 ? void 0 : session.author) === null || _c === void 0 ? void 0 : _c.nickname
-                            : session === null || session === void 0 ? void 0 : session.username), ctx.logger('points'))];
+                            : session === null || session === void 0 ? void 0 : session.username), ctx.logger('Command').extend('points'))];
                     case 1: return [2, _d.sent()];
                 }
             });
@@ -306,7 +282,7 @@ function gmr(ctx) {
                     case 2:
                         if (!(_i < gmrs_1.length)) return [3, 6];
                         gmr_1 = gmrs_1[_i];
-                        return [4, DDNetOrientedFunc_1.sendGMRReminder(session.bot, gmr_1.userId, gmr_1.groupId, gmr_1.content, ctx.logger('points'))];
+                        return [4, DDNetOrientedFunc_1.sendGMRReminder(session.bot, gmr_1.userId, gmr_1.groupId, gmr_1.content, ctx.logger('Command').extend('gmr'))];
                     case 3:
                         newReplyMessageId = _b.sent();
                         return [4, ctx.database.updateGMR(gmr_1.messageId, newReplyMessageId)];
@@ -325,148 +301,38 @@ function gmr(ctx) {
 function spot(ctx) {
     var _this = this;
     var logger = ctx.logger('Command').extend('spot');
-    ctx.command('spot', '（Seek-Locate-Destroy）');
-    ctx.command('spot/client', '查看client信息').action(function (_a) {
+    var spot = ctx.command('spot', '（Seek-Locate-Destroy）');
+    spot.subcommand('client', '查看client信息').action(function (_a) {
         var session = _a.session;
         return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_b) {
-                session === null || session === void 0 ? void 0 : session.send(koishi_core_1.s('image', {
+                session === null || session === void 0 ? void 0 : session.send(koishi_1.s('image', {
                     file: 'file://' + path_1.resolve(__dirname, '../static/client.jpg'),
                 }));
                 return [2];
             });
         });
     });
-    ctx.command('spot/find <name:text>', '查找在线状态')
-        .option('noDetail', '-nd')
+    spot.subcommand('find <name:text>', '查找在线状态')
+        .option('noDetail', '-n')
+        .check(function (_, name) { return DDNetOrientedFunc_1.commandCheckUserName(name); })
         .action(function (_a, name) {
         var session = _a.session, options = _a.options;
         return __awaiter(_this, void 0, void 0, function () {
-            var atSender, _result, result, toFind, data, players, player, server, lenth, seperate, i, j, countCN, player, reply, server, reply, e_1;
-            var _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        atSender = koishi_core_1.s('at', { id: session === null || session === void 0 ? void 0 : session.userId });
-                        if (name === undefined) {
-                            session === null || session === void 0 ? void 0 : session.sendQueued(atSender + 'find指令缺少参数name');
-                            return [2];
-                        }
-                        _result = name + "\n\n";
-                        result = _result;
-                        toFind = 'as:cn';
-                        _c.label = 1;
-                    case 1:
-                        _c.trys.push([1, 13, , 14]);
-                        return [4, axios_1.default("https://api.teeworlds.cn/servers/players?name=" + name + "&detail=" + (((_b = options === null || options === void 0 ? void 0 : options.noDetail) !== null && _b !== void 0 ? _b : false) ? 'false' : 'true'), {
-                                headers: {
-                                    'accept-encoding': 'gzip',
-                                },
-                            })];
-                    case 2:
-                        data = (_c.sent()).data;
-                        players = data.players;
-                        if (!(players.length === 0)) return [3, 3];
-                        result += '该玩家目前不在线';
-                        session === null || session === void 0 ? void 0 : session.sendQueued(result);
-                        return [3, 12];
-                    case 3:
-                        if (!(players.length === 1)) return [3, 4];
-                        player = players[0];
-                        server = player.server;
-                        result += (player.clan === ''
-                            ? '(no clan)'
-                            : 'clan：' + player.clan) + "\n\u4F4D\u4E8E" + server.locale + "\u670D\u52A1\u5668\uFF1A\n" + server.name + "\nmap\uFF1A" + server.map;
-                        session === null || session === void 0 ? void 0 : session.sendQueued(result);
-                        return [3, 12];
-                    case 4:
-                        lenth = players.length;
-                        seperate = '-'.repeat(30);
-                        i = 0, j = 0, countCN = 0;
-                        _c.label = 5;
-                    case 5:
-                        if (!(i < lenth && j <= lenth)) return [3, 11];
-                        while (j < lenth && players[j].server.locale !== toFind)
-                            j++;
-                        player = undefined;
-                        if (!(i === 0)) return [3, 8];
-                        if (!(j < lenth)) return [3, 6];
-                        if (countCN === 0)
-                            session === null || session === void 0 ? void 0 : session.sendQueued(atSender +
-                                ("\u67E5\u627E\u5230" + lenth + "\u4F4D\u73A9\u5BB6\uFF0C\u9996\u4F4D\u5982\u4E0B\uFF1A"));
-                        countCN++;
-                        player = players[j];
-                        j++;
-                        i--;
-                        return [3, 8];
-                    case 6:
-                        if (countCN) {
-                            if (lenth - countCN > 0)
-                                session === null || session === void 0 ? void 0 : session.sendQueued(atSender +
-                                    '位于CN的玩家已显示完毕，是否显示其它在线重名玩家？（y/...）');
-                            else {
-                                return [3, 11];
-                            }
-                        }
-                        else {
-                            session === null || session === void 0 ? void 0 : session.sendQueued(atSender +
-                                '未查找到任何位于CN的玩家，是否显示其它在线重名玩家？（y/...）');
-                        }
-                        return [4, (session === null || session === void 0 ? void 0 : session.prompt())];
-                    case 7:
-                        reply = _c.sent();
-                        if (!reply) {
-                            session === null || session === void 0 ? void 0 : session.sendQueued(atSender + '输入超时。');
-                            return [2];
-                        }
-                        if (!/[yY]/.test(reply))
-                            return [3, 11];
-                        _c.label = 8;
-                    case 8:
-                        player = player !== null && player !== void 0 ? player : players[i];
-                        if (i !== -1 &&
-                            j === lenth &&
-                            player.server.locale === toFind)
-                            return [3, 10];
-                        server = player.server;
-                        result += (player.clan === ''
-                            ? '(no clan)'
-                            : 'clan：' + player.clan) + "\n\u4F4D\u4E8E" + server.locale + "\u670D\u52A1\u5668\uFF1A\n\n" + server.name + "\nmap\uFF1A" + server.map;
-                        if (!(i < lenth)) return [3, 10];
-                        result += "\n" + seperate + "\n\n\u56DE\u590D\uFF1A\ny-\u7EE7\u7EED\u67E5\u770B\nip-\u83B7\u53D6\u670D\u52A1\u5668ip\u5E76\u7ED3\u675F\u5BF9\u8BDD\n\uFF08\u56DE\u590D\u5176\u5B83\u5219\u7ED3\u675F\u5BF9\u8BDD\uFF09";
-                        session === null || session === void 0 ? void 0 : session.sendQueued(result);
-                        return [4, (session === null || session === void 0 ? void 0 : session.prompt())];
-                    case 9:
-                        reply = _c.sent();
-                        if (!reply) {
-                            session === null || session === void 0 ? void 0 : session.sendQueued(atSender + '输入超时。');
-                            return [2];
-                        }
-                        if (/[yY]/.test(reply)) {
-                            result = _result;
-                            return [3, 10];
-                        }
-                        else if (/ip/.test(reply)) {
-                            session === null || session === void 0 ? void 0 : session.sendQueued(server.ip + ":" + server.port);
-                            return [3, 11];
-                        }
-                        else
-                            return [3, 11];
-                        _c.label = 10;
-                    case 10:
-                        i++;
-                        return [3, 5];
-                    case 11:
-                        session === null || session === void 0 ? void 0 : session.sendQueued('$find查看完毕$');
-                        _c.label = 12;
-                    case 12: return [3, 14];
-                    case 13:
-                        e_1 = _c.sent();
-                        logger.extend('find').error(e_1);
-                        session === null || session === void 0 ? void 0 : session.sendQueued('$出现未知错误$');
-                        return [3, 14];
-                    case 14: return [2];
-                }
+            return __generator(this, function (_b) {
+                DDNetOrientedFunc_1.find(session, name, logger, options === null || options === void 0 ? void 0 : options.noDetail);
+                return [2];
+            });
+        });
+    });
+}
+function cTest(ctx) {
+    var _this = this;
+    ctx.command('ct').action(function (_a) {
+        var session = _a.session;
+        return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_b) {
+                return [2];
             });
         });
     });

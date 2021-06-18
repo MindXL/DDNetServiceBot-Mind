@@ -24,5 +24,10 @@ var Config = {
         { onebot: '1010089230', name: 'Sol' },
         { onebot: '577047398', name: '满月' },
     ],
+    noPointsMsg: 'Player Not Found',
+    unknownErrorMsg: '$出现未知错误$',
+    ddnetUsernameErrorMsg: '$角色名称超过15字节$',
+    pointsData404ErrorMsg: 'Player not found',
+    pointsData404ErrorMsgBackup: 'Player Not Found',
 };
 exports.default = Config;

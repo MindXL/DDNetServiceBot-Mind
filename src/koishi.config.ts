@@ -21,7 +21,7 @@ module.exports = {
         },
     ],
 
-    prefix: ['', '%', '&', '*'],
+    prefix: ['%', '&', '*'],
 
     autoAssign: (session: Session) => autoAssign(session),
     autoAuthorize: (session: Session) => autoAuthorize(session),
@@ -61,7 +61,6 @@ module.exports = {
         './modules/UserManage': {},
     },
 
-    // logLevel: 3,
     logTime: true,
 
     watch: {

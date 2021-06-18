@@ -45,14 +45,6 @@ var CustomFunc_1 = require("../utils/CustomFunc");
 require("../utils/MysqlExtends/Moderator");
 module.exports.name = 'MessageHandler';
 module.exports.apply = function (ctx) {
-    ctx.middleware(function (session, next) {
-        if (session.content === 'hlep') {
-            return next(function () { return session.send('你想说的是 help 吗？'); });
-        }
-        else {
-            return next();
-        }
-    });
     var devCtx = CustomFunc_1.getDevCtx(ctx);
     var motCtx = CustomFunc_1.getMotCtx(ctx);
     motCtx.plugin(handleGMR);
@@ -62,6 +54,11 @@ module.exports.apply = function (ctx) {
         }
         return next();
     });
+    devCtx.middleware(function (session, next) {
+        return session.content === 'hlep'
+            ? next(function () { return session.send('你想说的是 help 吗？'); })
+            : next();
+    });
     devCtx.middleware(function (session, next) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
             if (session.content === 'mt') {
@@ -70,6 +67,8 @@ module.exports.apply = function (ctx) {
         });
     }); });
 };
+function recordWatchGroupsMsg(ctx) {
+}
 function handleGMR(ctx) {
     var _this = this;
     ctx.middleware(function (session, next) { return __awaiter(_this, void 0, void 0, function () {
@@ -126,11 +125,10 @@ function handleGMR(ctx) {
                 case 4:
                     botReply = '回复的消息格式似乎不正确，请重新回复';
                     _c.label = 5;
-                case 5: return [4, session.send(koishi_1.s.join([
-                        CustomFunc_1.sf('quote', { id: replyMessageId }),
-                        CustomFunc_1.sf('at', { id: session.userId }),
-                        CustomFunc_1.sf('at', { id: session.userId }),
-                    ]) + ("\n" + botReply))];
+                case 5: return [4, session.send(koishi_1.s('quote', { id: replyMessageId }) +
+                        koishi_1.s('at', { id: session.userId }) +
+                        koishi_1.s('at', { id: session.userId }) +
+                        +("\n" + botReply))];
                 case 6:
                     _c.sent();
                     _c.label = 7;

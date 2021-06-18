@@ -14,7 +14,7 @@ const app = new App({
             token: 'MindBot',
         },
     ],
-    prefix: ['', '%', '$', '*'],
+    prefix: ['%', '$', '*'],
     autoAssign: (session: Session) => autoAssign(session),
     autoAuthorize: (session: Session) => autoAuthorize(session),
 });
@@ -26,6 +26,7 @@ app.plugin(require('koishi-plugin-mysql'), {
     password: '1634300602Wx-',
     database: Config.mysqlDB,
 });
+
 // app.plugin(require('koishi-plugin-common'));
 
 app.plugin(require('./modules/AppManage'));
