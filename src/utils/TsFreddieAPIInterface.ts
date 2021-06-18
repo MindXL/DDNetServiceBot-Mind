@@ -75,8 +75,8 @@ export interface PointsData {
     };
 }
 
-export interface FindData {
-    players: {
+export interface FindDataPlayer{
+    
         name: string;
         clan: string;
         score: number;
@@ -102,5 +102,9 @@ export interface FindData {
             num_players: number;
             num_spectators: number;
         };
-    }[];
+    
+}
+
+export interface FindData {
+    players: FindDataPlayer[];
 }

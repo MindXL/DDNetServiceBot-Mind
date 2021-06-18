@@ -115,11 +115,42 @@ module.exports.apply = (ctx: Context) => {
 
     devCtx.middleware(async (session, next) => {
         if (session.content === 'mt') {
-            // session.send('MessageTest');
         }
         return next();
     });
 };
+
+function recordWatchGroupsMsg(ctx: Context) {
+    // let times = 0; // 复读次数
+    // let message = ''; // 当前消息
+    // devCtx.middleware((session, next) => {
+    //     if (session.content === message) {
+    //         times += 1;
+    //         if (times === 3) return session.send(message);
+    //     } else {
+    //         times = 0;
+    //         message = session.content!;
+    //         return next();
+    //     }
+    // }, true /* true 表示这是前置中间件 */);
+    // interface CQNode {
+    //     type: 'node';
+    //     data: {
+    //         id: number;
+    //     } | {
+    //         name: string;
+    //         uin: number;
+    //         content: string;
+    //     };
+    // }
+    // let messages:CQNode[]=[]
+    // devCtx.on('message', async (session) => {
+    //     if (session.content === 'et') {
+    //         messages.push({type:'node',data:{id:Number(session.messageId)}})
+    //         await session.bot.$sendGroupForwardMsg(Config.motGroup,messages)
+    //     }
+    // });
+}
 
 function handleGMR(ctx: Context) {
     ctx.middleware(async (session, next) => {

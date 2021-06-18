@@ -70,6 +70,8 @@ module.exports.apply = function (ctx) {
         });
     }); });
 };
+function recordWatchGroupsMsg(ctx) {
+}
 function handleGMR(ctx) {
     var _this = this;
     ctx.middleware(function (session, next) { return __awaiter(_this, void 0, void 0, function () {

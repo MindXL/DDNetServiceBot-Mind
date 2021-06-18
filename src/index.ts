@@ -14,7 +14,7 @@ const app = new App({
             token: 'MindBot',
         },
     ],
-    prefix: ['', '%', '$', '*'],
+    prefix: ['%', '$', '*'],
     autoAssign: (session: Session) => autoAssign(session),
     autoAuthorize: (session: Session) => autoAuthorize(session),
 });

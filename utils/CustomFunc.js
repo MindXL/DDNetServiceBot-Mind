@@ -8,7 +8,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getWatchCtx = exports.getMotCtx = exports.getModCtx = exports.getDevCtx = exports.autoAuthorize = exports.autoAssign = exports.sf = exports.ifInGroups = void 0;
+exports.byteLenth = exports.sf = exports.getWatchCtx = exports.getMotCtx = exports.getModCtx = exports.getDevCtx = exports.autoAuthorize = exports.autoAssign = exports.ifInGroups = void 0;
 var koishi_core_1 = require("koishi-core");
 var config_1 = __importDefault(require("./config"));
 function ifInGroups(groupId, groupIds) {
@@ -25,10 +25,6 @@ function ifInGroups(groupId, groupIds) {
     return flag;
 }
 exports.ifInGroups = ifInGroups;
-function sf(type, data) {
-    return koishi_core_1.s.from(koishi_core_1.s(type, data));
-}
-exports.sf = sf;
 function autoAssign(session) {
     return ifInGroups(session.groupId, __spreadArray([
         config_1.default.testGroup,
@@ -63,3 +59,11 @@ function getWatchCtx(ctx) {
     return ctx.group.apply(ctx, config_1.default.watchGroups).union(getDevCtx(ctx));
 }
 exports.getWatchCtx = getWatchCtx;
+function sf(type, data) {
+    return koishi_core_1.s.from(koishi_core_1.s(type, data));
+}
+exports.sf = sf;
+function byteLenth(str) {
+    return Buffer.from(str, 'utf-8').length;
+}
+exports.byteLenth = byteLenth;

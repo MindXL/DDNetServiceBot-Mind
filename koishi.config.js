@@ -18,7 +18,7 @@ module.exports = {
             token: 'MindBot',
         },
     ],
-    prefix: ['', '%', '&', '*'],
+    prefix: ['%', '&', '*'],
     autoAssign: function (session) { return CustomFunc_1.autoAssign(session); },
     autoAuthorize: function (session) { return CustomFunc_1.autoAuthorize(session); },
     plugins: {
