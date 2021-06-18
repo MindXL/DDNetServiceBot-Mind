@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var koishi_core_1 = require("koishi-core");
+var koishi_1 = require("koishi");
 var path_1 = require("path");
 var config_1 = __importDefault(require("../utils/config"));
 var CustomFunc_1 = require("../utils/CustomFunc");
@@ -84,7 +84,7 @@ function eco(ctx) {
                 switch (_b.label) {
                     case 0:
                         if (!(options === null || options === void 0 ? void 0 : options.timeout)) return [3, 2];
-                        return [4, koishi_core_1.sleep(options.timeout * koishi_core_1.Time.second)];
+                        return [4, koishi_1.sleep(options.timeout * koishi_1.Time.second)];
                     case 1:
                         _b.sent();
                         _b.label = 2;
@@ -132,11 +132,7 @@ function newmod(ctx) {
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
-                        atSender = koishi_core_1.s('at', { id: session === null || session === void 0 ? void 0 : session.userId });
-                        if (!DDNetOrientedFunc_1.testUserName(name)) {
-                            session === null || session === void 0 ? void 0 : session.sendQueued(atSender + '参数name超过15个字节');
-                            return [2];
-                        }
+                        atSender = koishi_1.s('at', { id: session === null || session === void 0 ? void 0 : session.userId });
                         onebot = (_c = (_b = /onebot:(?<onebot>\d+)/.exec(mod)) === null || _b === void 0 ? void 0 : _b.groups) === null || _c === void 0 ? void 0 : _c.onebot;
                         if (onebot === undefined ||
                             onebot === (session === null || session === void 0 ? void 0 : session.selfId) ||
@@ -180,7 +176,7 @@ function newmod(ctx) {
                         ctx.database.createModerator({ onebot: onebot, name: name });
                         _d.label = 6;
                     case 6:
-                        session === null || session === void 0 ? void 0 : session.send("\u6CE8\u518C\u6210\u529F\uFF01\n\u6B22\u8FCE\u4F60\uFF0C" + koishi_core_1.s('at', { id: onebot }) + "\uFF01");
+                        session === null || session === void 0 ? void 0 : session.send("\u6CE8\u518C\u6210\u529F\uFF01\n\u6B22\u8FCE\u4F60\uFF0C" + koishi_1.s('at', { id: onebot }) + "\uFF01");
                         return [2];
                 }
             });
@@ -206,36 +202,37 @@ function recall(ctx, _a) {
         var session = _a.session;
         if (count === void 0) { count = 1; }
         return __awaiter(_this, void 0, void 0, function () {
-            var list, removal, delay, index, error_1;
+            var channelId, list, removal, delay, index, error_1;
             var _b, _c;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
-                        list = recent[session === null || session === void 0 ? void 0 : session.channelId];
+                        channelId = session === null || session === void 0 ? void 0 : session.channelId;
+                        list = recent[channelId];
                         if (!list)
                             return [2, '近期没有发送消息。'];
                         removal = list.splice(0, count);
                         delay = (_c = (_b = ctx.app) === null || _b === void 0 ? void 0 : _b.options.delay) === null || _c === void 0 ? void 0 : _c.broadcast;
                         if (!list.length)
-                            delete recent[session === null || session === void 0 ? void 0 : session.channelId];
+                            delete recent[channelId];
                         index = 0;
                         _d.label = 1;
                     case 1:
                         if (!(index < removal.length)) return [3, 7];
                         if (!(index && delay)) return [3, 3];
-                        return [4, koishi_core_1.sleep(delay)];
+                        return [4, koishi_1.sleep(delay)];
                     case 2:
                         _d.sent();
                         _d.label = 3;
                     case 3:
                         _d.trys.push([3, 5, , 6]);
-                        return [4, (session === null || session === void 0 ? void 0 : session.bot.deleteMessage(session === null || session === void 0 ? void 0 : session.channelId, removal[index]))];
+                        return [4, (session === null || session === void 0 ? void 0 : session.bot.deleteMessage(channelId, removal[index]))];
                     case 4:
                         _d.sent();
                         return [3, 6];
                     case 5:
                         error_1 = _d.sent();
-                        ctx.logger('bot').warn(error_1);
+                        ctx.logger('Command').extend('recall').warn(error_1);
                         return [3, 6];
                     case 6:
                         index++;
@@ -258,7 +255,7 @@ function points(ctx) {
                 switch (_d.label) {
                     case 0: return [4, DDNetOrientedFunc_1.getPoints(name !== null && name !== void 0 ? name : (((_b = session === null || session === void 0 ? void 0 : session.author) === null || _b === void 0 ? void 0 : _b.nickname) !== ''
                             ? (_c = session === null || session === void 0 ? void 0 : session.author) === null || _c === void 0 ? void 0 : _c.nickname
-                            : session === null || session === void 0 ? void 0 : session.username), ctx.logger('points'))];
+                            : session === null || session === void 0 ? void 0 : session.username), ctx.logger('Command').extend('points'))];
                     case 1: return [2, _d.sent()];
                 }
             });
@@ -285,7 +282,7 @@ function gmr(ctx) {
                     case 2:
                         if (!(_i < gmrs_1.length)) return [3, 6];
                         gmr_1 = gmrs_1[_i];
-                        return [4, DDNetOrientedFunc_1.sendGMRReminder(session.bot, gmr_1.userId, gmr_1.groupId, gmr_1.content, ctx.logger('points'))];
+                        return [4, DDNetOrientedFunc_1.sendGMRReminder(session.bot, gmr_1.userId, gmr_1.groupId, gmr_1.content, ctx.logger('Command').extend('gmr'))];
                     case 3:
                         newReplyMessageId = _b.sent();
                         return [4, ctx.database.updateGMR(gmr_1.messageId, newReplyMessageId)];
@@ -309,7 +306,7 @@ function spot(ctx) {
         var session = _a.session;
         return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_b) {
-                session === null || session === void 0 ? void 0 : session.send(koishi_core_1.s('image', {
+                session === null || session === void 0 ? void 0 : session.send(koishi_1.s('image', {
                     file: 'file://' + path_1.resolve(__dirname, '../static/client.jpg'),
                 }));
                 return [2];

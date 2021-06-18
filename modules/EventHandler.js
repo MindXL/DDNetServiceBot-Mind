@@ -49,34 +49,39 @@ module.exports.apply = function (ctx) {
     var watchCtx = CustomFunc_1.getWatchCtx(ctx);
     var logger = ctx.logger('EventHandler');
     ctx.once('before-connect', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var _i, _a, data;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var _a, _i, _b, moderator, _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
                 case 0: return [4, ctx.database.getModerator('onebot', config_1.default.developer.onebot)];
                 case 1:
-                    if (!((_b.sent()) === undefined)) return [3, 3];
+                    _a = (_d.sent());
+                    if (_a) return [3, 3];
                     return [4, ctx.database.createUser('onebot', config_1.default.developer.onebot, config_1.default.developer)];
                 case 2:
-                    _b.sent();
-                    _b.label = 3;
+                    _a = (_d.sent());
+                    _d.label = 3;
                 case 3:
-                    _i = 0, _a = config_1.default.moderators;
-                    _b.label = 4;
+                    _a;
+                    _i = 0, _b = config_1.default.moderators;
+                    _d.label = 4;
                 case 4:
-                    if (!(_i < _a.length)) return [3, 8];
-                    data = _a[_i];
-                    return [4, ctx.database.getModerator('onebot', data.onebot)];
+                    if (!(_i < _b.length)) return [3, 9];
+                    moderator = _b[_i];
+                    return [4, ctx.database.getModerator('onebot', moderator.onebot)];
                 case 5:
-                    if (!((_b.sent()) ===
-                        undefined)) return [3, 7];
-                    return [4, ctx.database.createModerator(data)];
+                    _c = (_d.sent());
+                    if (_c) return [3, 7];
+                    return [4, ctx.database.createModerator(moderator)];
                 case 6:
-                    _b.sent();
-                    _b.label = 7;
+                    _c = (_d.sent());
+                    _d.label = 7;
                 case 7:
+                    _c;
+                    _d.label = 8;
+                case 8:
                     _i++;
                     return [3, 4];
-                case 8: return [2];
+                case 9: return [2];
             }
         });
     }); });
@@ -114,12 +119,12 @@ module.exports.apply = function (ctx) {
                     };
                     return [4, ctx.database.getGMR('union', set)];
                 case 2:
-                    if (!((_a.sent()) === undefined)) return [3, 4];
-                    return [4, ctx.database.createGMR(session, replyMessageId)];
+                    if (!_a.sent()) return [3, 4];
+                    return [4, ctx.database.setGMR('union', set, session, replyMessageId)];
                 case 3:
                     _a.sent();
                     return [3, 6];
-                case 4: return [4, ctx.database.setGMR('union', set, session, replyMessageId)];
+                case 4: return [4, ctx.database.createGMR(session, replyMessageId)];
                 case 5:
                     _a.sent();
                     _a.label = 6;

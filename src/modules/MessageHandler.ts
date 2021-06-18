@@ -1,21 +1,12 @@
 import { Context, s } from 'koishi';
 
 import Config from '../utils/config';
-import { getDevCtx, getMotCtx, sf } from '../utils/CustomFunc';
+import { getDevCtx, getMotCtx } from '../utils/CustomFunc';
 import '../utils/MysqlExtends/Moderator';
 
 module.exports.name = 'MessageHandler';
 
 module.exports.apply = (ctx: Context) => {
-    ctx.middleware((session, next) => {
-        if (session.content === 'hlep') {
-            // 如果该 session 没有被截获，则这里的回调函数将会被执行
-            return next(() => session.send('你想说的是 help 吗？'));
-        } else {
-            return next();
-        }
-    });
-
     const devCtx = getDevCtx(ctx);
     const motCtx = getMotCtx(ctx);
 
@@ -28,6 +19,12 @@ module.exports.apply = (ctx: Context) => {
         }
         return next();
     });
+
+    devCtx.middleware((session, next) =>
+        session.content === 'hlep'
+            ? next(() => session.send('你想说的是 help 吗？'))
+            : next()
+    );
 
     // 回应@消息
     // devCtx.middleware((session, next) => {
@@ -214,11 +211,10 @@ function handleGMR(ctx: Context) {
         }
 
         await session.send(
-            s.join([
-                sf('quote', { id: replyMessageId }),
-                sf('at', { id: session.userId! }),
-                sf('at', { id: session.userId! }),
-            ]) + `\n${botReply}`
+            s('quote', { id: replyMessageId }) +
+                s('at', { id: session.userId! }) +
+                s('at', { id: session.userId! }) +
+                +`\n${botReply}`
         );
 
         try {

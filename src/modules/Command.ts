@@ -1,17 +1,15 @@
-import { Context, Time, sleep, s } from 'koishi-core';
+import { Context, Time, sleep, s } from 'koishi';
 import { RecallConfig } from 'koishi-plugin-common';
 import { resolve } from 'path';
-import axios from 'axios';
 import _ from 'lodash';
 
 import Config from '../utils/config';
-import { byteLenth, getDevCtx, getMotCtx } from '../utils/CustomFunc';
+import { getDevCtx, getMotCtx } from '../utils/CustomFunc';
 import {
     commandCheckUserName,
     find,
     getPoints,
     sendGMRReminder,
-    testUserName,
 } from '../utils/DDNetOrientedFunc';
 
 module.exports.name = 'Command';
@@ -79,11 +77,6 @@ function newmod(ctx: Context) {
         .check((_, name) => commandCheckUserName(name))
         .action(async ({ session }, mod, name) => {
             const atSender = s('at', { id: session?.userId! });
-            if (!testUserName(name)) {
-                session?.sendQueued(atSender + '参数name超过15个字节');
-                return;
-            }
-
             // koishi已存在对数据格式的内部判断
             const onebot = /onebot:(?<onebot>\d+)/.exec(mod)?.groups?.onebot;
 
@@ -151,20 +144,22 @@ function recall(ctx: Context, { recallCount = 10 }: RecallConfig) {
     ctx.command('recall [count:number]', '撤回 bot 发送的消息', {
         authority: 3,
     }).action(async ({ session }, count = 1) => {
-        const list = recent[session?.channelId!];
+        const channelId = session?.channelId!;
+
+        const list = recent[channelId];
         if (!list) return '近期没有发送消息。';
+
         const removal = list.splice(0, count);
         const delay = ctx.app?.options.delay?.broadcast;
-        if (!list.length) delete recent[session?.channelId!];
+
+        if (!list.length) delete recent[channelId];
+
         for (let index = 0; index < removal.length; index++) {
             if (index && delay) await sleep(delay);
             try {
-                await session?.bot.deleteMessage(
-                    session?.channelId!,
-                    removal[index]
-                );
+                await session?.bot.deleteMessage(channelId, removal[index]);
             } catch (error) {
-                ctx.logger('bot').warn(error);
+                ctx.logger('Command').extend('recall').warn(error);
             }
         }
     });
@@ -179,7 +174,7 @@ function points(ctx: Context) {
                     (session?.author?.nickname !== ''
                         ? session?.author?.nickname
                         : session?.username),
-                ctx.logger('points')
+                ctx.logger('Command').extend('points')
             );
         });
 }
@@ -198,7 +193,7 @@ function gmr(ctx: Context) {
                     gmr.userId,
                     gmr.groupId,
                     gmr.content,
-                    ctx.logger('points')
+                    ctx.logger('Command').extend('gmr')
                 );
                 await ctx.database.updateGMR(gmr.messageId, newReplyMessageId!);
             }

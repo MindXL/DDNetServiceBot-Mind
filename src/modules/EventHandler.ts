@@ -14,26 +14,16 @@ module.exports.apply = (ctx: Context) => {
     const logger = ctx.logger('EventHandler');
 
     ctx.once('before-connect', async () => {
-        if (
-            (await ctx.database.getModerator(
-                'onebot',
-                Config.developer.onebot
-            )) === undefined
-        ) {
-            await ctx.database.createUser(
+        (await ctx.database.getModerator('onebot', Config.developer.onebot)) ||
+            (await ctx.database.createUser(
                 'onebot',
                 Config.developer.onebot,
                 Config.developer
-            );
-        }
+            ));
 
-        for (const data of Config.moderators) {
-            if (
-                (await ctx.database.getModerator('onebot', data.onebot)) ===
-                undefined
-            ) {
-                await ctx.database.createModerator(data);
-            }
+        for (const moderator of Config.moderators) {
+            (await ctx.database.getModerator('onebot', moderator.onebot)) ||
+                (await ctx.database.createModerator(moderator));
         }
     });
 
@@ -102,15 +92,14 @@ module.exports.apply = (ctx: Context) => {
                 groupId: session.groupId!,
                 channelId: session.channelId!,
             };
-            if ((await ctx.database.getGMR('union', set)) === undefined)
-                await ctx.database.createGMR(session, replyMessageId);
-            else
+            if (await ctx.database.getGMR('union', set))
                 await ctx.database.setGMR(
                     'union',
                     set,
                     session,
                     replyMessageId
                 );
+            else await ctx.database.createGMR(session, replyMessageId);
         } else {
             session.send(
                 '$Event On GMR出现未知错误，请联系Mind处理$\n错误标号：points/getPoints'

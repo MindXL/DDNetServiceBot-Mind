@@ -40,7 +40,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendGMRReminder = exports.find = exports.getPoints = exports.commandCheckUserName = exports.testUserName = void 0;
-var koishi_core_1 = require("koishi-core");
+var koishi_1 = require("koishi");
 var axios_1 = __importDefault(require("axios"));
 var lodash_1 = __importDefault(require("lodash"));
 var config_1 = __importDefault(require("./config"));
@@ -112,7 +112,7 @@ function find(session, name, logger, noDetail) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    atSender = koishi_core_1.s('at', { id: session === null || session === void 0 ? void 0 : session.userId });
+                    atSender = koishi_1.s('at', { id: session === null || session === void 0 ? void 0 : session.userId });
                     if (!name) {
                         session === null || session === void 0 ? void 0 : session.sendQueued(atSender + 'find指令缺少参数name');
                         return [2];

@@ -26,6 +26,7 @@ app.plugin(require('koishi-plugin-mysql'), {
     password: '1634300602Wx-',
     database: Config.mysqlDB,
 });
+
 // app.plugin(require('koishi-plugin-common'));
 
 app.plugin(require('./modules/AppManage'));

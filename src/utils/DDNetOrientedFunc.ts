@@ -1,4 +1,4 @@
-import { Logger, s, Argv } from 'koishi-core';
+import { Logger, s } from 'koishi';
 import { CQBot } from 'koishi-adapter-onebot';
 import axios from 'axios';
 import _ from 'lodash';

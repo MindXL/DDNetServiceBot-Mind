@@ -61,7 +61,6 @@ module.exports = {
         './modules/UserManage': {},
     },
 
-    // logLevel: 3,
     logTime: true,
 
     watch: {
