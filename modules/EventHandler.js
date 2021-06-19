@@ -130,7 +130,7 @@ module.exports.apply = function (ctx) {
                     _a.label = 6;
                 case 6: return [3, 8];
                 case 7:
-                    session.send('$Event On GMR出现未知错误，请联系Mind处理$\n错误标号：points/getPoints');
+                    session.bot.sendGroupMessage(config_1.default.motGroup, '$Event On GMR出现未知错误，请联系Mind处理$\n错误标号：points/getPoints');
                     _a.label = 8;
                 case 8: return [2];
             }

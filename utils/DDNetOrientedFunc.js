@@ -258,12 +258,8 @@ function sendGMRReminder(bot, userId, groupId, _answer, logger) {
                             groupId: config_1.default.motGroup,
                             channelId: config_1.default.motGroup,
                         }), answer, logger);
-                        return [2, newReplyMessageId];
                     }
-                    else {
-                        return [2];
-                    }
-                    return [2];
+                    return [2, newReplyMessageId];
             }
         });
     });

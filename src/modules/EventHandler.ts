@@ -101,7 +101,8 @@ module.exports.apply = (ctx: Context) => {
                 );
             else await ctx.database.createGMR(session, replyMessageId);
         } else {
-            session.send(
+            session.bot.sendGroupMessage(
+                Config.motGroup,
                 '$Event On GMR出现未知错误，请联系Mind处理$\n错误标号：points/getPoints'
             );
         }
