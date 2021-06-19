@@ -214,7 +214,7 @@ function handleGMR(ctx: Context) {
             s('quote', { id: replyMessageId }) +
                 s('at', { id: session.userId! }) +
                 s('at', { id: session.userId! }) +
-                +`\n${botReply}`
+                `\n${botReply}`
         );
 
         try {
