@@ -128,7 +128,7 @@ function handleGMR(ctx) {
                 case 5: return [4, session.send(koishi_1.s('quote', { id: replyMessageId }) +
                         koishi_1.s('at', { id: session.userId }) +
                         koishi_1.s('at', { id: session.userId }) +
-                        +("\n" + botReply))];
+                        ("\n" + botReply))];
                 case 6:
                     _c.sent();
                     _c.label = 7;
