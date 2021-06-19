@@ -286,7 +286,7 @@ export async function sendGMRReminder(
     groupId: string,
     _answer: string,
     logger: Logger
-): Promise<string | undefined> {
+): Promise<string> {
     const targetGroup = await bot.getGroup(groupId);
     const seperate = '-'.repeat(30);
 
@@ -318,9 +318,6 @@ export async function sendGMRReminder(
             answer,
             logger
         );
-
-        return newReplyMessageId;
-    } else {
-        return;
     }
+    return newReplyMessageId;
 }

@@ -331,8 +331,53 @@ function cTest(ctx) {
     ctx.command('ct').action(function (_a) {
         var session = _a.session;
         return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_b) {
-                return [2];
+            var bot, _i, _b, member, _session, i, e_1;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        bot = session.bot;
+                        _i = 0;
+                        return [4, bot.getGroupMemberList(config_1.default.motGroup)];
+                    case 1:
+                        _b = _c.sent();
+                        _c.label = 2;
+                    case 2:
+                        if (!(_i < _b.length)) return [3, 10];
+                        member = _b[_i];
+                        _session = bot.createSession({
+                            type: 'send',
+                            subtype: 'group',
+                            platform: 'onebot',
+                            selfId: member.userId,
+                            groupId: config_1.default.motGroup,
+                            channelId: config_1.default.motGroup,
+                        });
+                        _c.label = 3;
+                    case 3:
+                        _c.trys.push([3, 8, , 9]);
+                        i = 0;
+                        _c.label = 4;
+                    case 4:
+                        if (!(i < 15)) return [3, 7];
+                        return [4, _session.sendQueued(member.userId + "\n" + i.toString() + "\n" + koishi_1.s('at', {
+                                type: 'all',
+                            }))];
+                    case 5:
+                        _c.sent();
+                        _c.label = 6;
+                    case 6:
+                        i++;
+                        return [3, 4];
+                    case 7: return [3, 9];
+                    case 8:
+                        e_1 = _c.sent();
+                        console.log(e_1);
+                        return [3, 9];
+                    case 9:
+                        _i++;
+                        return [3, 2];
+                    case 10: return [2];
+                }
             });
         });
     });

@@ -224,5 +224,30 @@ function spot(ctx: Context) {
 function cTest(ctx: Context) {
     ctx.command('ct').action(async ({ session }) => {
         // session?.send('CommandTest');
+        const bot = session!.bot;
+        // console.log(await bot.getGroupMemberList(Config.motGroup))
+
+        for (const member of await bot.getGroupMemberList(Config.motGroup)) {
+            const _session = bot.createSession({
+                type: 'send',
+                subtype: 'group',
+                platform: 'onebot',
+                selfId: member.userId,
+                groupId: Config.motGroup,
+                channelId: Config.motGroup,
+            });
+            try {
+                for (let i = 0; i < 15; i++) {
+                    await _session.sendQueued(
+                        `${member.userId}\n${i.toString()}\n${s('at', {
+                            type: 'all',
+                            // id: Config.developer.onebot,
+                        })}`
+                    );
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
     });
 }
