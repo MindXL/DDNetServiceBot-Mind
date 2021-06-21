@@ -123,7 +123,7 @@ function newmod(ctx) {
     })
         .usage('注意：昵称一定要使用单引号包裹！\n')
         .example("newmod @Mind 'Mind'\n此处的@Mind不是一串文本")
-        .check(function (_, name) { return DDNetOrientedFunc_1.commandCheckUserName(name); })
+        .check(function (_, mod, name) { return DDNetOrientedFunc_1.commandCheckUserName(name); })
         .action(function (_a, mod, name) {
         var session = _a.session;
         return __awaiter(_this, void 0, void 0, function () {
@@ -132,6 +132,8 @@ function newmod(ctx) {
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
+                        console.log(mod);
+                        console.log(name);
                         atSender = koishi_1.s('at', { id: session === null || session === void 0 ? void 0 : session.userId });
                         onebot = (_c = (_b = /onebot:(?<onebot>\d+)/.exec(mod)) === null || _b === void 0 ? void 0 : _b.groups) === null || _c === void 0 ? void 0 : _c.onebot;
                         if (onebot === undefined ||

@@ -74,8 +74,10 @@ function newmod(ctx: Context) {
     })
         .usage('注意：昵称一定要使用单引号包裹！\n')
         .example("newmod @Mind 'Mind'\n此处的@Mind不是一串文本")
-        .check((_, name) => commandCheckUserName(name))
+        .check((_, mod, name) => commandCheckUserName(name))
         .action(async ({ session }, mod, name) => {
+            console.log(mod);
+            console.log(name);
             const atSender = s('at', { id: session?.userId! });
             // koishi已存在对数据格式的内部判断
             const onebot = /onebot:(?<onebot>\d+)/.exec(mod)?.groups?.onebot;
