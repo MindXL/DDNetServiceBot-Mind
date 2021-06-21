@@ -32,7 +32,7 @@ const Config = {
         { onebot: '1535650454', name: 'wuu' },
         { onebot: '1010089230', name: 'Sol' },
         { onebot: '577047398', name: '满月' },
-        { ontbot: '784122675', name: 'Rance' },
+        { onebot: '784122675', name: 'Rance' },
     ],
 
     noPointsMsg: 'Player Not Found',
