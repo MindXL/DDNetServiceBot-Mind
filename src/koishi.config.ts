@@ -16,12 +16,13 @@ module.exports = {
             type: 'onebot:ws',
             // 对应 cqhttp 配置项 ws_config.port
             server: 'ws://localhost:6700',
-            selfId: new Number(Config.selfId),
+            selfId: Config.selfId,
             token: 'MindBot',
         },
     ],
 
-    prefix: ['%', '&', '*'],
+    // prefix: ['%', '&', '*'],
+    prefix: '%',
 
     autoAssign: (session: Session) => autoAssign(session),
     autoAuthorize: (session: Session) => autoAuthorize(session),
@@ -34,6 +35,7 @@ module.exports = {
             password: '1634300602Wx-',
             database: Config.mysqlDB,
         },
+        webui: {},
         // common: {
         //     // 基础指令
         //     broadcast: false,
@@ -54,11 +56,11 @@ module.exports = {
         //     user: false,
         //     channel: false,
         // },
-        './modules/AppManage': {},
-        './modules/Command': {},
-        './modules/EventHandler': {},
-        './modules/MessageHandler': {},
-        './modules/UserManage': {},
+        './plugins/AppManage': {},
+        './plugins/Command': {},
+        './plugins/EventHandler': {},
+        './plugins/MessageHandler': {},
+        './plugins/UserManage': {},
     },
 
     logTime: true,

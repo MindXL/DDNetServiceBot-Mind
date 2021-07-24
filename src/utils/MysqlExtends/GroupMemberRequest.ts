@@ -181,7 +181,7 @@ Database.extend('koishi-plugin-mysql', {
         }
 
         const conditions = keys
-            .map((key) => {
+            .map(key => {
                 return `${this.escapeId(key)} = ${this.escape(
                     //@ts-ignore
                     set[key],
@@ -236,7 +236,7 @@ Database.extend('koishi-plugin-mysql', {
         );
 
         const assignments = keys
-            .map((key) => {
+            .map(key => {
                 key = this.escapeId(key);
                 return `${key} = VALUES(${key})`;
             })
@@ -287,7 +287,7 @@ Database.extend('koishi-plugin-mysql', {
         ) as GroupMemberRequest.QueryField[];
 
         const assignments = keys
-            .map((key) => {
+            .map(key => {
                 return `${this.escapeId(key)} = ${this.escape(
                     gmr[key],
                     GroupMemberRequest.table,

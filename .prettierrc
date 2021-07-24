@@ -1,6 +1,8 @@
 {
     "tabWidth": 4,
+    "endOfLine": "lf",
     "semi": true,
     "singleQuote": true,
-    "arrowParens": "always"
+    "bracketSpacing": true,
+    "arrowParens": "avoid"
 }

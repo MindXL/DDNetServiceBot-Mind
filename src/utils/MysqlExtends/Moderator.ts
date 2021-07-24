@@ -92,7 +92,7 @@ Database.extend('koishi-plugin-mysql', {
         if (fields && !fields.length) return { [type]: ids } as any;
 
         if (!ids.length) return [];
-        const list = ids.map((id) => this.escape(id)).join(',');
+        const list = ids.map(id => this.escape(id)).join(',');
         return this.select<Moderator>(
             Moderator.table,
             fields,
@@ -115,7 +115,7 @@ Database.extend('koishi-plugin-mysql', {
         const keys = Object.keys(mod);
 
         const assignments = keys
-            .map((key) => {
+            .map(key => {
                 key = this.escapeId(key);
                 return `${key} = VALUES(${key})`;
             })
@@ -136,7 +136,7 @@ Database.extend('koishi-plugin-mysql', {
             'authority'
         >[];
         const assignments = keys
-            .map((key) => {
+            .map(key => {
                 return `${this.escapeId(key)} = ${this.escape(
                     data[key],
                     Moderator.table,

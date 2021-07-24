@@ -14,7 +14,8 @@ const app = new App({
             token: 'MindBot',
         },
     ],
-    prefix: ['%', '$', '*'],
+    //prefix: ['%', '$', '*'],
+    prefix: '%',
     autoAssign: (session: Session) => autoAssign(session),
     autoAuthorize: (session: Session) => autoAuthorize(session),
 });
@@ -26,13 +27,13 @@ app.plugin(require('koishi-plugin-mysql'), {
     password: '1634300602Wx-',
     database: Config.mysqlDB,
 });
-
+app.plugin(require('koishi-plugin-webui'));
 // app.plugin(require('koishi-plugin-common'));
 
-app.plugin(require('./modules/AppManage'));
-app.plugin(require('./modules/Command'));
-app.plugin(require('./modules/EventHandler'));
-app.plugin(require('./modules/MessageHandler'));
-app.plugin(require('./modules/UserManage'));
+app.plugin(require('./plugins/AppManage'));
+app.plugin(require('./plugins/Command'));
+app.plugin(require('./plugins/EventHandler'));
+app.plugin(require('./plugins/MessageHandler'));
+app.plugin(require('./plugins/UserManage'));
 
 app.start();
