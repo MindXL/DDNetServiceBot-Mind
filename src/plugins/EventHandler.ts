@@ -72,7 +72,7 @@ module.exports.apply = (ctx: Context) => {
     //           );
     // });
 
-    watchCtx.on('group-member-request', async (session) => {
+    watchCtx.on('group-member-request', async session => {
         const answer = /答案：(.*?)$/.exec(session.content!)![1];
 
         const groupId = session.groupId!;
@@ -108,7 +108,7 @@ module.exports.apply = (ctx: Context) => {
         }
     });
 
-    watchCtx.on('group-member-deleted', async (session) => {
+    watchCtx.on('group-member-deleted', async session => {
         const userId = session.userId!;
         // const groupId = session.groupId!;
         // const operatorId = session.operatorId!;
@@ -135,11 +135,11 @@ module.exports.apply = (ctx: Context) => {
     });
 
     // 可通过koishi-plugin-common插件实现，详见koishi.config.ts
-    ctx.on('friend-request', async (session) => {
+    ctx.on('friend-request', async session => {
         await session.bot.handleFriendRequest(session.messageId!, false);
     });
 
-    devCtx.on('message', async (session) => {
+    devCtx.on('message', async session => {
         if (session.content === 'et') {
         }
     });

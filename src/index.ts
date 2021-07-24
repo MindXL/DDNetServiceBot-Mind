@@ -29,10 +29,10 @@ app.plugin(require('koishi-plugin-mysql'), {
 
 // app.plugin(require('koishi-plugin-common'));
 
-app.plugin(require('./modules/AppManage'));
-app.plugin(require('./modules/Command'));
-app.plugin(require('./modules/EventHandler'));
-app.plugin(require('./modules/MessageHandler'));
-app.plugin(require('./modules/UserManage'));
+app.plugin(require('./plugins/AppManage'));
+app.plugin(require('./plugins/Command'));
+app.plugin(require('./plugins/EventHandler'));
+app.plugin(require('./plugins/MessageHandler'));
+app.plugin(require('./plugins/UserManage'));
 
 app.start();

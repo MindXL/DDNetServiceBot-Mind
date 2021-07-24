@@ -104,7 +104,7 @@ dist
 .tern-port
 
 # custom
-/modules
+/plugins
 /utils
 /static/client.jpg
 index.js
