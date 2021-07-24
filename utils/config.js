@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Config = {
-    mysqlDB: 'koishi',
-    selfId: '1718209151',
-    modGroup: '1135333664',
-    motGroup: '1135333664',
-    watchGroups: ['1044036098'],
+    mysqlDB: '_koishi',
+    selfId: '1066974992',
+    modGroup: '834904988',
+    motGroup: '834904988',
+    watchGroups: ['869655189'],
     mainQQ: '1634300602',
     bot2Id: '1718209151',
     testGroup: '834904988',

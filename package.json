@@ -14,14 +14,14 @@
     "^mysql_tables": "source /home/centos/Projects/Koishi/DDNetServiceBot-Mind/static/sql/koishiTables.sql;"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.170",
-    "koishi": "^3.10.0",
-    "typescript": "^4.2.4"
+    "@types/lodash": "^4.14.171",
+    "koishi": "^3.12.3",
+    "typescript": "^4.3.5"
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "koishi-adapter-onebot": "^3.0.8",
-    "koishi-plugin-common": "^4.2.4",
+    "koishi-adapter-onebot": "^3.1.0",
+    "koishi-plugin-common": "^4.3.1",
     "koishi-plugin-mysql": "^3.3.2",
     "lodash": "^4.17.21"
   }
