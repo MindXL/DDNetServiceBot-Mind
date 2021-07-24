@@ -104,7 +104,8 @@ dist
 .tern-port
 
 # custom
-modules/
-utils/
+/modules
+/utils
+/static/client.jpg
 index.js
 koishi.config.js
