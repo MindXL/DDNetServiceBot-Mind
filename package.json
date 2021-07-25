@@ -23,6 +23,7 @@
     "koishi-adapter-onebot": "^3.1.0",
     "koishi-plugin-common": "^4.3.1",
     "koishi-plugin-mysql": "^3.3.2",
+    "koishi-plugin-webui": "^4.6.3",
     "lodash": "^4.17.21"
   }
 }
