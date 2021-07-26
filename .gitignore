@@ -104,8 +104,9 @@ dist
 .tern-port
 
 # custom
-/plugins
-/utils
-/static/client.jpg
-index.js
-koishi.config.js
+/dist
+
+/static/*
+!/static/sql
+/static/sql/_koishi.sql
+/static/sql/koishiTables.sql

@@ -14,7 +14,6 @@ const Config = {
     // watchGroups: ['869655189'],
 
     mainQQ: '1634300602',
-    bot2Id: '1718209151',
     testGroup: '834904988',
 
     developer: { onebot: '1634300602', name: 'Mind', authority: 4 },

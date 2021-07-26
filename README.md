@@ -6,7 +6,7 @@ Thanks *TsFreddie* for Typesctipt, methods and API support
 
 # How to start
 
-**First of all: **`yarn tsc`
+**First of all**: `yarn tsc`
 
 ## Start from koishi
 
@@ -23,5 +23,5 @@ node .
 ## Start from pm2
 
 ```
-pm2 start ./index.js --name koishi --log ./mot.log
+pm2 start ./dist/index.js --name koishi --log ./mot.log
 ```
