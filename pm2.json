@@ -1,0 +1,6 @@
+{
+    "name": "koishi",
+    "script": "./dist/index.js",
+    "cwd": "./",
+    "out_file": "./mot.log"
+}
