@@ -11,7 +11,11 @@
     "^mysql_dbcreate": "source /home/centos/Projects/Koishi/DDNetServiceBot-Mind/static/_koishi.sql;",
     "mysql_dbdumpupdate": "mysqldump -uroot -p -B -d _koishi > /home/centos/Projects/Koishi/DDNetServiceBot-Mind/static/sql/koishi_update.sql",
     "^mysql_dbupdate": "source /home/centos/Projects/Koishi/DDNetServiceBot-Mind/static/sql/koishi.sql",
-    "^mysql_tables": "source /home/centos/Projects/Koishi/DDNetServiceBot-Mind/static/sql/koishiTables.sql;"
+    "^mysql_tables": "source /home/centos/Projects/Koishi/DDNetServiceBot-Mind/static/sql/koishiTables.sql;",
+    "build": "yarn && tsc",
+    "dev": "tsc && koishi start ./dist/koishi.config.js",
+    "test": "koishi start ./dist/koishi.config.js",
+    "start": "pm2 start pm2.json"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.171",
