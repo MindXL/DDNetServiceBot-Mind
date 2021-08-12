@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import Config from './config';
 import { byteLenth } from './CustomFunc';
-import { PlayerData } from '../lib';
+import { PromiseResult, PlayerData } from '../lib';
 // import { PromiseResult } from '../declares/declares';
 
 export function testPlayerName(name: string): boolean {
@@ -55,10 +55,8 @@ export async function wrapGetPlayerPointsMsg(name: string): Promise<string> {
 
     let msg = `${name}\n\n`;
 
-    if (error) {
-        msg += error;
-        return msg;
-    }
+    if (error) return msg + error;
+
     // 排除error后data就一定存在
     // pity type control
     if (data === null) throw new Error();
