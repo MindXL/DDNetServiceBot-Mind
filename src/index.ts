@@ -1,4 +1,5 @@
 import { App, Session, User } from 'koishi-core';
+import { Logger } from 'koishi-utils';
 import 'koishi-adapter-onebot';
 import 'koishi-adapter-discord';
 
@@ -81,5 +82,7 @@ app.plugin(require('./modules/Command'));
 app.plugin(require('./modules/EventHandler'));
 app.plugin(require('./modules/MessageHandler'));
 // app.plugin(require('./modules/UserManage'));
+
+Logger.showTime = 'MM/dd hh:mm';
 
 app.start();
