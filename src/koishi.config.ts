@@ -98,7 +98,7 @@ module.exports = {
         // './modules/UserManage': {},
     },
 
-    logTime: true,
+    logTime: 'MM/dd hh:mm',
 
     watch: {
         // 要监听的根目录，相对于工作路径
