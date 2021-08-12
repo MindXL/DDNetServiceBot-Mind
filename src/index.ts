@@ -5,13 +5,6 @@ import 'koishi-adapter-discord';
 require('dotenv').config('../.env');
 import Config, { autoAssign, autoAuthorize } from './utils';
 
-const axiosConfig = {
-    proxy: {
-        host: '127.0.0.1',
-        port: 7890,
-    },
-};
-
 const app = new App({
     port: parseInt(process.env.PORT!),
     bots: [
@@ -27,16 +20,6 @@ const app = new App({
         },
     ],
 
-    discord: {
-        axiosConfig: {
-            proxy: {
-                host: '127.0.0.1',
-                port: 7890,
-            },
-        },
-    },
-
-    //prefix: ['%', '$', '*'],
     prefix: '%',
     autoAssign: (session: Session) => autoAssign(session),
     autoAuthorize: (session: Session) => autoAuthorize(session),
@@ -49,8 +32,7 @@ app.plugin(require('koishi-plugin-mysql'), {
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQLDB,
 });
-// app.plugin(require('koishi-plugin-webui'));
-// app.plugin(require('koishi-plugin-common'));
+app.plugin(require('koishi-plugin-webui'));
 app.plugin(require('koishi-plugin-common'), {
     // feedback: false
     operator: `onebot:${Config.Onebot.developer.onebot}`,

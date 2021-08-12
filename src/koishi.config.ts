@@ -24,14 +24,15 @@ module.exports = {
     // onebot: {
     //     secret: '',
     // },
-    discord: {
-        axiosConfig: {
-            proxy: {
-                host: '127.0.0.1',
-                port: 7890,
-            },
-        },
-    },
+    // discord: {
+    //     axiosConfig: {
+    //         // socketPath: process.env.PROXY,
+    //         // proxy: {
+    //         //     host: '127.0.0.1',
+    //         //     port: 7890,
+    //         // },
+    //     },
+    // },
 
     // prefix: ['%', '&', '*'],
     prefix: '%',

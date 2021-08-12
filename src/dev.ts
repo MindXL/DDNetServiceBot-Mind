@@ -1,5 +1,5 @@
-const { spawn } = require('child_process');
-const { sleep, Time } = require('koishi-core');
+import { spawn } from 'child_process';
+import { sleep, Time } from 'koishi-core';
 
 (async () => {
     spawn('yarn', ['tsc', '-w']);

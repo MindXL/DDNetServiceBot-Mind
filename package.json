@@ -13,7 +13,7 @@
     "^mysql_dbupdate": "source /home/centos/Projects/Koishi/DDNetServiceBot-Mind/static/sql/koishi.sql",
     "^mysql_tables": "source /home/centos/Projects/Koishi/DDNetServiceBot-Mind/static/sql/koishiTables.sql;",
     "build": "yarn && tsc",
-    "dev": "node ./dev.js",
+    "dev": "tsc && node ./dist/dev.js",
     "test": "tsc && node ./dist/index.js",
     "start": "pm2 start pm2.json"
   },

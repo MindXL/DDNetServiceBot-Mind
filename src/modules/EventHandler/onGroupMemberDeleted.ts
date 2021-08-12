@@ -1,0 +1,15 @@
+import { Context, Session } from 'koishi-core';
+import { Logger } from 'koishi-utils';
+
+export async function onGroupMemberDeleted(ctx: Context, logger: Logger) {
+    ctx.on('group-member-deleted', async session => {
+        try {
+            await session.database.mysql.query(
+                'UPDATE `user` SET ?? = ? WHERE ?? = ?',
+                [session.platform, undefined, session.platform, session.userId]
+            );
+        } catch (e) {
+            logger.extend('group-member-deleted').error(e);
+        }
+    });
+}

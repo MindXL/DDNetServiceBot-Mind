@@ -1,4 +1,4 @@
-import { Context } from 'koishi';
+import { Context } from 'koishi-core';
 
 import { getDevCtx, getMotCtx } from '../../utils';
 import { dev } from './dev';

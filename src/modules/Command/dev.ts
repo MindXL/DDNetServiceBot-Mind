@@ -1,8 +1,9 @@
 import { Context } from 'koishi-core';
 import { Logger, Time, sleep } from 'koishi-utils';
 
-export function dev(ctx: Context, logger: Logger) {
+export function dev(ctx: Context, _logger: Logger) {
     const dev = ctx.command('dev', 'Developer Commands');
+    const logger = _logger.extend('dev');
 
     dev.subcommand('echo <message:text>', '输出收到的信息', { authority: 1 })
         .option('encode', '-e 输出编码（encode）后的信息')
@@ -25,6 +26,32 @@ export function dev(ctx: Context, logger: Logger) {
             return message;
         });
 
+    dev.subcommand('clean', '清除数据库表`user`中的无效用户', {
+        authority: 4,
+    }).action(async ({ session }) => {
+        try {
+            // do not understand (did not succeed)
+            // await session?.database.remove('user', {
+            //     onebot: { $eq: undefined },
+            //     $and: [{ discord: { $eq: undefined } }],
+            // });
+            const mysql = session?.database.mysql;
+            await mysql?.query(
+                'DELETE FROM `user` WHERE ' +
+                    ctx.bots
+                        .map(bot => {
+                            return `${mysql?.escapeId(
+                                bot.platform
+                            )} IS ${mysql?.escape(undefined)}`;
+                        })
+                        .join(' AND ')
+            );
+            await session?.sendQueued('$无效用户清理完成$');
+        } catch (e) {
+            logger.extend('clean').error(e);
+        }
+    });
+
     dev.subcommand('reg', '测试正则表达式')
         .option('regex', '-r [regex:string] 指定正则表达式')
         .option('string', '-s [string:string] 指定字符串')
@@ -32,9 +59,10 @@ export function dev(ctx: Context, logger: Logger) {
             const _regex = '([yY]|(?:[nN]|[nN] (?<reason>.*))|[iI])$';
             const _string = '';
 
-            const regex = new RegExp(options?.regex ?? _regex, 'g');
+            const regex = new RegExp(options?.regex ?? _regex);
             const string = options?.string ?? _string;
             const result = regex.exec(string);
             // console.log(result);
+            return result?.toString();
         });
 }

@@ -22,7 +22,7 @@ export function beforeCommand(ctx: Context, logger: Logger) {
                     .replace(/\s{2,}/g, ' ')
             );
         } catch (e) {
-            logger.extend('before-command').error(e);
+            logger.extend('before#command').error(e);
         }
     });
 }

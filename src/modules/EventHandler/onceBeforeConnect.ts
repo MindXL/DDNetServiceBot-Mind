@@ -2,7 +2,7 @@ import { Context } from 'koishi-core';
 import { Logger } from 'koishi-utils';
 import {} from 'koishi-plugin-mysql';
 
-import Config from '../../utils/config';
+import Config from '../../utils';
 
 const { Onebot, Discord } = Config;
 
@@ -26,7 +26,7 @@ export function onceBeforeConnect(ctx: Context, logger: Logger) {
                     })
             );
         } catch (e) {
-            logger.extend('once-before-connect').error(e);
+            logger.extend('once@before#connect').error(e);
         }
     });
 }

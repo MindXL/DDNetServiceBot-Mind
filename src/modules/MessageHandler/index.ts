@@ -1,9 +1,6 @@
-import { Context, s } from 'koishi';
+import { Context } from 'koishi-core';
 
-// import Config from '../utils/config';
 import { getDevCtx, getMotCtx } from '../../utils';
-import Config from '../../utils/config';
-// import '../utils/MysqlExtends/Moderator';
 
 module.exports.name = 'MessageHandler';
 
@@ -16,8 +13,7 @@ module.exports.apply = (ctx: Context) => {
     // 回应"hh"消息
     devCtx.middleware(async (session, next) => {
         if (session.content === 'hh') {
-            console.log(session);
-            await session.send(s('text', { content: 'surprise' }));
+            await session.send('surprise');
         }
         return next();
     });

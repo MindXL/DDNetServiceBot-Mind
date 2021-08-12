@@ -1,4 +1,4 @@
-import { Context, Session } from 'koishi';
+import { Context, Session } from 'koishi-core';
 
 import Config from './config';
 
