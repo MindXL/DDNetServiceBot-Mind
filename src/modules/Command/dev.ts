@@ -1,9 +1,7 @@
-import { Context, Time, sleep, s } from 'koishi';
+import { Context } from 'koishi-core';
+import { Logger, Time, sleep } from 'koishi-utils';
 
-import Config from '../../utils/config';
-
-export function dev(ctx: Context) {
-    //const logger = ctx.logger('Command').extend('dev');
+export function dev(ctx: Context, logger: Logger) {
     const dev = ctx.command('dev', 'Developer Commands');
 
     dev.subcommand('echo <message:text>', '输出收到的信息', { authority: 1 })
@@ -28,8 +26,8 @@ export function dev(ctx: Context) {
         });
 
     dev.subcommand('reg', '测试正则表达式')
-        .option('regex', '-r [regex:text] 指定正则表达式')
-        .option('string', '-s [string:text] 指定字符串')
+        .option('regex', '-r [regex:string] 指定正则表达式')
+        .option('string', '-s [string:string] 指定字符串')
         .action(async ({ options }) => {
             const _regex = '([yY]|(?:[nN]|[nN] (?<reason>.*))|[iI])$';
             const _string = '';
@@ -37,35 +35,6 @@ export function dev(ctx: Context) {
             const regex = new RegExp(options?.regex ?? _regex, 'g');
             const string = options?.string ?? _string;
             const result = regex.exec(string);
-            console.log(result);
+            // console.log(result);
         });
-
-    dev.subcommand('ct').action(async ({ session }) => {
-        // session?.send('CommandTest');
-        const bot = session!.bot;
-        // console.log(await bot.getGroupMemberList(Config.motGroup))
-
-        for (const member of await bot.getGroupMemberList(Config.motGroup)) {
-            const _session = bot.createSession({
-                type: 'send',
-                subtype: 'group',
-                platform: 'onebot',
-                selfId: member.userId,
-                groupId: Config.motGroup,
-                channelId: Config.motGroup,
-            });
-            try {
-                for (let i = 0; i < 15; i++) {
-                    await _session.sendQueued(
-                        `${member.userId}\n${i.toString()}\n${s('at', {
-                            type: 'all',
-                            // id: Config.developer.onebot,
-                        })}`
-                    );
-                }
-            } catch (e) {
-                console.log(e);
-            }
-        }
-    });
 }

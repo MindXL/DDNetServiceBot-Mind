@@ -1,4 +1,4 @@
-interface PointsData_Type {
+interface PlayerData_Type {
     points: {
         total: number;
         points?: number;
@@ -14,7 +14,7 @@ interface PointsData_Type {
     maps: any;
 }
 
-interface PointsData_Map {
+interface PlayerData_Map {
     points: number;
     total_finishes: number;
     finishes: number;
@@ -24,7 +24,7 @@ interface PointsData_Map {
     first_finish?: number;
 }
 
-export interface PointsData {
+export interface PlayerData {
     player: string;
     points: {
         total: number;
@@ -75,34 +75,34 @@ export interface PointsData {
     };
 }
 
-export interface FindDataPlayer {
-    name: string;
-    clan: string;
-    score: number;
-    is_player: boolean;
-    flag: number;
-    server: {
-        ip: string;
-        port: number;
-        // protocols: [
-        //     string;
-        //     string
-        // ];
-        protocols: string[];
-        max_clients: number;
-        max_players: number;
-        passworded: boolean;
-        game_type: string;
-        name: string;
-        version: string;
-        map: string;
-        locale: string;
-        num_clients: number;
-        num_players: number;
-        num_spectators: number;
-    };
-}
+// export interface FindDataPlayer {
+//     name: string;
+//     clan: string;
+//     score: number;
+//     is_player: boolean;
+//     flag: number;
+//     server: {
+//         ip: string;
+//         port: number;
+//         // protocols: [
+//         //     string;
+//         //     string
+//         // ];
+//         protocols: string[];
+//         max_clients: number;
+//         max_players: number;
+//         passworded: boolean;
+//         game_type: string;
+//         name: string;
+//         version: string;
+//         map: string;
+//         locale: string;
+//         num_clients: number;
+//         num_players: number;
+//         num_spectators: number;
+//     };
+// }
 
-export interface FindData {
-    players: FindDataPlayer[];
-}
+// export interface FindData {
+//     players: FindDataPlayer[];
+// }

@@ -1,25 +1,37 @@
-import { Session } from 'koishi';
+import { Session, User } from 'koishi-core';
 
-import Config from './utils/config';
-import { autoAssign, autoAuthorize } from './utils/CustomFunc';
+require('dotenv').config('../.env');
+import Config, { autoAssign, autoAuthorize } from './utils';
 
 // 配置项文档：https://koishi.js.org/api/app.html
 module.exports = {
-    port: 8081,
-
-    onebot: {
-        secret: '',
-    },
+    port: process.env.PORT,
 
     bots: [
         {
             type: 'onebot:ws',
             // 对应 cqhttp 配置项 ws_config.port
             server: 'ws://localhost:6700',
-            selfId: Config.selfId,
-            token: 'MindBot',
+            selfId: Config.Onebot.selfId,
+            token: process.env.BOT_AUTH_TOKEN,
+        },
+        {
+            type: 'discord',
+            token: process.env.DISCORD_TOKEN,
         },
     ],
+
+    // onebot: {
+    //     secret: '',
+    // },
+    discord: {
+        axiosConfig: {
+            proxy: {
+                host: '127.0.0.1',
+                port: 7890,
+            },
+        },
+    },
 
     // prefix: ['%', '&', '*'],
     prefix: '%',
@@ -32,42 +44,64 @@ module.exports = {
             host: '127.0.0.1',
             port: 3306,
             user: 'root',
-            password: '1634300602Wx-',
-            database: Config.mysqlDB,
+            password: process.env.MYSQL_PASSWORD,
+            database: process.env.MYSQLDB,
         },
         webui: {},
-        // common: {
-        //     // 基础指令
-        //     broadcast: false,
-        //     contextify: false,
-        //     recall: false,
+        common: {
+            // feedback: false
+            operator: `onebot:${Config.Onebot.developer.onebot}`,
 
-        //     feedback: false,
-        //     // operator: 'onebot:1634300602',
+            // 处理事件
+            onFriendRequest: false,
+            async onGroupRequest(session: Session) {
+                // 只通过所有来自 4 级或以上权限用户的加群邀请
+                return (
+                    (await session.observeUser(['authority' as keyof User]))
+                        .authority >= 4
+                );
+            },
 
-        //     // 处理好友申请
-        //     onFriendRequest: false,
+            // 跨频道消息转发
+            relay: [
+                {
+                    source: `onebot:${Config.Onebot.modGroup}`,
+                    destination: `discord:${Config.Discord.modChannel}`,
+                },
+                {
+                    source: `discord:${Config.Discord.modChannel}`,
+                    destination: `onebot:${Config.Onebot.modGroup}`,
+                },
+            ],
 
-        //     // 数据管理
-        //     callme: false,
-        //     bind: false,
-        //     authorize: false,
-        //     assign: false,
-        //     user: false,
-        //     channel: false,
-        // },
-        './modules/AppManage': {},
+            // 基础指令
+            echo: false,
+            broadcast: false,
+            contextify: false,
+            // recall: false,
+
+            // 数据管理
+            callme: false,
+            // bind: false,
+            // authorize: false,
+            assign: false,
+
+            // 高级用法
+            user: false,
+            channel: false,
+        },
+        // './modules/AppManage': {},
         './modules/Command': {},
         './modules/EventHandler': {},
         './modules/MessageHandler': {},
-        './modules/UserManage': {},
+        // './modules/UserManage': {},
     },
 
     logTime: true,
 
     watch: {
         // 要监听的根目录，相对于工作路径
-        root: './*/*.js',
+        root: './**/*.js',
         // 要忽略的文件列表，支持 glob patterns
         ignore: ['node_modules'],
     },
