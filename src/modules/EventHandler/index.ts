@@ -12,8 +12,8 @@ module.exports.apply = (ctx: Context) => {
     const logger = ctx.logger('EventHandler');
     const watchCtx = getWatchCtx(ctx);
 
-    // ctx.plugin(onceBeforeConnect, logger);
-    // ctx.plugin(onceConnect, logger);
+    ctx.plugin(onceBeforeConnect, logger);
+    ctx.plugin(onceConnect, logger);
 
     ctx.plugin(beforeCommand, logger);
 

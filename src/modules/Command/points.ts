@@ -1,7 +1,5 @@
 import { Context } from 'koishi-core';
 import { Logger } from 'koishi-utils';
-import 'koishi-adapter-onebot';
-import 'koishi-plugin-webui';
 
 import Config, { wrapGetPlayerPointsMsg } from '../../utils';
 

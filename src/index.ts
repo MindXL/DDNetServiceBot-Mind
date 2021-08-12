@@ -82,6 +82,7 @@ app.plugin(require('./modules/Command'));
 app.plugin(require('./modules/EventHandler'));
 app.plugin(require('./modules/MessageHandler'));
 // app.plugin(require('./modules/UserManage'));
+app.plugin(require('./modules/Router'));
 
 Logger.showTime = 'MM/dd hh:mm';
 

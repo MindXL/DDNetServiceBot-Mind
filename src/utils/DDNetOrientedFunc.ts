@@ -1,12 +1,9 @@
-import { Logger, s } from 'koishi-utils';
-import { CQBot } from 'koishi-adapter-onebot';
 import axios, { AxiosError } from 'axios';
 import _ from 'lodash';
 
 import Config from './config';
 import { byteLenth } from './CustomFunc';
 import { PromiseResult, PlayerData } from '../lib';
-// import { PromiseResult } from '../declares/declares';
 
 export function testPlayerName(name: string): boolean {
     const bytes = byteLenth(name);
@@ -19,9 +16,9 @@ export async function getPlayerData(
     try {
         if (testPlayerName(name)) {
             const { data } = await axios(
-                `https://api.teeworlds.cn/ddnet/players/${encodeURIComponent(
-                    name
-                )}.json`,
+                `https://${
+                    'api.mindxl.site' ?? 'api.teeworlds.cn'
+                }/ddnet/players/${encodeURIComponent(name)}.json`,
                 {
                     headers: {
                         'accept-encoding': 'gzip, deflate',

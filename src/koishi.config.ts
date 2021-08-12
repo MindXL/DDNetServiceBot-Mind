@@ -96,6 +96,7 @@ module.exports = {
         './modules/EventHandler': {},
         './modules/MessageHandler': {},
         // './modules/UserManage': {},
+        './modules/Router': {},
     },
 
     logTime: 'MM/dd hh:mm',
