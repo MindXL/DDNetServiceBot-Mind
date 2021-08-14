@@ -14,7 +14,7 @@ interface PlayerData_Type {
     maps: any;
 }
 
-interface PlayerData_Map {
+export interface PlayerData_Map {
     points: number;
     total_finishes: number;
     finishes: number;
@@ -62,16 +62,16 @@ export interface PlayerData {
         finishes: number;
     }[];
     types: {
-        Novice: PointsData_Type;
-        Moderate: PointsData_Type;
-        Brutal: PointsData_Type;
-        Insane: PointsData_Type;
-        Dummy: PointsData_Type;
-        DDmaX: PointsData_Type;
-        Oldschool: PointsData_Type;
-        Solo: PointsData_Type;
-        Race: PointsData_Type;
-        Fun: PointsData_Type;
+        Novice: PlayerData_Type;
+        Moderate: PlayerData_Type;
+        Brutal: PlayerData_Type;
+        Insane: PlayerData_Type;
+        Dummy: PlayerData_Type;
+        DDmaX: PlayerData_Type;
+        Oldschool: PlayerData_Type;
+        Solo: PlayerData_Type;
+        Race: PlayerData_Type;
+        Fun: PlayerData_Type;
     };
 }
 
