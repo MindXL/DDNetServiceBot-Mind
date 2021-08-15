@@ -4,7 +4,9 @@ import { getWatchCtx } from '../../utils';
 import { onceBeforeConnect } from './onceBeforeConnect';
 import { onceConnect } from './onceConnect';
 import { beforeCommand } from './beforeCommand';
+import { onGroupMemberRequest } from './onGroupMemberRequest';
 import { onGroupMemberDeleted } from './onGroupMemberDeleted';
+import { test } from './test';
 
 import '../../MysqlExtends';
 
@@ -19,52 +21,8 @@ module.exports.apply = (ctx: Context) => {
 
     ctx.plugin(beforeCommand, logger);
 
+    watchCtx.plugin(onGroupMemberRequest, logger);
     watchCtx.plugin(onGroupMemberDeleted, logger);
 
-    ctx.on('connect', async () => {
-        // test zone
-        const messageId = 'me';
-        const replyMessageId = 're';
-        const userId = 'us';
-        const groupId = 'gr';
-        const channelId = 'ch';
-
-        console.dir(await ctx.database.getGMR('messageId', { messageId }));
-        console.dir(await ctx.database.getGMR('messageId', { messageId }, []));
-        console.dir(
-            await ctx.database.getGMR('messageId', { messageId }, ['groupId'])
-        );
-
-        console.dir(
-            await ctx.database.getGMR('replyMessageId', { replyMessageId })
-        );
-        console.dir(
-            await ctx.database.getGMR('replyMessageId', { replyMessageId }, [])
-        );
-        console.dir(
-            await ctx.database.getGMR('replyMessageId', { replyMessageId }, [
-                'replyMessageId',
-            ])
-        );
-
-        console.dir(
-            await ctx.database.getGMR('union', { userId, groupId, channelId })
-        );
-        console.dir(
-            await ctx.database.getGMR(
-                'union',
-                { userId, groupId, channelId },
-                []
-            )
-        );
-        console.dir(
-            await ctx.database.getGMR('union', { userId, groupId, channelId }, [
-                'messageId',
-                'content',
-            ])
-        );
-
-        console.dir(await ctx.database.getGMR('messageId', { messageId: '1' }));
-        console.dir(await ctx.database.getUser('onebot', '1'));
-    });
+    ctx.plugin(test, logger);
 };
