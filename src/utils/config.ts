@@ -46,6 +46,7 @@ const Config = {
     UnknownErrorMsg: '$出现未知错误$',
     PlayerNotFoundMsg: 'Player Not Found',
     PlayerNameErrorMsg: '玩家名称过长（超15字节）',
+    GMRReserveReplyMessageId: '-1',
     // pointsData404ErrorMsg: 'Player not found',
     // pointsData404ErrorMsgBackup: 'Player Not Found',
 };

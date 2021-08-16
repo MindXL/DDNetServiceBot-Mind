@@ -1,5 +1,6 @@
 import { Context } from 'koishi-core';
 import { Logger } from 'koishi-utils';
+import Config from '../../utils';
 
 export function test(ctx: Context, logger: Logger) {
     ctx.on('connect', async () => {
@@ -7,9 +8,14 @@ export function test(ctx: Context, logger: Logger) {
         await test2(ctx);
     });
 
-    ctx.middleware((session, next) => {
+    ctx.middleware(async (session, next) => {
         if (session.content === 'mt') {
             // console.dir(await ctx.database.getGMR())
+            await ctx.database.removeGMR('union', {
+                userId: Config.Onebot.developer.onebot,
+                groupId: Config.Onebot.motGroup,
+                channelId: Config.Onebot.motGroup,
+            });
         }
         return next();
     });
