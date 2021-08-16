@@ -8,8 +8,6 @@ import { onGroupMemberRequest } from './onGroupMemberRequest';
 import { onGroupMemberDeleted } from './onGroupMemberDeleted';
 import { test } from './test';
 
-import '../../MysqlExtends';
-
 module.exports.name = 'EventHandler';
 
 module.exports.apply = (ctx: Context) => {

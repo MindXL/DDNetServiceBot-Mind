@@ -30,11 +30,12 @@ export function dev(ctx: Context, _logger: Logger) {
         authority: 4,
     }).action(async ({ session }) => {
         try {
-            // do not understand (did not succeed)
-            // await session?.database.remove('user', {
-            //     onebot: { $eq: undefined },
-            //     $and: [{ discord: { $eq: undefined } }],
-            // });
+            /**do not understand (did not succeed)
+             * await session?.database.remove('user', {
+             *     onebot: { $eq: undefined },
+             *     $and: [{ discord: { $eq: undefined } }],
+             * });
+             */
             const mysql = session?.database.mysql;
             await mysql?.query(
                 'DELETE FROM `user` WHERE ' +

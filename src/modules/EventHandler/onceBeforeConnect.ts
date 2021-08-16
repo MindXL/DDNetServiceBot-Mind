@@ -1,6 +1,5 @@
 import { Context } from 'koishi-core';
 import { Logger } from 'koishi-utils';
-import {} from 'koishi-plugin-mysql';
 
 import Config from '../../utils';
 

@@ -17,7 +17,6 @@ module.exports.apply = (ctx: Context) => {
 
     devCtx.plugin(dev, logger);
 
-    // motCtx.plugin(recall, {});
     // motCtx.plugin(newmod);
     motCtx.plugin(points, logger);
     motCtx.plugin(gmr, logger);
