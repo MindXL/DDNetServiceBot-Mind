@@ -244,10 +244,10 @@ Database.extend('koishi-plugin-mysql', {
             ? this.joinKeys(this.inferFields(GroupMemberRequest.table, fields))
             : '*';
 
-        const [data] = await this.query(
+        const data = await this.query(
             `SELECT ${keys} FROM ${GroupMemberRequest.table} LIMIT ${end}`
         );
-        return [data && { ...data }];
+        return (data as GroupMemberRequest[]).map(gmr => ({ ...gmr }));
     },
 
     // async setGMR(type, set, replyMessageId) {

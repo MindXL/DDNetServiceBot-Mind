@@ -10,6 +10,7 @@ export function handleGMR(ctx: Context, logger: Logger) {
 
             // 若非回复消息
             if (!quote) return next();
+
             const replyMessageId = quote.messageId!;
 
             const gmr = await ctx.database.getGMR('replyMessageId', {
@@ -85,5 +86,5 @@ export function handleGMR(ctx: Context, logger: Logger) {
         } finally {
             return next();
         }
-    }, true);
+    });
 }

@@ -198,9 +198,8 @@ export async function sendGMRReminder(
                     seperate +
                     '\n回复此消息以处理入群申请\n（y/n/n [reason...]/i=忽略）'
             )
-            .catch(e => [null, e] as PromiseResult<string>);
+            .catch(e => [null, e.message] as PromiseResult<string>);
         /* 发现账号风控，此时不能发送消息 */
-
         return Array.isArray(replyMessageId)
             ? replyMessageId
             : [replyMessageId, null];
@@ -210,6 +209,6 @@ export async function sendGMRReminder(
             Config.Onebot.motGroup,
             '$收到入群申请$\n\n出现非风控错误，入群申请已归档'
         );
-        return [null, e];
+        return [null, e.message];
     }
 }
