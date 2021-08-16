@@ -1,6 +1,7 @@
 import { Context } from 'koishi-core';
 
 import { getDevCtx, getMotCtx } from '../../utils';
+import { handleGMR } from './handleGMR';
 
 module.exports.name = 'MessageHandler';
 
@@ -9,6 +10,8 @@ module.exports.apply = (ctx: Context) => {
 
     const devCtx = getDevCtx(ctx);
     const motCtx = getMotCtx(ctx);
+
+    motCtx.plugin(handleGMR, logger);
 
     // 回应"hh"消息
     devCtx.middleware(async (session, next) => {
