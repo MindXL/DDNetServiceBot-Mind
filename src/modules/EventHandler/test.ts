@@ -9,12 +9,13 @@ export function test(ctx: Context, logger: Logger) {
     });
 
     ctx.middleware(async (session, next) => {
-        if (session.content === 'mt') {
+        if (session.content === 'et') {
+            console.log(1);
             // console.dir(await ctx.database.getGMR())
             await ctx.database.removeGMR('union', {
-                userId: Config.Onebot.developer.onebot,
-                groupId: Config.Onebot.motGroup,
-                channelId: Config.Onebot.motGroup,
+                userId: '1718209150',
+                groupId: '834904988',
+                channelId: '834904988',
             });
         }
         return next();

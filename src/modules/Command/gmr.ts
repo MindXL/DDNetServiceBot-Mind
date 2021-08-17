@@ -15,7 +15,6 @@ export function gmr(ctx: Context, logger: Logger) {
                     return '$所有入群申请已被处理$';
 
                 let errors: string[] = [];
-                // `gmrs.map()` didn't act well, there's sth doing with Promise
                 for (const gmr of gmrs) {
                     const [newReplyMessageId, error] = await sendGMRReminder(
                         session?.bot as CQBot,

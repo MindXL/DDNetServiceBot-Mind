@@ -1,7 +1,9 @@
 import { Context } from 'koishi-core';
 import { Logger } from 'koishi-utils';
 
-export function beforeCommand(ctx: Context, logger: Logger) {
+export function beforeCommand(ctx: Context, _logger: Logger) {
+    const logger = _logger.extend('before#command');
+
     ctx.on('before-command', ({ session }) => {
         try {
             const author = session?.author;
@@ -22,7 +24,7 @@ export function beforeCommand(ctx: Context, logger: Logger) {
                     .replace(/\s{2,}/g, ' ')
             );
         } catch (e) {
-            logger.extend('before#command').error(e);
+            logger.error(e);
         }
     });
 }

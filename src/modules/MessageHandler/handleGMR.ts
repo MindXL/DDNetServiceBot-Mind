@@ -41,12 +41,12 @@ export function handleGMR(ctx: Context, logger: Logger) {
                 /]\s*([yY]|(?:[nN]|[nN]\s*(?<reason>.*))|[iI])\s*$/g.exec(
                     session.content!
                 );
-            console.log(regExp);
-            const modReply = regExp![1];
-            const reason = regExp!.groups?.resion;
 
             let botReply: string;
-            if (modReply) {
+            if (regExp) {
+                const modReply = regExp![1];
+                const reason = regExp!.groups?.reason;
+
                 if (modReply.match(/[yY]/)) {
                     botReply = '同意了该用户的入群申请';
                     session.bot.handleGroupMemberRequest(gmr.messageId, true);
@@ -72,6 +72,7 @@ export function handleGMR(ctx: Context, logger: Logger) {
 
             session.sendQueued(
                 s('quote', { id: replyMessageId }) +
+                    s('at', { id: userId }) +
                     s('at', { id: userId }) +
                     `\n${botReply}`
             );

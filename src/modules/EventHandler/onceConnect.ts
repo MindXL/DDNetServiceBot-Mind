@@ -3,7 +3,9 @@ import { Logger } from 'koishi-utils';
 
 import Config from '../../utils';
 
-export function onceConnect(ctx: Context, logger: Logger) {
+export function onceConnect(ctx: Context, _logger: Logger) {
+    const logger = _logger.extend('once@connect');
+
     ctx.once('connect', () => {
         try {
             ctx.bots.map(
@@ -23,7 +25,7 @@ export function onceConnect(ctx: Context, logger: Logger) {
                     )
             );
         } catch (e) {
-            logger.extend('once@connect').error(e);
+            logger.error(e);
         }
     });
 }

@@ -4,7 +4,9 @@ import { CQBot } from 'koishi-adapter-onebot';
 
 import Config, { parseGMRSession, sendGMRReminder } from '../../utils';
 
-export function onGroupMemberRequest(ctx: Context, logger: Logger) {
+export function onGroupMemberRequest(ctx: Context, _logger: Logger) {
+    const logger = _logger.extend('group-member-request');
+
     ctx.on('group-member-request', async session => {
         try {
             const answer =
@@ -23,7 +25,7 @@ export function onGroupMemberRequest(ctx: Context, logger: Logger) {
             await ctx.database.createGMR(gmr);
             if (error) throw new Error(error);
         } catch (e) {
-            logger.extend('group-member-request').error(e);
+            logger.error(e);
         }
     });
 }
