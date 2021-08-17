@@ -3,7 +3,7 @@ import './MysqlExtends';
 
 require('dotenv').config('../.env');
 import Config, { autoAssign, autoAuthorize } from './utils';
-
+// TODO: 测试watchGroups有多个元素时的稳定性
 const proxyInfo = process.env
     .PROXY!.match(/(\w+):\/\/([\w.]+):(\d+)/)
     ?.slice(1, 4)!;
@@ -73,16 +73,16 @@ module.exports = {
             },
 
             // 跨频道消息转发
-            relay: [
-                {
-                    source: `onebot:${Config.Onebot.modGroup}`,
-                    destination: `discord:${Config.Discord.modChannel}`,
-                },
-                {
-                    source: `discord:${Config.Discord.modChannel}`,
-                    destination: `onebot:${Config.Onebot.modGroup}`,
-                },
-            ],
+            // relay: [
+            //     {
+            //         source: `onebot:${Config.Onebot.modGroup}`,
+            //         destination: `discord:${Config.Discord.modChannel}`,
+            //     },
+            //     {
+            //         source: `discord:${Config.Discord.modChannel}`,
+            //         destination: `onebot:${Config.Onebot.modGroup}`,
+            //     },
+            // ],
 
             // 基础指令
             echo: false,

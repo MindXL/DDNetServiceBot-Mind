@@ -76,7 +76,7 @@ export function parseGMRSession(
 ): GroupMemberRequest {
     const gmr = {};
     _.map(session, (value, key) => {
-        GroupMemberRequest.excludeKeys.indexOf(key) === -1 &&
+        !GroupMemberRequest.excludeKeys.includes(key) &&
             Object.assign(gmr, { [key]: value });
     });
     // parse的时候还没有发送消息，因此replyMessageId不存在
@@ -93,7 +93,7 @@ export async function sendGMRReminder(
 ): Promise<PromiseResult<string>> {
     try {
         const targetGroup = await bot.getGroup(gmr.groupId);
-        const seperate = '-'.repeat(30) + '\n';
+        const seperate = '-'.repeat(15) + '\n';
         const pointsMessage = await wrapGetPlayerPointsMsg(gmr.answer);
 
         const replyMessageId = await bot

@@ -68,16 +68,16 @@ app.plugin(require('koishi-plugin-common'), {
     },
 
     // 跨频道消息转发
-    relay: [
-        {
-            source: `onebot:${Config.Onebot.modGroup}`,
-            destination: `discord:${Config.Discord.modChannel}`,
-        },
-        {
-            source: `discord:${Config.Discord.modChannel}`,
-            destination: `onebot:${Config.Onebot.modGroup}`,
-        },
-    ],
+    // relay: [
+    //     {
+    //         source: `onebot:${Config.Onebot.modGroup}`,
+    //         destination: `discord:${Config.Discord.modChannel}`,
+    //     },
+    //     {
+    //         source: `discord:${Config.Discord.modChannel}`,
+    //         destination: `onebot:${Config.Onebot.modGroup}`,
+    //     },
+    // ],
 
     // 基础指令
     echo: false,

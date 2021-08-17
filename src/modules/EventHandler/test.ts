@@ -10,13 +10,7 @@ export function test(ctx: Context, logger: Logger) {
 
     ctx.middleware(async (session, next) => {
         if (session.content === 'et') {
-            console.log(1);
-            // console.dir(await ctx.database.getGMR())
-            await ctx.database.removeGMR('union', {
-                userId: '1718209150',
-                groupId: '834904988',
-                channelId: '834904988',
-            });
+            session.send(('-'.repeat(20) + '\n').slice(0, -1) + '123');
         }
         return next();
     });

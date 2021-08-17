@@ -15,12 +15,10 @@ export function dev(ctx: Context, _logger: Logger) {
         .shortcut('说话', { args: ['会说话了'] })
         .shortcut('说鬼话', { options: { encode: true }, fuzzy: true })
         .shortcut('说人话', { options: { decode: true }, fuzzy: true })
-        .check(({ options }, message) =>
-            options?.encode ? encodeURI(message) : void 0
-        )
-        .check(({ options }, message) =>
-            options?.decode ? decodeURI(message) : void 0
-        )
+        .check(({ options }, message) => {
+            if (options?.encode) return encodeURIComponent(message);
+            if (options?.decode) return decodeURIComponent(message);
+        })
         .action(async ({ options }, message) => {
             if (options?.timeout) await sleep(options.timeout * Time.second);
             return message;

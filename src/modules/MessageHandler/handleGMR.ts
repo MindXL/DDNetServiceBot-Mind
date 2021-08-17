@@ -84,8 +84,7 @@ export function handleGMR(ctx: Context, logger: Logger) {
                 .catch();
         } catch (e) {
             logger.extend('handleGMR').error(e);
-        } finally {
-            return next();
         }
+        return next();
     });
 }

@@ -8,8 +8,8 @@ export function autoAssign(session: Session): boolean {
     return (
         [Onebot.motGroup, ...Onebot.watchGroups]
             .concat([Discord.groupId])
-            .indexOf(session.groupId!) !== -1 ||
-        [...Discord.watchChannels].indexOf(session.channelId!) !== -1
+            .includes(session.groupId!) ||
+        [...Discord.watchChannels].includes(session.channelId!)
     );
 }
 

@@ -5,7 +5,9 @@ import _ from 'lodash';
 
 import Config, { sendGMRReminder } from '../../utils';
 
-export function gmr(ctx: Context, logger: Logger) {
+export function gmr(ctx: Context, _logger: Logger) {
+    const logger = _logger.extend('points');
+
     ctx.command('gmr', '获取5条未处理的入群申请', { authority: 3 })
         .usage('(Group Member Request)')
         .action(async ({ session }) => {
@@ -35,7 +37,7 @@ export function gmr(ctx: Context, logger: Logger) {
                 // 风控错误，无法发送消息，return nothing
                 if (errors.length) return;
             } catch (e) {
-                logger.extend('gmr').error(e);
+                logger.error(e);
                 return Config.UnknownErrorMsg;
             }
         });

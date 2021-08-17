@@ -1,5 +1,4 @@
-import { Database, Tables, Session, Query } from 'koishi-core';
-// import * as utils from 'koishi-utils';
+import { Database, Tables, Query } from 'koishi-core';
 import _ from 'lodash';
 import {} from 'koishi-plugin-mysql';
 
@@ -59,41 +58,9 @@ export namespace GroupMemberRequest {
     export type UnionIndex = 'union';
     export type Union = 'userId' | 'groupId' | 'channelId';
 
-    // export type Observed<K extends Field = Field> = utils.Observed<
-    //     Pick<GroupMemberRequest, K>,
-    //     Promise<void>
-    // >;
-    // type Getter = <T extends Index>(
-    //     type: T,
-    //     id: string
-    // ) => Partial<GroupMemberRequest>;
-    // const getters: Getter[] = [];
-
-    // export function create<T extends Index>(
-    //     type: T,
-    //     id: string
-    // ): GroupMemberRequest {
-    //     const result = Tables.create('gmr');
-    //     result[type] = id;
-    //     for (const getter of getters) {
-    //         Object.assign(result, getter(type, id));
-    //     }
-    //     return result;
-    // }
-
     export const excludeKeys = ['selfId', 'type', 'subtype', 'content'];
 
     export interface Database {
-        // parseGMRSession(
-        //     session: Session.Payload<'group-member-request'>,
-        //     replyMessageId: string,
-        //     answer: string
-        // ): GroupMemberRequest;
-        // createGMR(
-        //     session: Session.Payload<'group-member-request'>,
-        //     replyMessageId: string,
-        //     answer: string
-        // ): Promise<void>;
         createGMR(gmr: GroupMemberRequest): Promise<void>;
 
         createFilter<
@@ -116,15 +83,6 @@ export namespace GroupMemberRequest {
             end: number,
             modifier?: Query.Modifier<K>
         ): Promise<Pick<GroupMemberRequest, K>[]>;
-
-        // setGMR<
-        //     T extends Index | UnionIndex,
-        //     S extends T extends Index ? T : Union
-        // >(
-        //     type: T,
-        //     set: Pick<GroupMemberRequest, S>,
-        //     replyMessageId: string
-        // ): Promise<void>;
         updateGMR<
             T extends Index | UnionIndex,
             S extends T extends Index ? T : Union
@@ -148,36 +106,6 @@ declare module 'koishi-core' {
 }
 
 Database.extend('koishi-plugin-mysql', {
-    // parseGMRSession(session, replyMessageId, answer) {
-    //     const gmr = {};
-
-    //     _.map(session, (value, key) => {
-    //         GroupMemberRequest.excludeKeys.indexOf(key) === -1 &&
-    //             Object.assign(gmr, { [key]: value });
-    //     });
-    //     Object.assign(gmr, { replyMessageId, answer });
-    //     return gmr as GroupMemberRequest;
-    // },
-    // async createGMR(session, replyMessageId, answer) {
-    //     const gmr = parseGMRSession(session,  answer);
-    //     const keys = Object.keys(gmr);
-    //     const assignments = keys
-    //         .map(key => {
-    //             key = this.escapeId(key);
-    //             return `${key} = VALUES(${key})`;
-    //         })
-    //         .join(', ');
-
-    //     await this.query(
-    //         `INSERT INTO ?? (${this.joinKeys(keys)}) VALUES (${keys
-    //             .map(() => '?')
-    //             .join(', ')}) ON DUPLICATE KEY UPDATE ${assignments}`,
-    //         [
-    //             GroupMemberRequest.table,
-    //             ...this.formatValues(GroupMemberRequest.table, gmr, keys),
-    //         ]
-    //     );
-    // },
     async createGMR(gmr) {
         const keys = Object.keys(gmr);
         const assignments = keys
@@ -206,6 +134,7 @@ Database.extend('koishi-plugin-mysql', {
 
         return conditions.join(' AND ');
     },
+
     async getGMR(type, set, modifier) {
         const {
             fields = undefined,
@@ -250,12 +179,6 @@ Database.extend('koishi-plugin-mysql', {
         return (data as GroupMemberRequest[]).map(gmr => ({ ...gmr }));
     },
 
-    // async setGMR(type, set, replyMessageId) {
-    //     await this.query(
-    //         `UPDATE ?? SET ?? = ? WHERE ${this.createFilter(type, set)}`,
-    //         [GroupMemberRequest.table, 'replyMessageId', replyMessageId]
-    //     );
-    // },
     async updateGMR(type, set, replyMessageId) {
         await this.query(
             `UPDATE ?? SET ?? = ? WHERE ${this.createFilter(type, set)}`,
