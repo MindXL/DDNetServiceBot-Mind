@@ -2,8 +2,9 @@ import { Context } from 'koishi-core';
 import { Logger, Time, sleep } from 'koishi-utils';
 
 export function dev(ctx: Context, _logger: Logger) {
-    const dev = ctx.command('dev', 'Developer Commands');
     const logger = _logger.extend('dev');
+
+    const dev = ctx.command('dev', 'Developer Commands');
 
     dev.subcommand('echo <message:text>', '输出收到的信息', { authority: 1 })
         .option('encode', '-e 输出编码（encode）后的信息')

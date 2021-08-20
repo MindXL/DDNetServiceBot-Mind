@@ -4,6 +4,7 @@ import { getDevCtx, getMotCtx } from '../../utils';
 import { dev } from './dev';
 import { points } from './points';
 import { gmr } from './gmr';
+import { spot } from './spot';
 import { newmod } from './newmod';
 
 module.exports.name = 'Command';
@@ -21,5 +22,6 @@ module.exports.apply = (ctx: Context) => {
     motCtx.select('platform', 'onebot').plugin(newmod, logger);
     motCtx.plugin(points, logger);
     motCtx.plugin(gmr, logger);
+    motCtx.plugin(spot, logger);
     // motCtx.plugin(spot);
 };

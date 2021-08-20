@@ -13,8 +13,6 @@ export function onGroupMemberRequest(ctx: Context, _logger: Logger) {
 
     ctx.on('group-member-request', async session => {
         try {
-            // TODO: 加个如果一个群里已经有这个玩家了直接同意的功能 by Ts
-
             const answer =
                 /答案：(.*?)$/.exec(session.content!)?.[1] ?? session.userId!;
             const gmr = parseGMRSession(session, answer);
@@ -64,8 +62,7 @@ export function onGroupMemberRequest(ctx: Context, _logger: Logger) {
                 gmr
             );
             Object.assign(gmr, {
-                replyMessageId:
-                    replyMessageId ?? Config.GMRReserveReplyMessageId,
+                replyMessageId: replyMessageId ?? Config.GMRErrorReplyMessageId,
             });
 
             // 入群申请归档后再提示错误

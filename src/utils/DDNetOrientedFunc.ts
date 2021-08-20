@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import Config from './config';
 import { byteLenth } from './CustomFunc';
-import { PromiseResult, PlayerData } from '../lib';
+import { PromiseResult, PlayerData, FindDataPlayer, FindData } from '../lib';
 import { GroupMemberRequest } from '../MysqlExtends';
 
 export function testPlayerName(name: string): boolean {
@@ -52,9 +52,9 @@ export async function getPlayerData(
 export async function wrapGetPlayerPointsMsg(name: string): Promise<string> {
     const [data, error] = await getPlayerData(name);
 
-    let msg = `${name}\n\n`;
+    let prefix = `${name}\n\n`;
 
-    if (error) return msg + error;
+    if (error) return prefix + error;
 
     // 排除error后data就一定存在
     // pity type control
@@ -65,9 +65,10 @@ export async function wrapGetPlayerPointsMsg(name: string): Promise<string> {
         '1.length'
     )?.[0];
 
-    msg += `${favServer}\n${data.points.rank}. with ${data.points.points} points`;
-
-    return msg;
+    return (
+        prefix +
+        `${favServer}\n${data.points.rank}. with ${data.points.points} points`
+    );
 }
 
 export function parseGMRSession(
@@ -124,4 +125,38 @@ export async function sendGMRReminder(
         );
         return [null, e.message];
     }
+}
+
+export async function getOnlinePlayerData(
+    name: string
+): Promise<PromiseResult<FindData>> {
+    try {
+        if (testPlayerName(name)) {
+            const { data }: { data: FindData } = await axios(
+                `https://${
+                    process.env.DDNET_API
+                }/servers/players?name=${encodeURIComponent(name)}&detail=true`,
+                {
+                    headers: {
+                        'accept-encoding': 'gzip',
+                    },
+                }
+            );
+            return [data, null];
+        } else {
+            throw new Error(Config.PlayerNameErrorMsg);
+        }
+    } catch (e) {
+        return [
+            null,
+            (e as AxiosError).isAxiosError ? Config.UnknownErrorMsg : e.message,
+        ];
+    }
+}
+
+export function wrapFindMsg(player: FindDataPlayer) {
+    const { server } = player;
+    return `${
+        player.clan === '' ? '(no clan)' : 'clan：' + player.clan
+    }\n\n位于${server.locale}服务器：\n${server.name}\n\nmap：${server.map}`;
 }
