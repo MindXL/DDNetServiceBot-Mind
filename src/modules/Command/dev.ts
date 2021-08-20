@@ -32,11 +32,12 @@ export function dev(ctx: Context, _logger: Logger) {
             /**do not understand (did not succeed)
              * await session?.database.remove('user', {
              *     onebot: { $eq: undefined },
-             *     $and: [{ discord: { $eq: undefined } }],
+             *     discord: { $eq: undefined },
              * });
              */
+
             const mysql = session?.database.mysql;
-            await mysql?.query(
+            const result: { affectedRows: number } = await mysql?.query(
                 'DELETE FROM `user` WHERE ' +
                     ctx.bots
                         .map(bot => {
@@ -45,8 +46,10 @@ export function dev(ctx: Context, _logger: Logger) {
                             )} IS ${mysql?.escape(undefined)}`;
                         })
                         .join(' AND ')
+            )!;
+            await session?.sendQueued(
+                `$清理了${result.affectedRows}位无效用户$`
             );
-            await session?.sendQueued('$无效用户清理完成$');
         } catch (e) {
             logger.extend('clean').error(e);
         }
