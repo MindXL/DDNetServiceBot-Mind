@@ -10,7 +10,7 @@ export function test(ctx: Context, logger: Logger) {
 
     ctx.middleware(async (session, next) => {
         if (session.content === 'et') {
-            session.send(('-'.repeat(20) + '\n').slice(0, -1) + '123');
+            session.send('-' + (false && '123'));
         }
         return next();
     });

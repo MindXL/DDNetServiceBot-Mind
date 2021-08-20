@@ -26,7 +26,7 @@ export function spot(ctx: Context, _logger: Logger) {
                 // pity type control
                 if (data === null) throw new Error();
 
-                let prefix = `${name}\n\n`;
+                const prefix = `${name}\n\n`;
                 const { players } = data;
                 if (!players.length) return prefix + '该玩家目前不在线';
                 if (players.length === 1) {
@@ -72,14 +72,14 @@ export function spot(ctx: Context, _logger: Logger) {
                 if (domestic) {
                     await session?.sendQueued(
                         atSender +
-                            `共查找到${players.length}位玩家\n其中有${domestic.length}位玩家位于CN\n首位如下：`
+                            `共查找到${players.length}位在线玩家\n其中有${domestic.length}位玩家位于CN\n首位如下：`
                     );
                     const msg = await goOnWith(domestic);
                     if (msg) return msg;
                 } else {
                     await session?.sendQueued(
                         atSender +
-                            '未查找到任何位于CN的玩家，是否显示其它在线重名玩家？（y/...）'
+                            '未查找到任何位于CN的在线玩家，是否显示其它在线重名玩家？（y/...）'
                     );
                     const reply = await session?.prompt()!;
                     if (!reply || !/[yY]/.test(reply)) return finishMsg;
