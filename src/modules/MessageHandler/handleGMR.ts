@@ -67,7 +67,16 @@ export function handleGMR(ctx: Context, logger: Logger) {
                 await ctx.database.removeGMR('replyMessageId', {
                     replyMessageId,
                 });
-                session.bot.deleteMessage(session.groupId!, gmr.replyMessageId);
+                await session.bot.deleteMessage(
+                    session.groupId!,
+                    gmr.replyMessageId
+                );
+                if (gmr.extraMsgIds)
+                    for (const extraMsgId of gmr.extraMsgIds)
+                        await session.bot.deleteMessage(
+                            session.groupId!,
+                            extraMsgId
+                        );
             } else {
                 botReply = '回复的消息格式似乎不正确，请重新回复';
             }

@@ -33,6 +33,7 @@ const Config = {
             discord: process.env.DISCORD_MASTER_ACCOUNT!,
             name: 'Mind',
         },
+        devPrivateChannel: process.env.DISCORD_MASTER_CHANNEL!,
 
         groupId: process.env.DISCORD_GROUP!,
         devChannel: process.env.DISCORD_DEV_CHANNEL!,
@@ -46,10 +47,6 @@ const Config = {
     UnknownErrorMsg: '$出现未知错误$',
     PlayerNotFoundMsg: 'Player Not Found',
     PlayerNameErrorMsg: '玩家名称过长（超15字节）',
-    GMRReserveReplyMessageId: '-1',
-    GMRErrorReplyMessageId: '-1',
-    // pointsData404ErrorMsg: 'Player not found',
-    // pointsData404ErrorMsgBackup: 'Player Not Found',
 };
 
 export default Config;

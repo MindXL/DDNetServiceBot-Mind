@@ -3,7 +3,7 @@ import { Logger } from 'koishi-utils';
 import { CQBot } from 'koishi-adapter-onebot';
 import _ from 'lodash';
 
-import Config, { sendGMRReminder } from '../../utils';
+import Config, { sendGMRReminder, findIfGMRNoPoints } from '../../utils';
 
 export function gmr(ctx: Context, _logger: Logger) {
     const logger = _logger.extend('points');
@@ -16,26 +16,51 @@ export function gmr(ctx: Context, _logger: Logger) {
                 if (Array.isArray(gmrs) && gmrs.length === 0)
                     return '$所有入群申请已被处理$';
 
-                let errors: string[] = [];
                 for (const gmr of gmrs) {
+                    const diffGMR = {};
+
                     const [newReplyMessageId, error] = await sendGMRReminder(
                         session?.bot as CQBot,
                         gmr
                     );
+                    if (error) throw new Error(error);
+                    newReplyMessageId &&
+                        Object.assign(diffGMR, {
+                            replyMessageId: newReplyMessageId,
+                        });
 
-                    if (newReplyMessageId) {
-                        await ctx.database.updateGMR(
+                    // 由于各种原因产生的额外消息发送
+                    const newExtraMsgIds: any[] = [];
+
+                    /* 若player无分则执行find查找 */
+                    await (async () => {
+                        const findMsgs = await findIfGMRNoPoints(
+                            gmr.answer ?? gmr.userId
+                        );
+                        if (Array.isArray(findMsgs) && findMsgs.length) {
+                            const findMsgIds = [];
+                            for (const msg of findMsgs) {
+                                const findMsgId =
+                                    await session?.bot.sendMessage(
+                                        session.groupId!,
+                                        msg
+                                    );
+                                findMsgIds.push(findMsgId);
+                            }
+                            newExtraMsgIds.push(...findMsgIds);
+                        }
+                    })();
+
+                    newExtraMsgIds.length &&
+                        Object.assign(diffGMR, { extraMsgIds: newExtraMsgIds });
+
+                    Object.keys(diffGMR).length &&
+                        (await ctx.database.updateGMR(
                             'messageId',
                             { messageId: gmr.messageId },
-                            newReplyMessageId
-                        );
-                    } else {
-                        errors.push(error!);
-                    }
+                            diffGMR
+                        ));
                 }
-
-                // 风控错误，无法发送消息，return nothing
-                if (errors.length) return;
             } catch (e) {
                 logger.error(e);
                 return Config.UnknownErrorMsg;

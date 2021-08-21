@@ -1,5 +1,5 @@
 import { Context } from 'koishi-core';
-import { Logger } from 'koishi-utils';
+import { Logger, sleep, Time } from 'koishi-utils';
 
 import Config from '../../utils';
 
@@ -9,6 +9,7 @@ export function onceBeforeConnect(ctx: Context, _logger: Logger) {
     const logger = _logger.extend('once@before#connect');
 
     ctx.once('before-connect', async () => {
+        await sleep(Time.second * 10);
         try {
             for (const table of ['user', 'channel']) {
                 await ctx.database.mysql.query('TRUNCATE ??', [table]);

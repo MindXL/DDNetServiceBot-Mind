@@ -7,9 +7,9 @@ import './MysqlExtends';
 require('dotenv').config('../.env');
 import Config, { autoAssign, autoAuthorize } from './utils';
 
-// const proxyInfo = process.env
-//     .PROXY!.match(/(\w+):\/\/([\w.]+):(\d+)/)
-//     ?.slice(1, 4)!;
+const proxyInfo = process.env
+    .PROXY!.match(/(\w+):\/\/([\w.]+):(\d+)/)
+    ?.slice(1, 4)!;
 
 const app = new App({
     port: parseInt(process.env.PORT!),
@@ -20,25 +20,25 @@ const app = new App({
             selfId: Config.Onebot.selfId,
             token: process.env.BOT_AUTH_TOKEN,
         },
-        // {
-        //     type: 'discord',
-        //     token: process.env.DISCORD_TOKEN,
-        // },
+        {
+            type: 'discord',
+            token: process.env.DISCORD_TOKEN,
+        },
     ],
 
-    // discord: {
-    //     axiosConfig: {
-    //         proxy: {
-    //             protocol: proxyInfo[0],
-    //             host: proxyInfo[1],
-    //             port: parseInt(proxyInfo[2]),
-    //             auth: {
-    //                 username: process.env.PROXY_USERNAME!,
-    //                 password: process.env.PROXY_PASSWORD!,
-    //             },
-    //         },
-    //     },
-    // },
+    discord: {
+        axiosConfig: {
+            proxy: {
+                protocol: proxyInfo[0],
+                host: proxyInfo[1],
+                port: parseInt(proxyInfo[2]),
+                auth: {
+                    username: process.env.PROXY_USERNAME!,
+                    password: process.env.PROXY_PASSWORD!,
+                },
+            },
+        },
+    },
 
     prefix: '%',
     autoAssign: (session: Session) => autoAssign(session),

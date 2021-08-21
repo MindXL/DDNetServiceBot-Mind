@@ -6,24 +6,25 @@ import Config from '../../utils';
 export function onceConnect(ctx: Context, _logger: Logger) {
     const logger = _logger.extend('once@connect');
 
-    ctx.once('connect', () => {
+    ctx.once('connect', async () => {
         try {
-            ctx.bots.map(
-                async bot =>
-                    await bot.sendPrivateMessage(
-                        (platform => {
-                            switch (platform) {
-                                case 'onebot':
-                                    return Config.Onebot.developer.onebot;
-                                case 'discord':
-                                    return Config.Discord.developer.discord;
-                                default:
-                                    return '';
-                            }
-                        })(bot.platform),
-                        `${bot.platform} bot is on.`
-                    )
-            );
+            for (const bot of ctx.bots) {
+                const msg = `${bot.platform} bot is on.`;
+
+                await bot.sendPrivateMessage(
+                    (() => {
+                        switch (bot.platform) {
+                            case 'onebot':
+                                return Config.Onebot.developer.onebot;
+                            case 'discord':
+                                return Config.Discord.devPrivateChannel;
+                            default:
+                                return '';
+                        }
+                    })(),
+                    msg
+                );
+            }
         } catch (e) {
             logger.error(e);
         }

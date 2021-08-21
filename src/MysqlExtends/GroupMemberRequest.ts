@@ -1,30 +1,18 @@
-import { Database, Tables, Query } from 'koishi-core';
+import { Database, Tables, Query, Platform } from 'koishi-core';
+import { difference } from 'koishi-utils';
 import _ from 'lodash';
 import {} from 'koishi-plugin-mysql';
 
-// 建表
-Database.extend('koishi-plugin-mysql', ({ tables }) => {
-    tables.gmr = {
-        platform: 'VARCHAR(10) NOT NULL',
-        userId: 'VARCHAR(20) NOT NULL',
-        groupId: 'VARCHAR(25) NOT NULL',
-        channelId: 'VARCHAR(25) NOT NULL',
-        time: 'BIGINT UNSIGNED NOT NULL',
-        answer: 'VARCHAR(50) NOT NULL',
-        messageId: 'VARCHAR(25) NOT NULL',
-        replyMessageId: 'VARCHAR(25) NOT NULL',
-    };
-});
-
 export interface GroupMemberRequest {
-    platform: string;
+    platform: Platform;
     userId: string;
     groupId: string;
     channelId: string;
     time: number;
-    answer: string;
+    answer?: string;
     messageId: string;
     replyMessageId: string;
+    extraMsgIds?: string[];
 }
 
 declare module 'koishi-core' {
@@ -33,20 +21,21 @@ declare module 'koishi-core' {
     }
 }
 
+// 建表
 Tables.extend('gmr', {
     primary: 'messageId',
-    // 出错时replyMessageId的值均为-1，不能为unique
-    unique: [['userId', 'groupId', 'channelId']],
-    // fields: {
-    //     platform: { type: 'string', length: 10 },
-    //     userId: { type: 'string', length: 25, nullable: false },
-    //     groupId: { type: 'string', length: 25, nullable: false },
-    //     channelId: { type: 'string', length: 25 },
-    //     time: { type: 'unsigned', nullable: false },
-    //     answer: { type: 'string', length: 50, nullable: false },
-    //     messageId: { type: 'string', length: 25, nullable: false },
-    //     replyMessageId: { type: 'string', length: 25, nullable: false },
-    // },
+    unique: [['userId', 'groupId', 'channelId'], 'replyMessageId'],
+    fields: {
+        platform: { type: 'string', length: 10, nullable: false },
+        userId: { type: 'string', length: 25, nullable: false },
+        groupId: { type: 'string', length: 25, nullable: false },
+        channelId: { type: 'string', length: 25, nullable: false },
+        time: { type: 'unsigned', nullable: false },
+        answer: { type: 'string', length: 50 },
+        messageId: { type: 'string', length: 25, nullable: false },
+        replyMessageId: { type: 'string', length: 25 },
+        extraMsgIds: { type: 'list' },
+    },
 });
 
 // 数据库支持
@@ -83,13 +72,25 @@ export namespace GroupMemberRequest {
             end: number,
             modifier?: Query.Modifier<K>
         ): Promise<Pick<GroupMemberRequest, K>[]>;
-        updateGMR<
+        // shouldn't be used anywhere
+        setGMR<
             T extends Index | UnionIndex,
             S extends T extends Index ? T : Union
         >(
             type: T,
             set: Pick<GroupMemberRequest, S>,
-            replyMessageId: string
+            data: Partial<GroupMemberRequest>
+        ): Promise<void>;
+        updateGMR<
+            T extends Index | UnionIndex,
+            S extends T extends Index ? T : Union,
+            D extends
+                | Pick<GroupMemberRequest, 'replyMessageId'>
+                | Partial<Pick<GroupMemberRequest, 'extraMsgIds'>>
+        >(
+            type: T,
+            set: Pick<GroupMemberRequest, S>,
+            data: D
         ): Promise<void>;
         removeGMR<
             T extends Index | UnionIndex,
@@ -179,11 +180,28 @@ Database.extend('koishi-plugin-mysql', {
         return (data as GroupMemberRequest[]).map(gmr => ({ ...gmr }));
     },
 
-    async updateGMR(type, set, replyMessageId) {
+    async setGMR(type, set, data) {
+        Object.assign(data, set);
+        const keys = Object.keys(data);
+        const assignments = difference(keys, [type])
+            .map(key => {
+                return `${this.escapeId(key)} = ${this.escape(
+                    data[key as keyof GroupMemberRequest],
+                    GroupMemberRequest.table,
+                    key
+                )}`;
+            })
+            .join(', ');
         await this.query(
-            `UPDATE ?? SET ?? = ? WHERE ${this.createFilter(type, set)}`,
-            [GroupMemberRequest.table, 'replyMessageId', replyMessageId]
+            `UPDATE ?? SET ${assignments} WHERE ${this.createFilter(
+                type,
+                set
+            )}`,
+            [GroupMemberRequest.table]
         );
+    },
+    async updateGMR(type, set, data) {
+        await this.setGMR(type, set, data);
     },
     async removeGMR(type, set) {
         await this.query(

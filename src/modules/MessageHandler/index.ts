@@ -13,10 +13,8 @@ module.exports.apply = (ctx: Context) => {
 
     motCtx.plugin(handleGMR, logger);
 
-    // 回应"hh"消息
     devCtx.middleware(async (session, next) => {
-        if (session.content === 'hh') {
-            await session.send('surprise');
+        if (session.content === 'et') {
         }
         return next();
     });

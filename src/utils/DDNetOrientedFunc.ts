@@ -81,10 +81,7 @@ export function parseGMRSession(
             Object.assign(gmr, { [key]: value });
     });
     // parse的时候还没有发送消息，因此replyMessageId不存在
-    Object.assign(gmr, {
-        replyMessageId: Config.GMRReserveReplyMessageId,
-        answer,
-    });
+    Object.assign(gmr, { answer });
     return gmr as GroupMemberRequest;
 }
 
@@ -95,7 +92,9 @@ export async function sendGMRReminder(
     try {
         const targetGroup = await bot.getGroup(gmr.groupId);
         const seperate = '-'.repeat(15) + '\n';
-        const pointsMessage = await wrapGetPlayerPointsMsg(gmr.answer);
+        const pointsMessage = await wrapGetPlayerPointsMsg(
+            gmr.answer ?? gmr.userId
+        );
 
         const replyMessageId = await bot
             .sendMessage(
@@ -105,9 +104,7 @@ export async function sendGMRReminder(
                     `目标群：${targetGroup.groupId}\n` +
                     `${targetGroup.groupName}\n\n` +
                     seperate +
-                    (gmr.answer === gmr.userId
-                        ? '$用户未提供答案，使用QQ号查询分数$\n'
-                        : '') +
+                    (gmr.answer ? '' : '$用户未提供答案，使用QQ号查询分数$\n') +
                     `${pointsMessage}\n` +
                     seperate +
                     '\n回复此消息以处理入群申请\n（y/n/n [reason...]/i=忽略）'
@@ -125,6 +122,55 @@ export async function sendGMRReminder(
         );
         return [null, e.message];
     }
+}
+
+export async function findIfGMRNoPoints(
+    name: string
+): Promise<string[] | undefined> {
+    if ((await getPlayerData(name))[0]?.points.points) return;
+
+    const [data, error] = await getOnlinePlayerData(name);
+    if (error) throw new Error(error);
+
+    // pity type control
+    if (data === null) throw new Error();
+
+    const prefix = `${name}\n\n`;
+
+    const { players: _players } = data;
+    if (!_players.length) return [prefix + '该玩家目前不在线'];
+    if (_players.length === 1) {
+        const player = _players[0];
+        return [
+            prefix +
+                wrapFindMsg(player) +
+                '\n\n服务器ip：\n' +
+                `${player.server.ip}:${player.server.port}`,
+        ];
+    }
+
+    // player.server.locale !== 'as:cn' 则排在后面
+    const players = _.sortBy(
+        _players,
+        player => player.server.locale !== 'as:cn'
+    );
+
+    const msgs: string[] = [];
+    msgs.push(
+        `共查找到${players.length}位在线玩家\n其中${
+            players.length <= 3 ? players.length : 3
+        }位如下：`
+    );
+    for (const player of players.slice(0, 3)) {
+        msgs.push(
+            prefix +
+                wrapFindMsg(player) +
+                '\n\n服务器ip：\n' +
+                `${player.server.ip}:${player.server.port}`
+        );
+    }
+
+    return msgs;
 }
 
 export async function getOnlinePlayerData(
