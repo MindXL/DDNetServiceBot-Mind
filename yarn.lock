@@ -799,10 +799,10 @@ koishi-adapter-onebot@^3.1.0:
     qface "1.1.0"
     ws "^7.4.5"
 
-koishi-core@^3.13.1:
-  version "3.13.1"
-  resolved "https://registry.yarnpkg.com/koishi-core/-/koishi-core-3.13.1.tgz#431b125d469865cf4acc40f70e27d0d6eedba162"
-  integrity sha512-1PlJ7cGB3pSURngeXxCLpqU6VzdSe1wTPCevt1gi8cbkjq3cAdU4RgiV4KKx0M9cK7gf8oAjMnA27wFgcYvkTQ==
+koishi-core@^3.14.0:
+  version "3.14.0"
+  resolved "https://registry.yarnpkg.com/koishi-core/-/koishi-core-3.14.0.tgz#296e3b86031ee7beeefeaf16b18ec18339c68254"
+  integrity sha512-qX2yhtmF4U+TOsJAIfutvwjaHgWCMB7M/S38bPbnSTgivn8WZp9LIVFUxJVXVh9+WcxTky93e3ZZFnqr5qapFQ==
   dependencies:
     "@koa/router" "^10.1.0"
     "@types/koa__router" "^8.0.7"
@@ -820,22 +820,22 @@ koishi-plugin-common@^4.3.1:
   resolved "https://registry.yarnpkg.com/koishi-plugin-common/-/koishi-plugin-common-4.3.3.tgz#66f629637631017dad70511c9a60c0d02f908301"
   integrity sha512-ef2SZzZ8JtXbY9VTiIdWbRbKylTqXcigXYlq7aK5P1Fx7Yl3VPjTh/kEAvzVKsv1dZn7GW+dTRiUKTbnaua7pg==
 
-koishi-plugin-mysql@^3.3.2:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/koishi-plugin-mysql/-/koishi-plugin-mysql-3.5.0.tgz#0b4c4473f4e5bd46943b729f88208b3f641c4cee"
-  integrity sha512-pSVELX7MlhTM+Ctl/WCJ1w6Kcc9UnJBrlZrj8asXWxCxzc21RKfr80AUwwB6MbOrc/x7sIr8w8rPFL02zGBoJQ==
+koishi-plugin-mysql@^3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/koishi-plugin-mysql/-/koishi-plugin-mysql-3.6.0.tgz#34dd9dc782220778a33d58f9709cca5c1a9f5f8f"
+  integrity sha512-Q7EwTwOuOqTo/BPB5/9k+MmuEDVpH2A3ILVpFexanvuY5DUwljTPbBfvIK2d8y3pADda65H3BHhvXptCubyCiQ==
   dependencies:
     "@types/mysql" "^2.15.19"
     mysql "^2.18.1"
 
-koishi-plugin-webui@^4.6.3:
-  version "4.6.3"
-  resolved "https://registry.yarnpkg.com/koishi-plugin-webui/-/koishi-plugin-webui-4.6.3.tgz#7ca34b3c6c9ee8657996f07b5031245a3583ebf3"
-  integrity sha512-djEHeFdK2FHQ/rxmrgJrB3jQqG/itA4d8oUgu6ZovEhiErPe2WUJAe9pOLn3m/65KqZalebqccny1O/BKdN8dA==
+koishi-plugin-webui@^4.7.0:
+  version "4.7.0"
+  resolved "https://registry.yarnpkg.com/koishi-plugin-webui/-/koishi-plugin-webui-4.7.0.tgz#fd28332510cb4b892ada9c521b156e096c48a7f7"
+  integrity sha512-5zgk9ocviTC11Fp+tFn9qPlE2nCwel1xKwUMlu7DJR/1KDmNsTCNb0hLlRuaEzL9B1uVEsbIWeLgitRZbPUqsQ==
   dependencies:
     semver "^7.3.5"
-    systeminformation "^5.6.14"
-    ws "^7.4.5"
+    systeminformation "^5.8.0"
+    ws "^8.0.0"
 
 koishi-utils@^4.2.3, koishi-utils@^4.2.4:
   version "4.2.4"
@@ -844,16 +844,16 @@ koishi-utils@^4.2.3, koishi-utils@^4.2.4:
   dependencies:
     supports-color "^8.1.0"
 
-koishi@^3.13.1:
-  version "3.13.1"
-  resolved "https://registry.yarnpkg.com/koishi/-/koishi-3.13.1.tgz#f34ea26e027f1100f9a1a88344898f232bb00cba"
-  integrity sha512-NrSMtwvG7x0COQYCWnPUkJUcn9XBfTnP1WQZ1kx3TvMOcs1w40WyHWjSGG0zJTK+9DMazBa9br5xHggOEJI4Yw==
+koishi@^3.14.0:
+  version "3.14.0"
+  resolved "https://registry.yarnpkg.com/koishi/-/koishi-3.14.0.tgz#65f2c2bb67add25c61819898637c733f875dad26"
+  integrity sha512-Ao8D3caC2B+zCpm4CvN1NfXnT9PQKopHOwKnWIm3f/L8whduc6uVl0Q8WHuiffqLbETACwvv96mQDg0XFmqOvQ==
   dependencies:
     cac "^6.7.3"
     chokidar "^3.5.2"
     js-yaml "^4.1.0"
     kleur "^4.1.4"
-    koishi-core "^3.13.1"
+    koishi-core "^3.14.0"
     koishi-utils "^4.2.4"
     prompts "^2.4.1"
 
@@ -1145,7 +1145,7 @@ supports-color@^8.1.0:
   dependencies:
     has-flag "^4.0.0"
 
-systeminformation@^5.6.14:
+systeminformation@^5.8.0:
   version "5.8.0"
   resolved "https://registry.yarnpkg.com/systeminformation/-/systeminformation-5.8.0.tgz#43e6d0918d7d42c65e53e36059f0849354ab2873"
   integrity sha512-l4drbK2PtNynGKblaShY9hDLW/gg1zxUq2+Yk4gTyd6a2JUvFyTGP8PhHV9iOh+MzS25PQa8W1t0kvcIvr9n7Q==
@@ -1228,6 +1228,11 @@ ws@^7.4.5:
   version "7.5.3"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.5.3.tgz#160835b63c7d97bfab418fc1b8a9fced2ac01a74"
   integrity sha512-kQ/dHIzuLrS6Je9+uv81ueZomEwH0qVYstcAQ4/Z93K8zeko9gtAbttJWzoC5ukqXY1PpoouV3+VSOqEAFt5wg==
+
+ws@^8.0.0:
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-8.2.0.tgz#0b738cd484bfc9303421914b11bb4011e07615bb"
+  integrity sha512-uYhVJ/m9oXwEI04iIVmgLmugh2qrZihkywG9y5FfZV2ATeLIzHf93qs+tUNqlttbQK957/VX3mtwAS+UfIwA4g==
 
 yallist@^4.0.0:
   version "4.0.0"
