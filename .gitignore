@@ -105,8 +105,3 @@ dist
 
 # custom
 /dist
-
-/static/*
-!/static/sql
-/static/sql/_koishi.sql
-/static/sql/koishiTables.sql

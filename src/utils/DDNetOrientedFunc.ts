@@ -1,45 +1,27 @@
-import { Logger, s } from 'koishi';
+import { Session } from 'koishi-core';
 import { CQBot } from 'koishi-adapter-onebot';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import _ from 'lodash';
 
 import Config from './config';
 import { byteLenth } from './CustomFunc';
-import { PointsData, FindData, FindDataPlayer } from './TsFreddieAPIInterface';
-import { Session } from 'koishi';
+import { PromiseResult, PlayerData, FindDataPlayer, FindData } from '../lib';
+import { GroupMemberRequest } from '../MysqlExtends';
 
-// declare module 'koishi-core' {
-//     namespace Argv {
-//         interface Domain {
-//             ddnetUsername: string;
-//         }
-//     }
-// }
-
-export function testUserName(name: string): boolean {
+export function testPlayerName(name: string): boolean {
     const bytes = byteLenth(name);
     return 0 < bytes && bytes <= 15;
 }
 
-export function commandCheckUserName(name: string) {
-    return testUserName(name) ? void 0 : Config.ddnetUsernameErrorMsg;
-}
-
-// Argv.createDomain('ddnetUsername', (source) => {
-//     if (!testUserName(source))
-//         throw new Error(`${Config.ddnetUsernameErrorMsg.slice(1, -1)}。`);
-//     return source;
-// });
-
-export async function getPoints(name: string, logger: Logger): Promise<string> {
-    let result = `${name}\n\n`;
-
+export async function getPlayerData(
+    name: string
+): Promise<PromiseResult<PlayerData>> {
     try {
-        if (testUserName(name)) {
-            const { data }: { data: PointsData } = await axios(
-                `https://api.teeworlds.cn/ddnet/players/${encodeURIComponent(
-                    name
-                )}.json`,
+        if (testPlayerName(name)) {
+            const { data } = await axios(
+                `https://${
+                    process.env.DDNET_API
+                }/ddnet/players/${encodeURIComponent(name)}.json`,
                 {
                     headers: {
                         'accept-encoding': 'gzip, deflate',
@@ -47,293 +29,180 @@ export async function getPoints(name: string, logger: Logger): Promise<string> {
                     },
                 }
             );
-            if (data.player) {
-                const favServer = _.maxBy(
-                    _.toPairs(_.groupBy(data.last_finishes, 'country')),
-                    '1.length'
-                )?.[0];
-
-                result += `${favServer}\n${data.points.rank}. with ${data.points.points} points`;
-            } else {
-                result += Config.noPointsMsg;
-            }
+            return [data, null];
         } else {
-            result += `${Config.noPointsMsg}\n${Config.ddnetUsernameErrorMsg}`;
-        }
-
-        // 向字符串的末尾添加一个字符标志位，判断是否出现404；若出现则代表该名下无分数，需要执行指令`find`显示玩家是否在线
-        // result += 'y';
-    } catch (e) {
-        if (e.response.status === 404) {
-            result += e?.response?.data?.error ?? Config.unknownErrorMsg;
-            // result += 'e';
-        } else {
-            logger?.extend('getPoints').error(e);
-            result += Config.unknownErrorMsg;
-            // result = '?';
-        }
-    }
-
-    return result;
-}
-
-// export async function ifExists(name: string, logger: Logger): Promise<boolean> {
-//     try {
-//         await axios(
-//             `https://api.teeworlds.cn/ddnet/players/${encodeURIComponent(
-//                 name
-//             )}`,
-//             {
-//                 headers: {
-//                     'accept-encoding': 'gzip, deflate',
-//                     decompress: true,
-//                 },
-//             }
-//         );
-//         return true;
-//     } catch (e) {
-//         logger?.extend('ifExists').error(e);
-//         return false;
-//     }
-// }
-
-// export async function getOnePoints(name: string, n: number): Promise<string> {
-//     if (!(await ifExists(name))) return `${name}\n\n该玩家不存在`;
-//     try {
-//         const { data } = await axios.get(
-//             `https://ddnet.tw/players/${encodeURIComponent(name)}/`
-//         );
-
-//         const results = new RegExp(
-//             `<div class="block2 ladder"><h3>(?<title>.*?)<[/]h3>\\n<p class="pers-result">(?<points>((\\d+). with (\\d+) points)|(Unranked))<[/]p><[/]div>`,
-//             'g'
-//         );
-
-//         while (n > 0) {
-//             results.exec(data);
-//             n -= 1;
-//         }
-
-//         const result = results.exec(data)?.groups;
-
-//         if (result) {
-//             return `${name}\n\n${result.title}\n${result.points}`;
-//         } else {
-//             throw new Error();
-//         }
-//     } catch (e) {
-//         return '$出现未知错误';
-//     }
-// }
-
-// export async function ifExists(name: string): Promise<boolean> {
-//     try {
-//         const { data } = await axios.get('https://ddnet.tw/players/', {
-//             params: { query: encodeURIComponent(name) },
-//         });
-//         if (data) {
-//             for (const element of data) {
-//                 if (element.name === name) return true;
-//             }
-//         }
-//         return false;
-//     } catch {
-//         return false;
-//     }
-// }
-
-function wrapFindMsg(player: FindDataPlayer) {
-    const { server } = player;
-    return `${
-        player.clan === '' ? '(no clan)' : 'clan：' + player.clan
-    }\n\n位于${server.locale}服务器：\n${server.name}\n\nmap：${server.map}`;
-}
-
-export async function find(
-    session: Session,
-    name: string,
-    logger: Logger,
-    noDetail?: boolean
-): Promise<void> {
-    const atSender = s('at', { id: session?.userId! });
-    if (!name) {
-        session?.sendQueued(atSender + 'find指令缺少参数name');
-        return;
-    } else if (!testUserName(name)) {
-        session?.sendQueued(atSender + Config.ddnetUsernameErrorMsg);
-        return;
-    }
-
-    const _result = `${name}\n\n`;
-    let result = _result;
-    const toFind = 'as:cn';
-
-    try {
-        // 默认为true
-        const { data }: { data: FindData } = await axios(
-            `https://api.teeworlds.cn/servers/players?name=${encodeURIComponent(
-                name
-            )}&detail=${noDetail ?? false ? 'false' : 'true'}`,
-            {
-                headers: {
-                    'accept-encoding': 'gzip',
-                },
-            }
-        );
-        const { players } = data;
-
-        if (players.length === 0) {
-            result += '该玩家目前不在线';
-            session.sendQueued(result);
-        } else {
-            const seperate = '-'.repeat(30);
-
-            if (players.length === 1) {
-                const player = players[0];
-
-                result += wrapFindMsg(player);
-                result += `\n\n（ip地址单独显示）`;
-                session.sendQueued(result);
-                session.sendQueued(`${player.server.ip}:${player.server.port}`);
-            } else {
-                const lenth = players.length;
-                // const seperate = '-'.repeat(30);
-
-                // i points to all; j only points to 'CN'
-                for (
-                    let i = 0, j = 0, countCN = 0;
-                    i < lenth && j <= lenth;
-                    i++
-                ) {
-                    while (j < lenth && players[j].server.locale !== toFind)
-                        j++;
-
-                    let player = undefined;
-                    if (i === 0)
-                        if (j < lenth) {
-                            // 匹配到位于CN的玩家
-                            if (countCN === 0)
-                                session?.sendQueued(
-                                    atSender +
-                                        `查找到${lenth}位玩家，首位如下：`
-                                );
-
-                            countCN++;
-                            player = players[j];
-                            j++;
-                            i--;
-                        } else {
-                            // 遍历CN完毕
-
-                            if (countCN) {
-                                // 曾遍历到CN玩家
-                                if (lenth - countCN > 0)
-                                    // 仍有位于其他国家的玩家
-                                    session?.sendQueued(
-                                        atSender +
-                                            '位于CN的玩家已显示完毕，是否显示其它在线重名玩家？（y/...）'
-                                    );
-                                else {
-                                    // 所有玩家均位于CN
-                                    break;
-                                }
-                            } else {
-                                // 未遍历到CN玩家
-                                session?.sendQueued(
-                                    atSender +
-                                        '未查找到任何位于CN的玩家，是否显示其它在线重名玩家？（y/...）'
-                                );
-                            }
-
-                            const reply = await session?.prompt()!;
-                            if (!reply) {
-                                session?.sendQueued(atSender + '输入超时。');
-                                return;
-                            }
-
-                            if (!/[yY]/.test(reply)) break;
-                        }
-
-                    // 只要之前未跳出就会执行下段
-                    // 若之前未找到CN玩家，则此处player===undifined
-                    player = player ?? players[i];
-
-                    // 若此时player指向已遍历的CN玩家
-                    if (
-                        i !== -1 &&
-                        j === lenth &&
-                        player.server.locale === toFind
-                    )
-                        continue;
-                    let { server } = player;
-
-                    result += wrapFindMsg(player);
-                    if (i < lenth) {
-                        result += `\n${seperate}\n\n回复：\ny-继续查看\nip-获取服务器ip并结束对话\n（回复其它则结束对话）`;
-                        session?.sendQueued(result);
-                        const reply = await session?.prompt()!;
-
-                        if (!reply) {
-                            session?.sendQueued(atSender + '输入超时。');
-                            return;
-                        }
-
-                        if (/[yY]/.test(reply)) {
-                            result = _result;
-                            continue;
-                        } else if (/ip/.test(reply)) {
-                            session?.sendQueued(`${server.ip}:${server.port}`);
-                            break;
-                        } else break;
-                    }
-                }
-                session?.sendQueued('$find查看完毕$');
-            }
+            throw new Error(Config.PlayerNameErrorMsg);
         }
     } catch (e) {
-        logger.extend('find').error(e);
-        session?.sendQueued(Config.unknownErrorMsg);
+        let message: string;
+
+        if ((e as AxiosError).isAxiosError) {
+            message =
+                (e as AxiosError).response?.status === 404
+                    ? Config.PlayerNotFoundMsg
+                    : Config.UnknownErrorMsg;
+        } else {
+            message = (e as Error).message;
+        }
+
+        return [null, message];
     }
+}
+
+export async function wrapGetPlayerPointsMsg(name: string): Promise<string> {
+    const [data, error] = await getPlayerData(name);
+
+    let prefix = `${name}\n\n`;
+
+    if (error) return prefix + error;
+
+    // 排除error后data就一定存在
+    // pity type control
+    if (data === null) throw new Error();
+
+    const favServer = _.maxBy(
+        _.toPairs(_.groupBy(data.last_finishes, 'country')),
+        '1.length'
+    )?.[0];
+
+    return (
+        prefix +
+        `${favServer}\n${data.points.rank}. with ${data.points.points} points`
+    );
+}
+
+export function parseGMRSession(
+    session: Session.Payload<'group-member-request'>,
+    answer: string
+): GroupMemberRequest {
+    const gmr = {};
+    _.map(session, (value, key) => {
+        !GroupMemberRequest.excludeKeys.includes(key) &&
+            Object.assign(gmr, { [key]: value });
+    });
+    // parse的时候还没有发送消息，因此replyMessageId不存在
+    Object.assign(gmr, { answer });
+    return gmr as GroupMemberRequest;
 }
 
 export async function sendGMRReminder(
     bot: CQBot,
-    userId: string,
-    groupId: string,
-    _answer: string,
-    logger: Logger
-): Promise<string> {
-    const targetGroup = await bot.getGroup(groupId);
-    const seperate = '-'.repeat(30);
+    gmr: GroupMemberRequest
+): Promise<PromiseResult<string>> {
+    try {
+        const targetGroup = await bot.getGroup(gmr.groupId);
+        const seperate = '-'.repeat(15) + '\n';
+        const pointsMessage = await wrapGetPlayerPointsMsg(
+            gmr.answer ?? gmr.userId
+        );
 
-    const answer = _answer !== '' ? _answer : userId;
-    const pointsMessage = await getPoints(answer, logger);
+        const replyMessageId = await bot
+            .sendMessage(
+                Config.Onebot.motGroup,
+                '$收到入群申请$\n\n' +
+                    `申请人：${gmr.userId}\n\n` +
+                    `目标群：${targetGroup.groupId}\n` +
+                    `${targetGroup.groupName}\n\n` +
+                    seperate +
+                    (gmr.answer ? '' : '$用户未提供答案，使用QQ号查询分数$\n') +
+                    `${pointsMessage}\n` +
+                    seperate +
+                    '\n回复此消息以处理入群申请\n（y/n/n [reason...]/i=忽略）'
+            )
+            .catch(e => [null, e.message] as PromiseResult<string>);
+        /* 发现账号风控，此时不能发送消息 */
+        return Array.isArray(replyMessageId)
+            ? replyMessageId
+            : [replyMessageId, null];
+    } catch (e) {
+        // 风控错误不会出现在这里，可以发送消息
+        await bot.sendMessage(
+            Config.Onebot.motGroup,
+            '$收到入群申请$\n\n出现非风控错误，入群申请已归档'
+        );
+        return [null, e.message];
+    }
+}
 
-    const newReplyMessageId = await bot.sendGroupMessage(
-        Config.motGroup,
-        `$收到入群申请$\n\n申请人：${userId}\n\n目标群：${
-            targetGroup.groupId
-        }\n${targetGroup.groupName}\n\n${seperate}\n${
-            _answer === '' ? '$用户未提供答案，使用QQ号查询分数$\n' : ''
-        }${pointsMessage}\n${seperate}\n\n回复此消息以处理入群申请\n（y/n/n [reason...]/i=忽略）`
+export async function findIfGMRNoPoints(
+    name: string
+): Promise<string[] | undefined> {
+    if ((await getPlayerData(name))[0]?.points.points) return;
+
+    const [data, error] = await getOnlinePlayerData(name);
+    if (error) throw new Error(error);
+
+    // pity type control
+    if (data === null) throw new Error();
+
+    const prefix = `${name}\n\n`;
+
+    const { players: _players } = data;
+    if (!_players.length) return [prefix + '该玩家目前不在线'];
+    if (_players.length === 1) {
+        const player = _players[0];
+        return [
+            prefix +
+                wrapFindMsg(player) +
+                '\n\n服务器ip：\n' +
+                `${player.server.ip}:${player.server.port}`,
+        ];
+    }
+
+    // player.server.locale !== 'as:cn' 则排在后面
+    const players = _.sortBy(
+        _players,
+        player => player.server.locale !== 'as:cn'
     );
 
-    if (
-        pointsMessage.endsWith(Config.pointsData404ErrorMsg) ||
-        pointsMessage.endsWith(Config.pointsData404ErrorMsgBackup)
-    ) {
-        find(
-            bot.createSession({
-                type: 'send',
-                subtype: 'group',
-                platform: 'onebot',
-                selfId: Config.developer.onebot,
-                groupId: Config.motGroup,
-                channelId: Config.motGroup,
-            }),
-            answer,
-            logger
+    const msgs: string[] = [];
+    msgs.push(
+        `共查找到${players.length}位在线玩家\n其中${
+            players.length <= 3 ? players.length : 3
+        }位如下：`
+    );
+    for (const player of players.slice(0, 3)) {
+        msgs.push(
+            prefix +
+                wrapFindMsg(player) +
+                '\n\n服务器ip：\n' +
+                `${player.server.ip}:${player.server.port}`
         );
     }
-    return newReplyMessageId;
+
+    return msgs;
+}
+
+export async function getOnlinePlayerData(
+    name: string
+): Promise<PromiseResult<FindData>> {
+    try {
+        if (testPlayerName(name)) {
+            const { data }: { data: FindData } = await axios(
+                `https://${
+                    process.env.DDNET_API
+                }/servers/players?name=${encodeURIComponent(name)}&detail=true`,
+                {
+                    headers: {
+                        'accept-encoding': 'gzip',
+                    },
+                }
+            );
+            return [data, null];
+        } else {
+            throw new Error(Config.PlayerNameErrorMsg);
+        }
+    } catch (e) {
+        return [
+            null,
+            (e as AxiosError).isAxiosError ? Config.UnknownErrorMsg : e.message,
+        ];
+    }
+}
+
+export function wrapFindMsg(player: FindDataPlayer) {
+    const { server } = player;
+    return `${
+        player.clan === '' ? '(no clan)' : 'clan：' + player.clan
+    }\n\n位于${server.locale}服务器：\n${server.name}\n\nmap：${server.map}`;
 }
