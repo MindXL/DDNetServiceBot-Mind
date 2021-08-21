@@ -63,9 +63,11 @@ export function handleGMR(ctx: Context, logger: Logger) {
                 } else {
                     botReply = '忽略了该用户的入群申请';
                 }
+
                 await ctx.database.removeGMR('replyMessageId', {
                     replyMessageId,
                 });
+                session.bot.deleteMessage(session.groupId!, gmr.replyMessageId);
             } else {
                 botReply = '回复的消息格式似乎不正确，请重新回复';
             }
@@ -77,7 +79,6 @@ export function handleGMR(ctx: Context, logger: Logger) {
                     `\n${botReply}`
             );
 
-            session.bot.deleteMessage(session.groupId!, gmr.replyMessageId);
             // 管理员不可撤回群主和管理员的消息，这种错误不需抛出
             session.bot
                 .deleteMessage(session.groupId!, session.messageId!)

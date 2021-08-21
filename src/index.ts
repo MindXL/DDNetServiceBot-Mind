@@ -7,9 +7,9 @@ import './MysqlExtends';
 require('dotenv').config('../.env');
 import Config, { autoAssign, autoAuthorize } from './utils';
 
-const proxyInfo = process.env
-    .PROXY!.match(/(\w+):\/\/([\w.]+):(\d+)/)
-    ?.slice(1, 4)!;
+// const proxyInfo = process.env
+//     .PROXY!.match(/(\w+):\/\/([\w.]+):(\d+)/)
+//     ?.slice(1, 4)!;
 
 const app = new App({
     port: parseInt(process.env.PORT!),
@@ -20,25 +20,25 @@ const app = new App({
             selfId: Config.Onebot.selfId,
             token: process.env.BOT_AUTH_TOKEN,
         },
-        {
-            type: 'discord',
-            token: process.env.DISCORD_TOKEN,
-        },
+        // {
+        //     type: 'discord',
+        //     token: process.env.DISCORD_TOKEN,
+        // },
     ],
 
-    discord: {
-        axiosConfig: {
-            proxy: {
-                protocol: proxyInfo[0],
-                host: proxyInfo[1],
-                port: parseInt(proxyInfo[2]),
-                auth: {
-                    username: process.env.PROXY_USERNAME!,
-                    password: process.env.PROXY_PASSWORD!,
-                },
-            },
-        },
-    },
+    // discord: {
+    //     axiosConfig: {
+    //         proxy: {
+    //             protocol: proxyInfo[0],
+    //             host: proxyInfo[1],
+    //             port: parseInt(proxyInfo[2]),
+    //             auth: {
+    //                 username: process.env.PROXY_USERNAME!,
+    //                 password: process.env.PROXY_PASSWORD!,
+    //             },
+    //         },
+    //     },
+    // },
 
     prefix: '%',
     autoAssign: (session: Session) => autoAssign(session),
@@ -97,11 +97,9 @@ app.plugin(require('koishi-plugin-common'), {
     channel: false,
 });
 
-// app.plugin(require('./modules/AppManage'));
 app.plugin(require('./modules/Command'));
 app.plugin(require('./modules/EventHandler'));
 app.plugin(require('./modules/MessageHandler'));
-// app.plugin(require('./modules/UserManage'));
 app.plugin(require('./modules/Router'));
 
 Logger.showTime = 'MM/dd hh:mm';

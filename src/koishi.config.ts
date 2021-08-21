@@ -3,10 +3,10 @@ import './MysqlExtends';
 
 require('dotenv').config('../.env');
 import Config, { autoAssign, autoAuthorize } from './utils';
-// TODO: 测试watchGroups有多个元素时的稳定性
-const proxyInfo = process.env
-    .PROXY!.match(/(\w+):\/\/([\w.]+):(\d+)/)
-    ?.slice(1, 4)!;
+
+// const proxyInfo = process.env
+//     .PROXY!.match(/(\w+):\/\/([\w.]+):(\d+)/)
+//     ?.slice(1, 4)!;
 
 // 配置项文档：https://koishi.js.org/api/app.html
 module.exports = {
@@ -20,28 +20,28 @@ module.exports = {
             selfId: Config.Onebot.selfId,
             token: process.env.BOT_AUTH_TOKEN,
         },
-        {
-            type: 'discord',
-            token: process.env.DISCORD_TOKEN,
-        },
+        // {
+        //     type: 'discord',
+        //     token: process.env.DISCORD_TOKEN,
+        // },
     ],
 
     // onebot: {
     //     secret: '',
     // },
-    discord: {
-        axiosConfig: {
-            proxy: {
-                protocol: proxyInfo[0],
-                host: proxyInfo[1],
-                port: parseInt(proxyInfo[2]),
-                auth: {
-                    username: process.env.PROXY_USERNAME!,
-                    password: process.env.PROXY_PASSWORD!,
-                },
-            },
-        },
-    },
+    // discord: {
+    //     axiosConfig: {
+    //         proxy: {
+    //             protocol: proxyInfo[0],
+    //             host: proxyInfo[1],
+    //             port: parseInt(proxyInfo[2]),
+    //             auth: {
+    //                 username: process.env.PROXY_USERNAME!,
+    //                 password: process.env.PROXY_PASSWORD!,
+    //             },
+    //         },
+    //     },
+    // },
 
     // prefix: ['%', '&', '*'],
     prefix: '%',
@@ -101,11 +101,9 @@ module.exports = {
             user: false,
             channel: false,
         },
-        // './modules/AppManage': {},
         './modules/Command': {},
         './modules/EventHandler': {},
         './modules/MessageHandler': {},
-        // './modules/UserManage': {},
         './modules/Router': {},
     },
 
