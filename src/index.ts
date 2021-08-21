@@ -43,6 +43,7 @@ const app = new App({
     prefix: '%',
     autoAssign: (session: Session) => autoAssign(session),
     autoAuthorize: (session: Session) => autoAuthorize(session),
+    processMessage: (message: string) => message,
 });
 
 app.plugin(require('koishi-plugin-mysql'), {

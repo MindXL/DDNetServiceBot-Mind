@@ -48,6 +48,7 @@ module.exports = {
 
     autoAssign: (session: Session) => autoAssign(session),
     autoAuthorize: (session: Session) => autoAuthorize(session),
+    processMessage: (message: string) => message,
 
     plugins: {
         mysql: {
