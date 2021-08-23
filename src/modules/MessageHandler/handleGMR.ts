@@ -91,7 +91,7 @@ export function handleGMR(ctx: Context, logger: Logger) {
             // 管理员不可撤回群主和管理员的消息，这种错误不需抛出
             session.bot
                 .deleteMessage(session.groupId!, session.messageId!)
-                .catch();
+                .catch(e => {});
         } catch (e) {
             logger.extend('handleGMR').error(e);
         }
