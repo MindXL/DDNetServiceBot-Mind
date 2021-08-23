@@ -1,6 +1,5 @@
 import { Context } from 'koishi-core';
 import { Logger } from 'koishi-utils';
-import { CQBot } from 'koishi-adapter-onebot';
 import _ from 'lodash';
 
 import Config, { sendGMRReminder, findIfGMRNoPoints } from '../../utils';
@@ -12,6 +11,7 @@ export function gmr(ctx: Context, _logger: Logger) {
         .usage('(Group Member Request)')
         .action(async ({ session }) => {
             try {
+                console.log(session);
                 const gmrs = await ctx.database.getGMRByNum(5);
                 if (Array.isArray(gmrs) && gmrs.length === 0)
                     return '$所有入群申请已被处理$';
@@ -20,7 +20,8 @@ export function gmr(ctx: Context, _logger: Logger) {
                     const diffGMR = {};
 
                     const [newReplyMessageId, error] = await sendGMRReminder(
-                        session?.bot as CQBot,
+                        // session?.bot as CQBot,
+                        session!,
                         gmr
                     );
                     if (error) throw new Error(error);

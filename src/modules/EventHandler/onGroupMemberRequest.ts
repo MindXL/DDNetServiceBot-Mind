@@ -39,10 +39,7 @@ export function onGroupMemberRequest(ctx: Context, _logger: Logger) {
                 return;
 
             // 发送入群申请提示消息
-            const [replyMessageId, error] = await sendGMRReminder(
-                session.bot as CQBot,
-                gmr
-            );
+            const [replyMessageId, error] = await sendGMRReminder(session, gmr);
             if (error) throw new Error(error);
             Object.assign(gmr, { replyMessageId });
 
