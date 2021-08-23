@@ -55,8 +55,16 @@ app.plugin(require('koishi-plugin-mysql'), {
 });
 app.plugin(require('koishi-plugin-webui'));
 app.plugin(require('koishi-plugin-common'), {
-    // feedback: false
-    operator: `onebot:${Config.Onebot.developer.onebot}`,
+    admin: false,
+    bind: false,
+    broadcast: false,
+    callme: false,
+    echo: false,
+    // feedback
+    // operator: `onebot:${Config.Onebot.developer.onebot}`,
+
+    contextify: true,
+    recall: true,
 
     // 处理事件
     onFriendRequest: false,
@@ -79,24 +87,23 @@ app.plugin(require('koishi-plugin-common'), {
     //         destination: `onebot:${Config.Onebot.modGroup}`,
     //     },
     // ],
-
-    // 基础指令
-    echo: false,
-    broadcast: false,
-    contextify: false,
-    // recall: false,
-
-    // 数据管理
-    callme: false,
-    // bind: false,
-    // authorize: false,
-    assign: false,
-
-    // 高级用法
-    user: false,
-    channel: false,
 });
-
+app.plugin(require('koishi-plugin-puppeteer'));
+// app.plugin(require('koishi-plugin-schedule'));
+app.plugin(require('koishi-plugin-tools'), {
+    baidu: true,
+    brainfuck: false,
+    // 此条目前似乎还未正式注册为指令
+    // bilibili: false,
+    crypto: false,
+    magi: false,
+    maya: false,
+    mcping: false,
+    music: false,
+    oeis: false,
+    qrcode: true,
+    weather: false,
+});
 app.plugin(require('./modules/Command'));
 app.plugin(require('./modules/EventHandler'));
 app.plugin(require('./modules/MessageHandler'));

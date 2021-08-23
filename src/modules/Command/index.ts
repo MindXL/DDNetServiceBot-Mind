@@ -23,5 +23,8 @@ module.exports.apply = (ctx: Context) => {
     motCtx.plugin(points, logger);
     motCtx.plugin(gmr, logger);
     motCtx.plugin(spot, logger);
-    // motCtx.plugin(spot);
+
+    ctx.command('ct').action(({ session }) => {
+        return session?.channelId;
+    });
 };

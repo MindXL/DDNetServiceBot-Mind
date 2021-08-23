@@ -24,6 +24,9 @@
     "koishi-adapter-onebot": "^3.1.0",
     "koishi-plugin-common": "^4.3.1",
     "koishi-plugin-mysql": "^3.6.0",
+    "koishi-plugin-puppeteer": "^2.1.6",
+    "koishi-plugin-schedule": "^3.0.7",
+    "koishi-plugin-tools": "^2.1.4",
     "koishi-plugin-webui": "^4.7.0",
     "lodash": "^4.17.21"
   }

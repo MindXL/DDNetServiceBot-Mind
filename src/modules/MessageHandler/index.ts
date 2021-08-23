@@ -14,7 +14,7 @@ module.exports.apply = (ctx: Context) => {
     motCtx.plugin(handleGMR, logger);
 
     devCtx.middleware(async (session, next) => {
-        if (session.content === 'et') {
+        if (session.content === 'mt') {
         }
         return next();
     });

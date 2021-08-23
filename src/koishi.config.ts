@@ -25,23 +25,33 @@ module.exports = {
             token: process.env.DISCORD_TOKEN,
         },
     ],
-
-    // onebot: {
-    //     secret: '',
-    // },
-    discord: {
-        axiosConfig: {
-            proxy: {
-                protocol: proxyInfo[0],
-                host: proxyInfo[1],
-                port: parseInt(proxyInfo[2]),
-                auth: {
-                    username: process.env.PROXY_USERNAME!,
-                    password: process.env.PROXY_PASSWORD!,
-                },
+    axiosConfig: {
+        proxy: {
+            protocol: proxyInfo[0],
+            host: proxyInfo[1],
+            port: parseInt(proxyInfo[2]),
+            auth: {
+                username: process.env.PROXY_USERNAME!,
+                password: process.env.PROXY_PASSWORD!,
             },
         },
     },
+    // onebot: {
+    //     secret: '',
+    // },
+    // discord: {
+    //     axiosConfig: {
+    //         proxy: {
+    //             protocol: proxyInfo[0],
+    //             host: proxyInfo[1],
+    //             port: parseInt(proxyInfo[2]),
+    //             auth: {
+    //                 username: process.env.PROXY_USERNAME!,
+    //                 password: process.env.PROXY_PASSWORD!,
+    //             },
+    //         },
+    //     },
+    // },
 
     // prefix: ['%', '&', '*'],
     prefix: '%',
@@ -60,8 +70,16 @@ module.exports = {
         },
         webui: {},
         common: {
-            // feedback: false
-            operator: `onebot:${Config.Onebot.developer.onebot}`,
+            admin: false,
+            bind: false,
+            broadcast: false,
+            callme: false,
+            echo: false,
+            // feedback
+            // operator: `onebot:${Config.Onebot.developer.onebot}`,
+
+            contextify: true,
+            recall: true,
 
             // 处理事件
             onFriendRequest: false,
@@ -84,22 +102,22 @@ module.exports = {
             //         destination: `onebot:${Config.Onebot.modGroup}`,
             //     },
             // ],
-
-            // 基础指令
-            echo: false,
-            broadcast: false,
-            contextify: false,
-            // recall: false,
-
-            // 数据管理
-            callme: false,
-            // bind: false,
-            // authorize: false,
-            assign: false,
-
-            // 高级用法
-            user: false,
-            channel: false,
+        },
+        puppeteer: {},
+        // schedule: {},
+        tools: {
+            baidu: true,
+            brainfuck: false,
+            // 此条目前似乎还未正式注册为指令
+            // bilibili: false,
+            crypto: false,
+            magi: false,
+            maya: false,
+            mcping: false,
+            music: false,
+            oeis: false,
+            qrcode: true,
+            weather: false,
         },
         './modules/Command': {},
         './modules/EventHandler': {},
