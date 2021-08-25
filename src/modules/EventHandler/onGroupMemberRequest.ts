@@ -8,6 +8,7 @@ import Config, {
     sendGMRReminder,
     wrapGetPlayerPointsMsg,
     findIfGMRNoPoints,
+    GMRCache,
 } from '../../utils';
 import { GroupMemberRequest } from '../../MysqlExtends';
 
@@ -39,7 +40,10 @@ export function onGroupMemberRequest(ctx: Context, _logger: Logger) {
                 return;
 
             // 发送入群申请提示消息
-            const [replyMessageId, error] = await sendGMRReminder(session, gmr);
+            const [replyMessageId, error] = await sendGMRReminder(
+                session.bot as CQBot,
+                gmr
+            );
             if (error) throw new Error(error);
             Object.assign(gmr, { replyMessageId });
 
@@ -65,7 +69,10 @@ export function onGroupMemberRequest(ctx: Context, _logger: Logger) {
         } catch (e) {
             logger.error(e);
         } finally {
-            Object.keys(gmr).length && (await ctx.database.createGMR(gmr));
+            if (Object.keys(gmr).length) {
+                await ctx.database.createGMR(gmr);
+                Object.assign(GMRCache, { [gmr.replyMessageId]: gmr });
+            }
         }
     });
 }

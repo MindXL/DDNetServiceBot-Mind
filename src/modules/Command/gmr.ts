@@ -1,8 +1,16 @@
 import { Context } from 'koishi-core';
 import { Logger } from 'koishi-utils';
+import { CQBot } from 'koishi-adapter-onebot';
 import _ from 'lodash';
 
-import Config, { sendGMRReminder, findIfGMRNoPoints } from '../../utils';
+import Config, {
+    sendGMRReminder,
+    findIfGMRNoPoints,
+    GMRCache,
+} from '../../utils';
+import { GroupMemberRequest } from '../../MysqlExtends';
+
+type DiffGMR = Pick<GroupMemberRequest, 'replyMessageId' | 'extraMsgIds'>;
 
 export function gmr(ctx: Context, _logger: Logger) {
     const logger = _logger.extend('points');
@@ -11,17 +19,15 @@ export function gmr(ctx: Context, _logger: Logger) {
         .usage('(Group Member Request)')
         .action(async ({ session }) => {
             try {
-                console.log(session);
                 const gmrs = await ctx.database.getGMRByNum(5);
                 if (Array.isArray(gmrs) && gmrs.length === 0)
                     return '$所有入群申请已被处理$';
 
                 for (const gmr of gmrs) {
-                    const diffGMR = {};
+                    const diffGMR: DiffGMR = {} as any;
 
                     const [newReplyMessageId, error] = await sendGMRReminder(
-                        // session?.bot as CQBot,
-                        session!,
+                        session?.bot as CQBot,
                         gmr
                     );
                     if (error) throw new Error(error);
@@ -55,12 +61,17 @@ export function gmr(ctx: Context, _logger: Logger) {
                     newExtraMsgIds.length &&
                         Object.assign(diffGMR, { extraMsgIds: newExtraMsgIds });
 
-                    Object.keys(diffGMR).length &&
-                        (await ctx.database.updateGMR(
+                    if (Object.keys(diffGMR).length) {
+                        delete GMRCache[gmr.replyMessageId];
+                        Object.assign(GMRCache, {
+                            [diffGMR.replyMessageId]: { ...gmr, ...diffGMR },
+                        });
+                        await ctx.database.updateGMR(
                             'messageId',
                             { messageId: gmr.messageId },
                             diffGMR
-                        ));
+                        );
+                    }
                 }
             } catch (e) {
                 logger.error(e);

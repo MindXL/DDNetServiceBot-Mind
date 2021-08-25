@@ -1,7 +1,7 @@
 import { Context } from 'koishi-core';
 import { Logger, s } from 'koishi-utils';
 
-import Config from '../../utils';
+import Config, { GMRCache } from '../../utils';
 
 export function handleGMR(ctx: Context, logger: Logger) {
     ctx.middleware(async (session, next) => {
@@ -9,23 +9,26 @@ export function handleGMR(ctx: Context, logger: Logger) {
             const { quote } = session;
 
             // 若非回复消息
-            if (!quote) return next();
-
-            const replyMessageId = quote.messageId!;
-
-            const gmr = await ctx.database.getGMR('replyMessageId', {
-                replyMessageId,
-            });
-
-            // 若被回复的消息非提示入群申请的消息
-            if (!gmr) return next();
+            if (!quote || quote.author?.userId !== Config.Onebot.selfId)
+                return next();
 
             // 若消息格式不正确
             const regExp =
-                /]\s*([yY]|(?:[nN]|[nN]\s*(?<reason>.*))|[iI])\s*$/g.exec(
+                /\[CQ:quote,id=[-\d]+\]\[CQ:at,id=\d+\]\s+\[CQ:at,id=\d+\]\s*([yY]|(?:[nN]|[nN]\s*(?<reason>.*))|[iI])\s*/.exec(
                     session.content!
                 );
             if (!regExp) return next();
+
+            const replyMessageId = quote.messageId!;
+
+            // 使用缓存，避免向数据库请求
+            const gmr =
+                GMRCache[replyMessageId] ??
+                (await ctx.database.getGMR('replyMessageId', {
+                    replyMessageId,
+                }));
+            // 若被回复的消息非提示入群申请的消息
+            if (!gmr) return next();
 
             const userId = session.userId!;
             // 若非在册的管理员
@@ -66,7 +69,7 @@ export function handleGMR(ctx: Context, logger: Logger) {
             await ctx.database.removeGMR('replyMessageId', {
                 replyMessageId,
             });
-
+            delete GMRCache[replyMessageId];
             await session.sendQueued(
                 s('quote', { id: replyMessageId }) +
                     s('at', { id: userId }) +

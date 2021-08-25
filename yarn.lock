@@ -699,7 +699,7 @@ fd-slicer@~1.1.0:
   dependencies:
     pend "~1.2.0"
 
-file-type@^16.3.0:
+file-type@^16.5.3:
   version "16.5.3"
   resolved "https://registry.yarnpkg.com/file-type/-/file-type-16.5.3.tgz#474b7e88c74724046abb505e9b8ed4db30c4fc06"
   integrity sha512-uVsl7iFhHSOY4bEONLlTK47iAHtNsFHWP5YE4xJfZ4rnX7S1Q3wce09XgqSC7E/xh8Ncv/be1lNoyprlUH/x6A==
@@ -1130,16 +1130,16 @@ koa@^2.13.1:
     type-is "^1.6.16"
     vary "^1.1.2"
 
-koishi-adapter-discord@^1.3.3:
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/koishi-adapter-discord/-/koishi-adapter-discord-1.3.3.tgz#70f4c228d60749cce26a9c51b668ad56f3934ce3"
-  integrity sha512-M+Xwf1RUI3qRekSS/7FB1ebW5S7AQn4dmB7Tqh8MbxUQY4P98myw2FaB+8QeVxlpXKIko/fTBhLzqu2pmsGY6g==
+koishi-adapter-discord@^1.3.4:
+  version "1.3.4"
+  resolved "https://registry.yarnpkg.com/koishi-adapter-discord/-/koishi-adapter-discord-1.3.4.tgz#8f1d8a22a3da46b65f9448635bc1454160b3b8a6"
+  integrity sha512-wPmbJyaXEgwBXk7PRf5s/v+1WkdcCPtMEIkT3otEPW0dfgGq52hiOouuVEiVp3PCR5R96FRRVPnla2dlGMtAWA==
   dependencies:
     axios "^0.21.1"
     es-aggregate-error "^1.0.5"
-    file-type "^16.3.0"
+    file-type "^16.5.3"
     form-data "^4.0.0"
-    ws "^7.4.5"
+    ws "^8.0.0"
 
 koishi-adapter-onebot@^3.1.0:
   version "3.1.0"
@@ -1151,10 +1151,10 @@ koishi-adapter-onebot@^3.1.0:
     qface "1.1.0"
     ws "^7.4.5"
 
-koishi-core@^3.14.0:
-  version "3.14.0"
-  resolved "https://registry.yarnpkg.com/koishi-core/-/koishi-core-3.14.0.tgz#296e3b86031ee7beeefeaf16b18ec18339c68254"
-  integrity sha512-qX2yhtmF4U+TOsJAIfutvwjaHgWCMB7M/S38bPbnSTgivn8WZp9LIVFUxJVXVh9+WcxTky93e3ZZFnqr5qapFQ==
+koishi-core@^3.14.1:
+  version "3.14.1"
+  resolved "https://registry.yarnpkg.com/koishi-core/-/koishi-core-3.14.1.tgz#461425cb69210cbfcbd5e42f99059e8b290fbf1a"
+  integrity sha512-ZTsCaN8/p8MP5VSJorMvaeoEiyxPD+Gpnv/DLODb0o6XVC0sCOj5ucDvl3HY1aFjOsTPt0d7y3pBAPCE57BJEQ==
   dependencies:
     "@koa/router" "^10.1.0"
     "@types/koa__router" "^8.0.7"
@@ -1167,15 +1167,15 @@ koishi-core@^3.14.0:
     koishi-utils "^4.2.4"
     lru-cache "^6.0.0"
 
-koishi-plugin-common@^4.3.1:
-  version "4.3.3"
-  resolved "https://registry.yarnpkg.com/koishi-plugin-common/-/koishi-plugin-common-4.3.3.tgz#66f629637631017dad70511c9a60c0d02f908301"
-  integrity sha512-ef2SZzZ8JtXbY9VTiIdWbRbKylTqXcigXYlq7aK5P1Fx7Yl3VPjTh/kEAvzVKsv1dZn7GW+dTRiUKTbnaua7pg==
+koishi-plugin-common@^4.3.4:
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/koishi-plugin-common/-/koishi-plugin-common-4.3.4.tgz#ee9618736a60117e77cee41cb323ff94733d29f7"
+  integrity sha512-9VEvle6YDetlkMa1o6y1O9SKwYLyx2agbluvipAUDu65RdS5xbnKgBvFX5RQ2hQp5SkdamHxfL3lwQuTNBzE2w==
 
-koishi-plugin-mysql@^3.6.0:
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/koishi-plugin-mysql/-/koishi-plugin-mysql-3.6.0.tgz#34dd9dc782220778a33d58f9709cca5c1a9f5f8f"
-  integrity sha512-Q7EwTwOuOqTo/BPB5/9k+MmuEDVpH2A3ILVpFexanvuY5DUwljTPbBfvIK2d8y3pADda65H3BHhvXptCubyCiQ==
+koishi-plugin-mysql@^3.6.1:
+  version "3.6.1"
+  resolved "https://registry.yarnpkg.com/koishi-plugin-mysql/-/koishi-plugin-mysql-3.6.1.tgz#0750e2c693157f98a9f548ecc5b9edee2039175b"
+  integrity sha512-ma7R8DbMVuvktgfiUiFlC+GR6eQgtpN89s4bdX9mRLC/6slGXqNtgbIUzx61JVjiFOcB/pPP7C95UZLX2U/EDQ==
   dependencies:
     "@types/mysql" "^2.15.19"
     mysql "^2.18.1"
@@ -1222,16 +1222,16 @@ koishi-utils@^4.2.3, koishi-utils@^4.2.4:
   dependencies:
     supports-color "^8.1.0"
 
-koishi@^3.14.0:
-  version "3.14.0"
-  resolved "https://registry.yarnpkg.com/koishi/-/koishi-3.14.0.tgz#65f2c2bb67add25c61819898637c733f875dad26"
-  integrity sha512-Ao8D3caC2B+zCpm4CvN1NfXnT9PQKopHOwKnWIm3f/L8whduc6uVl0Q8WHuiffqLbETACwvv96mQDg0XFmqOvQ==
+koishi@^3.14.1:
+  version "3.14.1"
+  resolved "https://registry.yarnpkg.com/koishi/-/koishi-3.14.1.tgz#cc258e3fbdf84d356cc5e4d491199db70e989051"
+  integrity sha512-MAaXQB1N0b3E4yK49WuEdCjJEW1V7DP8hBYSNZ46QLjXDKfZiqv9VX3vw8lTeFbZVE7yPP1uFHd2yVkTNSzXEA==
   dependencies:
     cac "^6.7.3"
     chokidar "^3.5.2"
     js-yaml "^4.1.0"
     kleur "^4.1.4"
-    koishi-core "^3.14.0"
+    koishi-core "^3.14.1"
     koishi-utils "^4.2.4"
     prompts "^2.4.1"
 
