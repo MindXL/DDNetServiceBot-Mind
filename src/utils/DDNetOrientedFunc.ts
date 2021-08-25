@@ -1,4 +1,5 @@
 import { Session } from 'koishi-core';
+import { CQBot } from 'koishi-adapter-onebot';
 import axios, { AxiosError } from 'axios';
 import _ from 'lodash';
 
@@ -85,23 +86,19 @@ export function parseGMRSession(
 }
 
 export async function sendGMRReminder(
-    session: Session,
+    bot: CQBot,
     gmr: GroupMemberRequest
 ): Promise<PromiseResult<string>> {
     try {
-        const targetGroup = await session.bot.getGroup(gmr.groupId);
+        const targetGroup = await bot.getGroup(gmr.groupId);
         const seperate = '-'.repeat(15) + '\n';
         const pointsMessage = await wrapGetPlayerPointsMsg(
             gmr.answer ?? gmr.userId
         );
 
-        if (!session.channelId)
-            throw new Error(
-                'sendGMRReminder()中传入的session没有指定channelId'
-            );
-        const replyMessageId = await session.bot
+        const replyMessageId = await bot
             .sendMessage(
-                session.channelId,
+                Config.Onebot.motGroup,
                 '$收到入群申请$\n\n' +
                     `申请人：${gmr.userId}\n\n` +
                     `目标群：${targetGroup.groupId}\n` +
@@ -119,7 +116,8 @@ export async function sendGMRReminder(
             : [replyMessageId, null];
     } catch (e) {
         // 风控错误不会出现在这里，可以发送消息
-        await session.sendQueued(
+        await bot.sendMessage(
+            Config.Onebot.motGroup,
             '$收到入群申请$\n\n出现非风控错误，入群申请已归档'
         );
         return [null, e.message];
