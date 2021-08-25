@@ -36,24 +36,17 @@ export function getDevCtx(ctx: Context): Context {
 }
 
 export function getModCtx(ctx: Context): Context {
-    return ctx
-        .group(Onebot.modGroup)
-        .union(ctx.channel(Discord.modChannel))
-        .union(getDevCtx(ctx));
+    return ctx.group(Onebot.modGroup).union(ctx.channel(Discord.modChannel));
 }
 
 export function getMotCtx(ctx: Context): Context {
-    return ctx
-        .group(Onebot.motGroup)
-        .union(ctx.channel(Discord.motChannel))
-        .union(getDevCtx(ctx));
+    return ctx.group(Onebot.motGroup).union(ctx.channel(Discord.motChannel));
 }
 
 export function getWatchCtx(ctx: Context): Context {
     return ctx
         .group(...Onebot.watchGroups)
-        .union(ctx.channel(...Discord.watchChannels))
-        .union(getDevCtx(ctx));
+        .union(ctx.channel(...Discord.watchChannels));
 }
 
 export function byteLenth(str: string): number {

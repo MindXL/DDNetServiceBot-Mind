@@ -13,3 +13,7 @@ import { sleep, Time } from 'koishi-core';
     //     stdio: [process.stdin, process.stdout, process.stderr],
     // });
 })();
+
+// 在node_modules/koishi-plugin-mysql/lib/index.js的第480添加了如下代码
+// const count = (await this.query(`SELECT COUNT(*) FROM ??`, ["user"]))[0]['COUNT(*)']
+// Object.assign(user, {id: count.toString()})
