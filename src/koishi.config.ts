@@ -25,33 +25,23 @@ module.exports = {
             token: process.env.DISCORD_TOKEN,
         },
     ],
-    axiosConfig: {
-        proxy: {
-            protocol: proxyInfo[0],
-            host: proxyInfo[1],
-            port: parseInt(proxyInfo[2]),
-            auth: {
-                username: process.env.PROXY_USERNAME!,
-                password: process.env.PROXY_PASSWORD!,
-            },
-        },
-    },
+
     // onebot: {
     //     secret: '',
     // },
-    // discord: {
-    //     axiosConfig: {
-    //         proxy: {
-    //             protocol: proxyInfo[0],
-    //             host: proxyInfo[1],
-    //             port: parseInt(proxyInfo[2]),
-    //             auth: {
-    //                 username: process.env.PROXY_USERNAME!,
-    //                 password: process.env.PROXY_PASSWORD!,
-    //             },
-    //         },
-    //     },
-    // },
+    discord: {
+        axiosConfig: {
+            proxy: {
+                protocol: proxyInfo[0],
+                host: proxyInfo[1],
+                port: parseInt(proxyInfo[2]),
+                auth: {
+                    username: process.env.PROXY_USERNAME!,
+                    password: process.env.PROXY_PASSWORD!,
+                },
+            },
+        },
+    },
 
     // prefix: ['%', '&', '*'],
     prefix: '%',
