@@ -16,8 +16,8 @@ export function onceConnect(ctx: Context, _logger: Logger) {
                         switch (bot.platform) {
                             case 'onebot':
                                 return Config.Onebot.developer.onebot;
-                            case 'discord':
-                                return Config.Discord.devPrivateChannel;
+                            // case 'discord':
+                            //     return Config.Discord.devPrivateChannel;
                             default:
                                 return '';
                         }

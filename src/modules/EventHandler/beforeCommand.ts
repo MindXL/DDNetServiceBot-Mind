@@ -15,11 +15,15 @@ export function beforeCommand(ctx: Context, _logger: Logger) {
                 ['authority']
             );
 
+            // if (
+            //     (Config.Onebot.watchGroups.includes(session?.groupId!) ||
+            //         Config.Discord.watchChannels.includes(
+            //             session?.channelId!
+            //         )) &&
+            //     user.authority < 3
+            // )
             if (
-                (Config.Onebot.watchGroups.includes(session?.groupId!) ||
-                    Config.Discord.watchChannels.includes(
-                        session?.channelId!
-                    )) &&
+                Config.Onebot.watchGroups.includes(session?.groupId!) &&
                 user.authority < 3
             )
                 return '';

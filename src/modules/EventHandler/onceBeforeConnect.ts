@@ -3,7 +3,7 @@ import { Logger, sleep, Time } from 'koishi-utils';
 
 import Config from '../../utils';
 
-const { Onebot, Discord } = Config;
+const { Onebot } = Config;
 
 export function onceBeforeConnect(ctx: Context, _logger: Logger) {
     const logger = _logger.extend('once@before#connect');
@@ -18,7 +18,7 @@ export function onceBeforeConnect(ctx: Context, _logger: Logger) {
             await ctx.database.createUser('onebot', Onebot.developer.onebot, {
                 authority: 4,
                 ...Onebot.developer,
-                ...Discord.developer,
+                // ...Discord.developer,
             });
 
             for (const moderator of Onebot.moderators) {

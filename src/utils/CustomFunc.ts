@@ -2,15 +2,16 @@ import { Context, Session } from 'koishi-core';
 
 import Config from './config';
 
-const { Onebot, Discord } = Config;
+const { Onebot } = Config;
 
 export function autoAssign(session: Session): boolean {
-    return (
-        [Onebot.motGroup, ...Onebot.watchGroups]
-            .concat([Discord.groupId])
-            .includes(session.groupId!) ||
-        [...Discord.watchChannels].includes(session.channelId!)
-    );
+    // return (
+    //     [Onebot.motGroup, ...Onebot.watchGroups]
+    //         .concat([Discord.groupId])
+    //         .includes(session.groupId!) ||
+    //     [...Discord.watchChannels].includes(session.channelId!)
+    // );
+    return [Onebot.motGroup, ...Onebot.watchGroups].includes(session.groupId!);
 }
 
 export function autoAuthorize(session: Session): number {
@@ -18,37 +19,44 @@ export function autoAuthorize(session: Session): number {
 }
 
 export function getDevCtx(ctx: Context): Context {
-    return ctx
-        .group(Onebot.devGroup)
-        .union(ctx.channel(Discord.devChannel))
-        .union(
-            ctx
-                .select('platform', 'onebot')
-                .unselect('groupId')
-                .user(Onebot.developer.onebot)
-        )
-        .union(
-            ctx
-                .select('platform', 'discord')
-                .unselect('groupId')
-                .user(Discord.developer.discord)
-        );
+    return (
+        ctx
+            .group(Onebot.devGroup)
+            // .union(ctx.channel(Discord.devChannel))
+            .union(
+                ctx
+                    .select('platform', 'onebot')
+                    .unselect('groupId')
+                    .user(Onebot.developer.onebot)
+            )
+    );
+    // .union(
+    //     ctx
+    //         .select('platform', 'discord')
+    //         .unselect('groupId')
+    //         .user(Discord.developer.discord)
+    // );
 }
 
 export function getModCtx(ctx: Context): Context {
-    return ctx.group(Onebot.modGroup).union(ctx.channel(Discord.modChannel));
+    return ctx.group(Onebot.modGroup);
+    // .union(ctx.channel(Discord.modChannel));
 }
 
 export function getMotCtx(ctx: Context): Context {
-    return ctx.group(Onebot.motGroup).union(ctx.channel(Discord.motChannel));
+    return ctx.group(Onebot.motGroup);
+    // .union(ctx.channel(Discord.motChannel));
 }
 
 export function getWatchCtx(ctx: Context): Context {
-    return ctx
-        .group(...Onebot.watchGroups)
-        .union(ctx.channel(...Discord.watchChannels));
+    return ctx.group(...Onebot.watchGroups);
+    // .union(ctx.channel(...Discord.watchChannels));
 }
 
 export function byteLenth(str: string): number {
     return Buffer.from(str, 'utf-8').length;
+}
+
+export function verifyError(error: unknown): string {
+    return error instanceof Error ? error.message : Config.UnknownErrorMsg;
 }
