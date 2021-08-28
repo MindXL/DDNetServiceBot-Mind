@@ -11,7 +11,7 @@ export interface GroupMemberRequest {
     time: number;
     answer?: string;
     messageId: string;
-    replyMessageId: string;
+    replyMessageId: string | null;
     extraMsgIds?: string[];
 }
 
@@ -153,10 +153,10 @@ Database.extend('koishi-plugin-mysql', {
             ? this.joinKeys(this.inferFields(GroupMemberRequest.table, fields))
             : '*';
 
-        let sql = `SELECT ${keys} FROM ${GroupMemberRequest.table} WHERE ${filter}`;
+        let sql = `SELECT ${keys} FROM ?? WHERE ${filter}`;
         if (limit) sql += ' LIMIT ' + limit;
         if (offset) sql += ' OFFSET ' + offset;
-        const [data] = await this.query(sql);
+        const [data] = await this.query(sql, [GroupMemberRequest.table]);
 
         return data && Object.assign({ ...data }, set);
     },
@@ -174,9 +174,9 @@ Database.extend('koishi-plugin-mysql', {
             ? this.joinKeys(this.inferFields(GroupMemberRequest.table, fields))
             : '*';
 
-        const data = await this.query(
-            `SELECT ${keys} FROM ${GroupMemberRequest.table} LIMIT ${end}`
-        );
+        const data = await this.query(`SELECT ${keys} FROM ?? LIMIT ${end}`, [
+            GroupMemberRequest.table,
+        ]);
         return (data as GroupMemberRequest[]).map(gmr => ({ ...gmr }));
     },
 

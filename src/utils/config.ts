@@ -28,21 +28,21 @@ const Config = {
         ],
     },
 
-    Discord: {
-        developer: {
-            discord: process.env.DISCORD_MASTER_ACCOUNT!,
-            name: 'Mind',
-        },
-        devPrivateChannel: process.env.DISCORD_MASTER_CHANNEL!,
+    // Discord: {
+    //     developer: {
+    //         discord: process.env.DISCORD_MASTER_ACCOUNT!,
+    //         name: 'Mind',
+    //     },
+    //     devPrivateChannel: process.env.DISCORD_MASTER_CHANNEL!,
 
-        groupId: process.env.DISCORD_GROUP!,
-        devChannel: process.env.DISCORD_DEV_CHANNEL!,
-        modChannel: process.env.DISCORD_MOD_CHANNEL!,
-        motChannel: process.env.DISCORD_MOT_CHANNEL!,
-        watchChannels: process.env
-            .DISCORD_WATCH_CHANNELS!.split(',')
-            .map(channel => channel.trim()),
-    },
+    //     groupId: process.env.DISCORD_GROUP!,
+    //     devChannel: process.env.DISCORD_DEV_CHANNEL!,
+    //     modChannel: process.env.DISCORD_MOD_CHANNEL!,
+    //     motChannel: process.env.DISCORD_MOT_CHANNEL!,
+    //     watchChannels: process.env
+    //         .DISCORD_WATCH_CHANNELS!.split(',')
+    //         .map(channel => channel.trim()),
+    // },
 
     UnknownErrorMsg: '$出现未知错误$',
     PlayerNotFoundMsg: 'Player Not Found',

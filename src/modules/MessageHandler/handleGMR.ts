@@ -21,14 +21,14 @@ export function handleGMR(ctx: Context, logger: Logger) {
 
             const replyMessageId = quote.messageId!;
 
-            // 使用缓存，避免向数据库请求
-            const gmr =
-                GMRCache[replyMessageId] ??
-                (await ctx.database.getGMR('replyMessageId', {
-                    replyMessageId,
-                }));
             // 若被回复的消息非提示入群申请的消息
-            if (!gmr) return next();
+            // 使用缓存判断被回复的消息是否为入群申请的提示消息
+            // undefined不会触发此函数
+            if (!GMRCache.includes(replyMessageId)) return next();
+
+            const gmr = await ctx.database.getGMR('replyMessageId', {
+                replyMessageId,
+            });
 
             const userId = session.userId!;
             // 若非在册的管理员
@@ -69,7 +69,7 @@ export function handleGMR(ctx: Context, logger: Logger) {
             await ctx.database.removeGMR('replyMessageId', {
                 replyMessageId,
             });
-            delete GMRCache[replyMessageId];
+            GMRCache.splice(GMRCache.indexOf(replyMessageId), 1);
             await session.sendQueued(
                 s('quote', { id: replyMessageId }) +
                     s('at', { id: userId }) +
@@ -77,10 +77,7 @@ export function handleGMR(ctx: Context, logger: Logger) {
                     `\n${botReply}`
             );
 
-            await session.bot.deleteMessage(
-                session.groupId!,
-                gmr.replyMessageId
-            );
+            await session.bot.deleteMessage(session.groupId!, replyMessageId);
             if (gmr.extraMsgIds)
                 for (const extraMsgId of gmr.extraMsgIds)
                     await session.bot.deleteMessage(

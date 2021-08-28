@@ -71,7 +71,7 @@ export function onGroupMemberRequest(ctx: Context, _logger: Logger) {
         } finally {
             if (Object.keys(gmr).length) {
                 await ctx.database.createGMR(gmr);
-                Object.assign(GMRCache, { [gmr.replyMessageId]: gmr });
+                GMRCache.push(gmr.replyMessageId);
             }
         }
     });

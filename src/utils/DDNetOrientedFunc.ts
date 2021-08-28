@@ -4,7 +4,7 @@ import axios, { AxiosError } from 'axios';
 import _ from 'lodash';
 
 import Config from './config';
-import { byteLenth } from './CustomFunc';
+import { byteLenth, verifyError } from './CustomFunc';
 import { PromiseResult, PlayerData, FindDataPlayer, FindData } from '../lib';
 import { GroupMemberRequest } from '../MysqlExtends';
 
@@ -109,7 +109,7 @@ export async function sendGMRReminder(
                     seperate +
                     '\n回复此消息以处理入群申请\n（y/n/n [reason...]/i=忽略）'
             )
-            .catch(e => [null, e.message] as PromiseResult<string>);
+            .catch(e => [null, verifyError(e)] as PromiseResult<string>);
         /* 发现账号风控，此时不能发送消息 */
         return Array.isArray(replyMessageId)
             ? replyMessageId
@@ -120,7 +120,7 @@ export async function sendGMRReminder(
             Config.Onebot.motGroup,
             '$收到入群申请$\n\n出现非风控错误，入群申请已归档'
         );
-        return [null, e.message];
+        return [null, verifyError(e)];
     }
 }
 
@@ -193,10 +193,7 @@ export async function getOnlinePlayerData(
             throw new Error(Config.PlayerNameErrorMsg);
         }
     } catch (e) {
-        return [
-            null,
-            (e as AxiosError).isAxiosError ? Config.UnknownErrorMsg : e.message,
-        ];
+        return [null, verifyError(e)];
     }
 }
 
