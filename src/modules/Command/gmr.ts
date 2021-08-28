@@ -31,10 +31,10 @@ export function gmr(ctx: Context, _logger: Logger) {
                         gmr
                     );
                     if (error) throw new Error(error);
-                    newReplyMessageId &&
-                        Object.assign(diffGMR, {
-                            replyMessageId: newReplyMessageId,
-                        });
+                    if (!newReplyMessageId) throw new Error();
+                    Object.assign(diffGMR, {
+                        replyMessageId: newReplyMessageId,
+                    });
 
                     // 由于各种原因产生的额外消息发送
                     const newExtraMsgIds: any[] = [];
@@ -62,10 +62,8 @@ export function gmr(ctx: Context, _logger: Logger) {
                         Object.assign(diffGMR, { extraMsgIds: newExtraMsgIds });
 
                     if (Object.keys(diffGMR).length) {
-                        delete GMRCache[gmr.replyMessageId];
-                        Object.assign(GMRCache, {
-                            [diffGMR.replyMessageId]: { ...gmr, ...diffGMR },
-                        });
+                        GMRCache[GMRCache.indexOf(gmr.replyMessageId)] =
+                            newReplyMessageId;
                         await ctx.database.updateGMR(
                             'messageId',
                             { messageId: gmr.messageId },

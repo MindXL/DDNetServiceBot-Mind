@@ -1,5 +1,3 @@
-import { GroupMemberRequest } from '../MysqlExtends';
-
-// 缓存bot上线后出现的入群申请，若handleGMR.ts中收到的replyMessageId在缓存中就不必向数据库进行查找
-// 也缓存执行gmr指令后从数据库中获取到的gmr
-export const GMRCache: { [replyMessageId: string]: GroupMemberRequest } = {};
+// 缓存所有gmr的（包括数据库内和上线后出现的）replyMessageId
+// 若第一次入群申请的提示消息未发出去，则对应的replyMessageId为undefined，这也是数组中会出现undefined的原因
+export const GMRCache: (string | null)[] = [];
