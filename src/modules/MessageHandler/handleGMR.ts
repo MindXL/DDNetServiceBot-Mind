@@ -12,19 +12,19 @@ export function handleGMR(ctx: Context, logger: Logger) {
             if (!quote || quote.author?.userId !== Config.Onebot.selfId)
                 return next();
 
-            // 若消息格式不正确
-            const regExp =
-                /\[CQ:quote,id=[-\d]+\]\[CQ:at,id=\d+\]\s+\[CQ:at,id=\d+\]\s*([yY]|(?:[nN]|[nN]\s*(?<reason>.*))|[iI])\s*/.exec(
-                    session.content!
-                );
-            if (!regExp) return next();
-
             const replyMessageId = quote.messageId!;
 
             // 若被回复的消息非提示入群申请的消息
             // 使用缓存判断被回复的消息是否为入群申请的提示消息
-            // undefined不会触发此函数
+            // undefined不会触发此函数，不必考虑
             if (!GMRCache.includes(replyMessageId)) return next();
+
+            // 若消息格式不正确
+            const regExp =
+                /]\s*([yY]|(?:[nN]|[nN]\s+(?<reason>.*))|[iI])\s*$/g.exec(
+                    session.content!
+                );
+            if (!regExp) return next();
 
             const gmr = await ctx.database.getGMR('replyMessageId', {
                 replyMessageId,
