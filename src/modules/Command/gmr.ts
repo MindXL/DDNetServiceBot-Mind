@@ -7,6 +7,7 @@ import Config, {
     sendGMRReminder,
     findIfGMRNoPoints,
     GMRCache,
+    loadGMRCache,
 } from '../../utils';
 import { GroupMemberRequest } from '../../MysqlExtends';
 
@@ -16,7 +17,11 @@ export function gmr(ctx: Context, _logger: Logger) {
     const logger = _logger.extend('points');
 
     ctx.command('gmr', '获取5条未处理的入群申请', { authority: 3 })
+        .option('reload', '--reload')
         .usage('(Group Member Request)')
+        .check(({ options }) => {
+            if (options?.reload) loadGMRCache(ctx);
+        })
         .action(async ({ session }) => {
             try {
                 const gmrs = await ctx.database.getGMRByNum(5);
