@@ -1,8 +1,7 @@
 import { Context } from 'koishi-core';
 import { Logger } from 'koishi-utils';
 
-import Config, { GMRCache } from '../../utils';
-import { GroupMemberRequest } from '../../MysqlExtends';
+import Config, { loadGMRCache } from '../../utils';
 
 export function onceConnect(ctx: Context, _logger: Logger) {
     const logger = _logger.extend('once@connect');
@@ -29,11 +28,7 @@ export function onceConnect(ctx: Context, _logger: Logger) {
             }
 
             // 载入数据库中已有的入群申请的replyMessageId，减少数据库请求
-            const rawGMRs = (await ctx.database.mysql.query(
-                'SELECT ?? FROM ??',
-                ['replyMessageId', GroupMemberRequest.table]
-            )) as Pick<GroupMemberRequest, 'replyMessageId'>[];
-            GMRCache.push(...rawGMRs.map(gmr => gmr.replyMessageId));
+            loadGMRCache(ctx);
         } catch (e) {
             logger.error(e);
         }
