@@ -13,9 +13,9 @@
     "start": "pm2 start pm2.json"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.171",
+    "@types/lodash": "^4.14.173",
     "koishi": "^3.14.2",
-    "typescript": "^4.4.2"
+    "typescript": "^4.4.3"
   },
   "dependencies": {
     "axios": "^0.21.4",
