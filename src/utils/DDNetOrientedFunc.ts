@@ -25,7 +25,7 @@ export async function getPlayerData(
                 {
                     headers: {
                         'accept-encoding': 'gzip, deflate',
-                        decompress: true,
+                        decompress: 'true',
                     },
                 }
             );
@@ -127,7 +127,8 @@ export async function sendGMRReminder(
 export async function findIfGMRNoPoints(
     name: string
 ): Promise<string[] | undefined> {
-    if ((await getPlayerData(name))[0]?.points.points) return;
+    if (!testPlayerName(name) || (await getPlayerData(name))[0]?.points.points)
+        return;
 
     const [data, error] = await getOnlinePlayerData(name);
     if (error) throw new Error(error);
