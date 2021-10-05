@@ -25,7 +25,7 @@ export async function getPlayerData(
                 {
                     headers: {
                         'accept-encoding': 'gzip, deflate',
-                        decompress: true,
+                        decompress: 'true',
                     },
                 }
             );
